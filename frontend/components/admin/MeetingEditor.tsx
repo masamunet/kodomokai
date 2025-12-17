@@ -119,7 +119,7 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
             </div>
           </div>
           <div className="mt-4 text-right">
-            <button type="submit" disabled={isPending} className="bg-primary text-primary-foreground py-2 px-4 rounded hover:bg-primary/90 disabled:opacity-50">
+            <button type="submit" disabled={isPending} className="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-500 disabled:opacity-50">
               保存
             </button>
           </div>
@@ -136,14 +136,14 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
                 type="button"
                 onClick={handleCopyAgendas}
                 disabled={isPending}
-                className="text-sm text-primary hover:text-primary/80 disabled:opacity-50"
+                className="text-sm text-indigo-600 hover:text-indigo-500 disabled:opacity-50"
               >
                 昨年度からコピー
               </button>
             )}
             <button
               onClick={() => setIsAddingAgenda(!isAddingAgenda)}
-              className="text-sm bg-muted text-primary px-3 py-1 rounded hover:bg-muted/80"
+              className="text-sm bg-muted text-indigo-600 px-3 py-1 rounded hover:bg-muted/80"
             >
               + 議題追加
             </button>
@@ -153,6 +153,7 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
         {isAddingAgenda && (
           <AgendaForm
             meetingId={meeting?.id}
+            defaultDisplayOrder={agendas.length > 0 ? Math.max(...agendas.map(a => a.display_order)) + 1 : 1}
             onCancel={() => setIsAddingAgenda(false)}
             onComplete={() => setIsAddingAgenda(false)}
           />
@@ -197,7 +198,7 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
   )
 }
 
-function AgendaForm({ meetingId, agenda, onCancel, onComplete }: { meetingId?: string, agenda?: Agenda, onCancel: () => void, onComplete: () => void }) {
+function AgendaForm({ meetingId, agenda, defaultDisplayOrder = 1, onCancel, onComplete }: { meetingId?: string, agenda?: Agenda, defaultDisplayOrder?: number, onCancel: () => void, onComplete: () => void }) {
   const [isPending, startTransition] = useTransition()
 
   if (!meetingId) {
@@ -239,7 +240,7 @@ function AgendaForm({ meetingId, agenda, onCancel, onComplete }: { meetingId?: s
           <input
             type="number"
             name="display_order"
-            defaultValue={agenda?.display_order || 0}
+            defaultValue={agenda?.display_order || defaultDisplayOrder}
             placeholder="表示順 (0, 1, 2...)"
             className="w-24 rounded border-input bg-background focus:border-ring focus:ring-ring text-sm text-foreground"
           />
@@ -247,7 +248,7 @@ function AgendaForm({ meetingId, agenda, onCancel, onComplete }: { meetingId?: s
       </div>
       <div className="flex justify-end gap-2 mt-3">
         <button type="button" onClick={onCancel} className="text-sm text-muted-foreground hover:text-foreground">キャンセル</button>
-        <button type="submit" disabled={isPending} className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/90 disabled:opacity-50">
+        <button type="submit" disabled={isPending} className="text-sm bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-500 disabled:opacity-50">
           保存
         </button>
       </div>

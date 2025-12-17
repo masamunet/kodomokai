@@ -26,6 +26,8 @@
   /* slate-200 */
   --ring: #4f46e5;
   /* indigo-600 */
+  --primary: #4f46e5;
+  --primary-foreground: #ffffff;
 }
 
 @theme inline {
@@ -37,6 +39,9 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 
   --color-sidebar: var(--sidebar-background);
   --color-sidebar-foreground: var(--sidebar-foreground);

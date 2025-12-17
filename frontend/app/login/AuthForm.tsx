@@ -81,7 +81,7 @@ export default function AuthForm() {
         <div className="flex items-center justify-between">
           <div className="text-sm">
             {isLogin && (
-              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <a href="#" className="font-medium text-primary hover:text-primary/80">
                 パスワードを忘れた場合
               </a>
             )}
@@ -92,14 +92,14 @@ export default function AuthForm() {
           {isLogin ? (
             <button
               formAction={login}
-              className="group relative flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="group relative flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               ログイン
             </button>
           ) : (
             <button
               formAction={signup}
-              className="group relative flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="group relative flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               登録する
             </button>
@@ -109,7 +109,7 @@ export default function AuthForm() {
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+              className="text-sm font-semibold text-primary hover:text-primary/80"
             >
               {isLogin ? '新規アカウント作成はこちら' : 'すでにアカウントをお持ちの方はこちら'}
             </button>

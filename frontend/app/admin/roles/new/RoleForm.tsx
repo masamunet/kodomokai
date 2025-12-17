@@ -12,9 +12,10 @@ type Props = {
     display_order: number // or string, depending on DB type, usually number
     description: string | null
   }
+  initialDisplayOrder?: number
 }
 
-export default function RoleForm({ role }: Props) {
+export default function RoleForm({ role, initialDisplayOrder = 1 }: Props) {
   const [message, setMessage] = useState<string | null>(null)
 
   const handleSubmit = async (formData: FormData) => {
@@ -66,7 +67,7 @@ export default function RoleForm({ role }: Props) {
             type="number"
             name="display_order"
             id="display_order"
-            defaultValue={role?.display_order || 0}
+            defaultValue={role?.display_order || initialDisplayOrder}
             className="block w-24 rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
           <p className="mt-1 text-sm text-gray-500">数字が小さいほど先に表示されます。</p>
