@@ -30,6 +30,31 @@ export async function getRegularMeetings(year: number) {
   return sortedData
 }
 
+export async function getRegularMeeting(id: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('regular_meetings')
+    .select('*, meeting_agendas(*)')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error('Error fetching regular meeting:', error)
+    return null
+  }
+
+  // Client-side sort for agendas to be safe
+  const sortedData = {
+    ...data,
+    meeting_agendas: data.meeting_agendas?.sort((a: any, b: any) =>
+      (a.display_order - b.display_order) || (new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+    ) || []
+  }
+
+  return sortedData
+}
+
 export async function upsertRegularMeeting(formData: FormData) {
   const supabase = await createClient()
 

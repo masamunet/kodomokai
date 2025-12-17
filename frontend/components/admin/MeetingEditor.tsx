@@ -1,9 +1,14 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { upsertRegularMeeting, upsertMeetingAgenda, deleteMeetingAgenda, copyAgendasFromPreviousYear } from '@/app/actions/meetings'
 import { generateGoogleCalendarUrl } from '@/lib/calendar'
-import { Calendar } from 'lucide-react'
+import MarkdownEditor from '@/components/ui/MarkdownEditor'
+import CopyLinkButton from '@/components/ui/CopyLinkButton'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { Calendar, ChevronDown, ChevronUp } from 'lucide-react'
+import Link from 'next/link'
 
 type Meeting = {
   id: string
@@ -27,13 +32,43 @@ type Props = {
   month: number
   meeting?: Meeting
   agendas: Agenda[]
+  defaultItemsExpanded?: boolean
 }
 
-export default function MeetingEditor({ year, month, meeting, agendas }: Props) {
+export default function MeetingEditor({ year, month, meeting, agendas, defaultItemsExpanded = false }: Props) {
   const [isEditingSchedule, setIsEditingSchedule] = useState(false)
   const [isAddingAgenda, setIsAddingAgenda] = useState(false)
+  const [isAgendasExpanded, setIsAgendasExpanded] = useState(true) // Default Section to OPEN
   const [editingAgendaId, setEditingAgendaId] = useState<string | null>(null)
+
+  // Lifted state for expanded agenda items
+  // Initialize with all IDs if defaultItemsExpanded is true, otherwise empty
+  const [expandedAgendaIds, setExpandedAgendaIds] = useState<string[]>(() =>
+    defaultItemsExpanded ? agendas.map(a => a.id) : []
+  )
+
   const [isPending, startTransition] = useTransition()
+
+  // Sync expandedAgendaIds if agendas change (e.g. newly added item) IF we are in "Always Expand" mode? 
+  // Or just rely on user interaction. 
+  // Let's ensure that if we navigate from List to Detail, the state re-initializes correctly (key change or mount).
+  // Next.js navigation preserves state if component tree is identical. 
+  // We might want to use a useEffect to enforce defaultItemsExpanded behavior on prop change.
+  useEffect(() => {
+    if (defaultItemsExpanded) {
+      setExpandedAgendaIds(agendas.map(a => a.id))
+    } else {
+      // If default is false, we don't necessarily want to close everything if user opened some?
+      // But if we navigate FROM Detail TO List, we probably want to reset.
+      setExpandedAgendaIds([])
+    }
+  }, [defaultItemsExpanded, agendas.length]) // Re-eval if count changes or prop changes
+
+  const toggleAgendaExpansion = (id: string) => {
+    setExpandedAgendaIds(prev =>
+      prev.includes(id) ? prev.filter(pid => pid !== id) : [...prev, id]
+    )
+  }
 
   // Schedule Form State
   const [scheduleForm, setScheduleForm] = useState({
@@ -83,14 +118,30 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
     <div className="bg-card shadow-sm rounded-lg p-6 mb-6 border border-border">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <span className="bg-muted text-muted-foreground text-sm font-medium mr-2 px-2.5 py-0.5 rounded">{month}月</span>
-            {meeting?.scheduled_date ? new Date(meeting.scheduled_date).toLocaleDateString('ja-JP', { weekday: 'short', month: 'short', day: 'numeric' }) : '日程未定'}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <span className="bg-muted text-muted-foreground text-sm font-medium px-2.5 py-0.5 rounded">{month}月</span>
+              {meeting?.id ? (
+                <Link href={`/admin/meetings/${meeting.id}`} className="hover:underline hover:text-primary transition-colors">
+                  {meeting?.scheduled_date ? new Date(meeting.scheduled_date).toLocaleDateString('ja-JP', { weekday: 'short', month: 'short', day: 'numeric' }) : '日程未定'}
+                </Link>
+              ) : (
+                <span>
+                  {meeting?.scheduled_date ? new Date(meeting.scheduled_date).toLocaleDateString('ja-JP', { weekday: 'short', month: 'short', day: 'numeric' }) : '日程未定'}
+                </span>
+              )}
+            </h3>
+          </div>
           <div className="text-sm text-muted-foreground mt-1">
             {meeting?.start_time?.slice(0, 5) || '--:--'} @ {meeting?.location || '場所未定'}
           </div>
           {meeting?.description && <div className="text-sm text-muted-foreground mt-1">{meeting.description}</div>}
+
+          {meeting?.id && (
+            <div className="mt-2">
+              <CopyLinkButton meetingId={meeting.id} />
+            </div>
+          )}
         </div>
         <button
           onClick={() => setIsEditingSchedule(!isEditingSchedule)}
@@ -145,7 +196,20 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
       {/* Agendas Section */}
       <div className="border-t border-border pt-4 mt-4">
         <div className="flex justify-between items-center mb-4">
-          <h4 className="font-bold text-foreground">議題</h4>
+          <div
+            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => setIsAgendasExpanded(!isAgendasExpanded)}
+          >
+            <h4 className="font-bold text-foreground flex items-center gap-2">
+              議題
+              {isAgendasExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </h4>
+            {!isAgendasExpanded && agendas.length > 0 && (
+              <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                {agendas.length}件
+              </span>
+            )}
+          </div>
           <div className="flex gap-2">
             {agendas.length === 0 && meeting?.id && (
               <button
@@ -158,7 +222,10 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
               </button>
             )}
             <button
-              onClick={() => setIsAddingAgenda(!isAddingAgenda)}
+              onClick={() => {
+                setIsAgendasExpanded(true)
+                setIsAddingAgenda(!isAddingAgenda)
+              }}
               className="text-sm bg-muted text-indigo-600 px-3 py-1 rounded hover:bg-muted/80"
             >
               + 議題追加
@@ -166,49 +233,81 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
           </div>
         </div>
 
-        {isAddingAgenda && (
-          <AgendaForm
-            meetingId={meeting?.id}
-            defaultDisplayOrder={agendas.length > 0 ? Math.max(...agendas.map(a => a.display_order)) + 1 : 1}
-            onCancel={() => setIsAddingAgenda(false)}
-            onComplete={() => setIsAddingAgenda(false)}
-          />
-        )}
+        {isAgendasExpanded && (
+          <>
+            {isAddingAgenda && (
+              <AgendaForm
+                meetingId={meeting?.id}
+                defaultDisplayOrder={agendas.length > 0 ? Math.max(...agendas.map(a => a.display_order)) + 1 : 1}
+                onCancel={() => setIsAddingAgenda(false)}
+                onComplete={() => setIsAddingAgenda(false)}
+              />
+            )}
 
-        <div className="space-y-3">
-          {agendas.map(agenda => (
-            <div key={agenda.id} className="bg-card p-3 border border-border rounded shadow-sm hover:shadow-md transition-shadow">
-              {editingAgendaId === agenda.id ? (
-                <AgendaForm
-                  meetingId={meeting?.id}
-                  agenda={agenda}
-                  onCancel={() => setEditingAgendaId(null)}
-                  onComplete={() => setEditingAgendaId(null)}
-                />
-              ) : (
-                <div className="flex justify-between items-start">
-                  <div>
-                    <div className="font-medium text-foreground">{agenda.title}</div>
-                    {agenda.description && <div className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{agenda.description}</div>}
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => setEditingAgendaId(agenda.id)} className="text-muted-foreground hover:text-primary">
-                      ✎
-                    </button>
-                    <button onClick={() => handleDeleteAgenda(agenda.id)} className="text-muted-foreground hover:text-destructive">
-                      🗑
-                    </button>
-                  </div>
+            <div className="space-y-3">
+              {agendas.map(agenda => (
+                <div key={agenda.id} className="bg-card p-3 border border-border rounded shadow-sm hover:shadow-md transition-shadow">
+                  {editingAgendaId === agenda.id ? (
+                    <AgendaForm
+                      meetingId={meeting?.id}
+                      agenda={agenda}
+                      onCancel={() => setEditingAgendaId(null)}
+                      onComplete={() => setEditingAgendaId(null)}
+                    />
+                  ) : (
+                    <AgendaItemView
+                      agenda={agenda}
+                      isExpanded={expandedAgendaIds.includes(agenda.id)}
+                      onToggle={() => toggleAgendaExpansion(agenda.id)}
+                      onEdit={() => setEditingAgendaId(agenda.id)}
+                      onDelete={() => handleDeleteAgenda(agenda.id)}
+                    />
+                  )}
+                </div>
+              ))}
+              {agendas.length === 0 && !isAddingAgenda && (
+                <div className="text-center text-muted-foreground py-4 text-sm">
+                  議題は登録されていません
                 </div>
               )}
             </div>
-          ))}
-          {agendas.length === 0 && !isAddingAgenda && (
-            <div className="text-center text-muted-foreground py-4 text-sm">
-              議題は登録されていません
-            </div>
-          )}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function AgendaItemView({ agenda, isExpanded, onToggle, onEdit, onDelete }: { agenda: Agenda, isExpanded: boolean, onToggle: () => void, onEdit: () => void, onDelete: () => void }) {
+  return (
+    <div className="flex justify-between items-start">
+      <div className="flex-1">
+        <div
+          className="font-medium text-foreground flex items-center gap-2 cursor-pointer hover:text-primary transition-colors"
+          onClick={onToggle}
+        >
+          {agenda.title}
+          <span className="text-muted-foreground">
+            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </span>
         </div>
+        {isExpanded && (
+          <div className="text-sm text-muted-foreground mt-2 prose prose-sm dark:prose-invert max-w-none">
+            {agenda.description ? (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{agenda.description}</ReactMarkdown>
+            ) : (
+              <span className="text-muted-foreground/50 italic">(詳細なし)</span>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="flex gap-2 ml-4">
+        <button onClick={onEdit} className="text-muted-foreground hover:text-primary">
+          ✎
+        </button>
+        <button onClick={onDelete} className="text-muted-foreground hover:text-destructive">
+          🗑
+        </button>
       </div>
     </div>
   )
@@ -243,15 +342,16 @@ function AgendaForm({ meetingId, agenda, defaultDisplayOrder = 1, onCancel, onCo
             className="w-full rounded border-input bg-background focus:border-ring focus:ring-ring text-foreground"
           />
         </div>
-        <div>
-          <textarea
-            name="description"
-            defaultValue={agenda?.description || ''}
-            placeholder="詳細（オプション）"
-            rows={2}
-            className="w-full rounded border-input bg-background focus:border-ring focus:ring-ring text-sm text-foreground"
-          ></textarea>
-        </div>
+      </div>
+      <div>
+        <MarkdownEditor
+          name="description"
+          defaultValue={agenda?.description || ''}
+          placeholder="詳細（Markdown対応）"
+          rows={6}
+        />
+      </div>
+      <div>
         <div>
           <input
             type="number"
