@@ -15,7 +15,7 @@ export default async function AdminLayout({
       <header className="bg-white shadow-md border-b border-border">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">管理者ダッシュボード</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">役員ダッシュボード</h1>
             <div className="bg-muted rounded p-1">
               <FiscalYearSwitcher currentYear={targetFiscalYear} theme="light" />
             </div>
