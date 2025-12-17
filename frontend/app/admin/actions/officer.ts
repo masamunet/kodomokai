@@ -89,3 +89,74 @@ export async function deleteAssignment(formData: FormData) {
 
   revalidatePath('/admin/officers')
 }
+
+// --- Task Management ---
+
+export async function upsertOfficerTask(formData: FormData) {
+  const supabase = await createClient()
+
+  const id = formData.get('id') as string // If present, update. If empty, insert.
+  const role_id = formData.get('role_id') as string
+  const title = formData.get('title') as string
+  const description = formData.get('description') as string
+  // 'on' represents checked in HTML forms
+  const is_monthly = formData.get('is_monthly') === 'on'
+  const target_month_val = formData.get('target_month') as string
+  const target_month = target_month_val ? parseInt(target_month_val) : null
+
+  const taskData = {
+    role_id,
+    title,
+    description,
+    is_monthly,
+    target_month,
+  }
+
+  let error
+  if (id) {
+    const res = await supabase
+      .from('officer_tasks')
+      .update(taskData)
+      .eq('id', id)
+    error = res.error
+  } else {
+    const res = await supabase
+      .from('officer_tasks')
+      .insert(taskData)
+    error = res.error
+  }
+
+  if (error) {
+    console.error('Upsert task error:', error)
+    return { success: false, message: 'タスクの保存に失敗しました: ' + error.message }
+  }
+
+  revalidatePath('/admin/roles') // Revalidate role pages to show new tasks
+  // Also revalidate the specific role page if needed, but the list or the individual page generally covers it.
+  revalidatePath(`/admin/roles/${role_id}`)
+
+  return { success: true, message: 'タスクを保存しました' }
+}
+
+export async function deleteOfficerTask(formData: FormData) {
+  const supabase = await createClient()
+  const id = formData.get('id') as string
+  const role_id = formData.get('role_id') as string // Passed for revalidation context if needed
+
+  const { error } = await supabase
+    .from('officer_tasks')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    console.error('Delete task error:', error)
+    return { success: false, message: 'タスクの削除に失敗しました: ' + error.message }
+  }
+
+  revalidatePath('/admin/roles')
+  if (role_id) {
+    revalidatePath(`/admin/roles/${role_id}`)
+  }
+
+  return { success: true, message: 'タスクを削除しました' }
+}

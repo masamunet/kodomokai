@@ -14,7 +14,7 @@ export default async function AdminRolesPage() {
     <div>
       <AdminPageHeader
         title="役職管理"
-        description="PTA役員の役職を管理します。"
+        description="役員の役職を管理します。"
         action={{ label: '役職を追加', href: '/admin/roles/new' }}
       />
       <div className="mt-8 flow-root">
