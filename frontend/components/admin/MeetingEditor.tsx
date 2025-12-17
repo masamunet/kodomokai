@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from 'react'
 import { upsertRegularMeeting, upsertMeetingAgenda, deleteMeetingAgenda, copyAgendasFromPreviousYear } from '@/app/actions/meetings'
+import { generateGoogleCalendarUrl } from '@/lib/calendar'
+import { Calendar } from 'lucide-react'
 
 type Meeting = {
   id: string
@@ -97,6 +99,20 @@ export default function MeetingEditor({ year, month, meeting, agendas }: Props) 
           {isEditingSchedule ? 'キャンセル' : '日程編集'}
         </button>
       </div>
+
+      {meeting?.scheduled_date && (
+        <div className="mb-4">
+          <a
+            href={generateGoogleCalendarUrl(meeting)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
+          >
+            <Calendar size={14} />
+            Googleカレンダーに登録
+          </a>
+        </div>
+      )}
 
       {isEditingSchedule && (
         <form action={handleScheduleSubmit} className="mb-6 bg-muted/50 p-4 rounded-lg border border-border">

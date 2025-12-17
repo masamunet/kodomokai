@@ -1,5 +1,6 @@
 import { getRegularMeetings } from '@/app/actions/meetings'
 import MeetingEditor from '@/components/admin/MeetingEditor'
+import BulkExportButton from '@/components/admin/BulkExportButton'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
@@ -24,22 +25,26 @@ export default async function RegularMeetingsPage({
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <h1 className="text-2xl font-bold text-foreground">役員定例会</h1>
         <div className="flex items-center gap-4">
-          <Link
-            href={`/admin/meetings?year=${year - 1}`}
-            className="p-2 hover:bg-muted rounded-full transition-colors"
-          >
-            <ChevronLeft size={20} className="text-muted-foreground hover:text-foreground" />
-          </Link>
-          <span className="text-lg font-bold text-foreground">{year}年度</span>
-          <Link
-            href={`/admin/meetings?year=${year + 1}`}
-            className="p-2 hover:bg-muted rounded-full transition-colors"
-          >
-            <ChevronRight size={20} className="text-muted-foreground hover:text-foreground" />
-          </Link>
+          <BulkExportButton meetings={meetings} />
+
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/admin/meetings?year=${year - 1}`}
+              className="p-2 hover:bg-muted rounded-full transition-colors"
+            >
+              <ChevronLeft size={20} className="text-muted-foreground hover:text-foreground" />
+            </Link>
+            <span className="text-lg font-bold text-foreground">{year}年度</span>
+            <Link
+              href={`/admin/meetings?year=${year + 1}`}
+              className="p-2 hover:bg-muted rounded-full transition-colors"
+            >
+              <ChevronRight size={20} className="text-muted-foreground hover:text-foreground" />
+            </Link>
+          </div>
         </div>
       </div>
 
