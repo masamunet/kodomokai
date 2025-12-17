@@ -8,7 +8,8 @@ export default async function AdminEventsPage() {
   const { data: events } = await supabase
     .from('events')
     .select('*')
-    .order('start_time', { ascending: false })
+    .order('scheduled_date', { ascending: false })
+    .order('start_time', { ascending: true })
 
   return (
     <div>
@@ -32,7 +33,8 @@ export default async function AdminEventsPage() {
                     </Link>
                     <div className="ml-2 flex flex-shrink-0">
                       <p className="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold leading-5 text-blue-800">
-                        {new Date(event.start_time).toLocaleDateString()}
+                        {new Date(event.scheduled_date).toLocaleDateString()}
+                        {event.start_time && ` ${event.start_time.slice(0, 5)}`}
                       </p>
                     </div>
                   </div>

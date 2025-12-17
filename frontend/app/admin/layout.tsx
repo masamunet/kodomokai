@@ -27,6 +27,9 @@ export default async function AdminLayout({
             <Link href="/admin/meetings" className="text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors whitespace-nowrap">
               定例会
             </Link>
+            <Link href="/admin/events/annual" className="text-primary-foreground bg-indigo-500 hover:bg-indigo-600 ml-2 px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors whitespace-nowrap">
+              年間予定
+            </Link>
             <div className="h-5 w-px bg-border mx-2 shrink-0" />
 
             <NavLinks />
