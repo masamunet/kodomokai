@@ -12,52 +12,66 @@ export default async function AdminLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="bg-white shadow-md border-b border-border">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">役員ダッシュボード</h1>
-            <div className="bg-muted rounded p-1">
+      <header className="bg-card shadow-sm border-b border-border sticky top-0 z-50">
+        <div className="mx-auto flex h-16 w-full max-w-[1920px] items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-4 shrink-0">
+            <Link href="/admin" className="flex items-center gap-2">
+              <h1 className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap">役員DB</h1>
+            </Link>
+            <div className="bg-muted rounded p-1 hidden sm:block">
               <FiscalYearSwitcher currentYear={targetFiscalYear} theme="light" />
             </div>
           </div>
-          <nav className="flex gap-4 items-center">
-            <Link href="/admin/meetings" className="text-white bg-indigo-600 hover:bg-indigo-500 px-3 py-2 rounded-md text-sm font-medium shadow-sm transition-colors border border-indigo-500">
+
+          <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar ml-4">
+            <Link href="/admin/meetings" className="text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors whitespace-nowrap">
               定例会
             </Link>
-            <div className="h-6 w-px bg-border mx-2" />
-            <Link href="/admin/templates" className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors">
-              テンプレート
-            </Link>
-            <Link href="/admin/events" className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors">
-              イベント
-            </Link>
-            <Link href="/admin/members" className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors">
-              名簿
-            </Link>
-            <div className="h-6 w-px bg-border mx-2" />
-            <Link href="/admin/roles" className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors">
-              役職
-            </Link>
-            <Link href="/admin/officers" className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors">
-              任命
-            </Link>
-            <Link href="/admin/settings" className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors">
-              設定
-            </Link>
-            <div className="h-6 w-px bg-border mx-2" />
-            <Link href="/admin/notifications" className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors">
-              配信
-            </Link>
-            <Link href="/" className="ml-4 text-white bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-md text-sm font-medium shadow-sm transition-colors">
-              ホームへ
+            <div className="h-5 w-px bg-border mx-2 shrink-0" />
+
+            <NavLinks />
+
+            <div className="h-5 w-px bg-border mx-2 shrink-0" />
+            <Link href="/" className="text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors whitespace-nowrap ml-2">
+              ホーム
             </Link>
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8">
+      <main className="mx-auto w-full max-w-[1920px] flex-1 p-4 sm:p-6 lg:p-8">
         <Breadcrumbs />
         {children}
       </main>
     </div>
+  )
+}
+
+function NavLinks() {
+  return (
+    <>
+      <Link href="/admin/templates" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        テンプレート
+      </Link>
+      <Link href="/admin/events" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        イベント
+      </Link>
+      <Link href="/admin/members" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        名簿
+      </Link>
+      <div className="h-5 w-px bg-border mx-2 shrink-0" />
+      <Link href="/admin/roles" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        役職
+      </Link>
+      <Link href="/admin/officers" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        任命
+      </Link>
+      <Link href="/admin/settings" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        設定
+      </Link>
+      <div className="h-5 w-px bg-border mx-2 shrink-0" />
+      <Link href="/admin/notifications" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        配信
+      </Link>
+    </>
   )
 }
