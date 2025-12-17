@@ -21,6 +21,10 @@ export default async function AdminLayout({
             </div>
           </div>
           <nav className="flex gap-4 items-center">
+            <Link href="/admin/meetings" className="text-white bg-indigo-600 hover:bg-indigo-500 px-3 py-2 rounded-md text-sm font-medium shadow-sm transition-colors border border-indigo-500">
+              定例会
+            </Link>
+            <div className="h-6 w-px bg-border mx-2" />
             <Link href="/admin/templates" className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium hover:bg-muted transition-colors">
               テンプレート
             </Link>
