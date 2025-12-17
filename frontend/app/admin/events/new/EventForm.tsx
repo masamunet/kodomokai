@@ -1,0 +1,162 @@
+
+'use client'
+
+import { useState } from 'react'
+import { createEvent } from '../../actions/event'
+import Link from 'next/link'
+
+export default function EventForm() {
+  const [message, setMessage] = useState<string | null>(null)
+
+  const handleSubmit = async (formData: FormData) => {
+    setMessage(null)
+    const result = await createEvent(formData)
+
+    if (result && !result.success) {
+      setMessage(result.message)
+    }
+  }
+
+  return (
+    <form action={handleSubmit} className="space-y-6 bg-white p-6 shadow sm:rounded-md">
+      {message && (
+        <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded border">
+          {message}
+        </div>
+      )}
+
+      <div>
+        <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">
+          イベント名
+        </label>
+        <div className="mt-2">
+          <input
+            type="text"
+            name="title"
+            id="title"
+            required
+            className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">
+          説明
+        </label>
+        <div className="mt-2">
+          <textarea
+            id="description"
+            name="description"
+            rows={3}
+            className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="start_time" className="block text-sm font-medium leading-6 text-gray-900">
+            開始日時
+          </label>
+          <div className="mt-2">
+            <input
+              type="datetime-local"
+              name="start_time"
+              id="start_time"
+              required
+              className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="end_time" className="block text-sm font-medium leading-6 text-gray-900">
+            終了日時
+          </label>
+          <div className="mt-2">
+            <input
+              type="datetime-local"
+              name="end_time"
+              id="end_time"
+              className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900">
+          開催場所
+        </label>
+        <div className="mt-2">
+          <input
+            type="text"
+            name="location"
+            id="location"
+            className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="type" className="block text-sm font-medium leading-6 text-gray-900">
+          種類
+        </label>
+        <div className="mt-2">
+          <select
+            id="type"
+            name="type"
+            className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          >
+            <option value="meeting">会議</option>
+            <option value="recreation">レクリエーション</option>
+            <option value="other">その他</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="relative flex gap-x-3">
+        <div className="flex h-6 items-center">
+          <input
+            id="rsvp_required"
+            name="rsvp_required"
+            type="checkbox"
+            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          />
+        </div>
+        <div className="text-sm leading-6">
+          <label htmlFor="rsvp_required" className="font-medium text-gray-900">
+            出欠確認を行う
+          </label>
+          <p className="text-gray-500">チェックを入れると、会員に出欠登録を求めます。</p>
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="rsvp_deadline" className="block text-sm font-medium leading-6 text-gray-900">
+          出欠締め切り
+        </label>
+        <div className="mt-2">
+          <input
+            type="datetime-local"
+            name="rsvp_deadline"
+            id="rsvp_deadline"
+            className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-3 pt-4">
+        <Link href="/admin/events" className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+          キャンセル
+        </Link>
+        <button
+          type="submit"
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          作成する
+        </button>
+      </div>
+    </form>
+  )
+}
