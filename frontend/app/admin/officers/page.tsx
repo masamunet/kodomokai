@@ -4,6 +4,8 @@ import { deleteAssignment } from '../actions/officer'
 
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminOfficersPage() {
   const supabase = await createClient()
 
@@ -15,6 +17,7 @@ export default async function AdminOfficersPage() {
         profile:profiles(full_name, email, last_name_kana, first_name_kana)
     `)
     .order('fiscal_year', { ascending: false })
+    .order('display_order', { foreignTable: 'role', ascending: true })
     .order('created_at', { ascending: false })
 
   return (
@@ -25,7 +28,24 @@ export default async function AdminOfficersPage() {
         action={{ label: '役員を任命する', href: '/admin/officers/new' }}
       />
 
-      <div className="flow-root">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4">
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-blue-700">
+                現在の任命数: <span className="font-bold text-lg">{assignments?.length || 0}名</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flow-root mt-6">
 
         <div className="overflow-hidden bg-white shadow sm:rounded-md">
           <ul role="list" className="divide-y divide-gray-200">

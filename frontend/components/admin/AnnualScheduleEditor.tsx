@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, Fragment } from 'react'
 import { upsertEvent, deleteEvent } from '@/app/actions/events'
 import { Calendar, Trash2, Edit2, CheckCircle2, HelpCircle, Save, X, Printer, Download, Calendar as CalendarIcon, AlertTriangle } from 'lucide-react'
 import MarkdownEditor from '@/components/ui/MarkdownEditor'
@@ -135,7 +135,7 @@ export default function AnnualScheduleEditor({ year, events }: Props) {
 
               // Fragments for mapping
               return (
-                <>
+                <Fragment key={month}>
                   {monthEvents.map((event, index) => (
                     <EventRow
                       key={event.id}
@@ -173,7 +173,7 @@ export default function AnnualScheduleEditor({ year, events }: Props) {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               )
             })}
           </tbody>

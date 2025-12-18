@@ -63,6 +63,9 @@ function NavLinks() {
       <Link href="/admin/members" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
         名簿
       </Link>
+      <Link href="/admin/users/import" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        一括登録
+      </Link>
       <div className="h-5 w-px bg-border mx-2 shrink-0" />
       <Link href="/admin/roles" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
         役職
