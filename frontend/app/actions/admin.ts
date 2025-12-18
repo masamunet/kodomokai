@@ -9,87 +9,63 @@ type ImportResult = {
   logs: string[]
 }
 
+const toHiragana = (str: string) => {
+  return str.replace(/[\u30a1-\u30f6]/g, function (match) {
+    var chr = match.charCodeAt(0) - 0x60;
+    return String.fromCharCode(chr);
+  });
+}
+
+const parseLine = (line: string) => {
+  let parts = line.split(',').map(s => s.trim())
+  if (parts.length === 1 && /\s/.test(line)) {
+    parts = line.split(/\s+/).map(s => s.trim()).filter(Boolean)
+  }
+  return parts
+}
+
 export async function importUsers(csvContent: string): Promise<ImportResult> {
   const supabase = createAdminClient()
   const logs: string[] = []
-  let createdCount = 0
-  let failedCount = 0
+  const lines = csvContent.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'))
+  const createdUserIds: string[] = []
 
-  // 1. Parse CSV
-  const lines = csvContent.split('\n').map(l => l.trim()).filter(l => l)
+  console.log(`[importUsers] Starting import for ${lines.length} lines`)
+  try {
+    for (const [index, line] of lines.entries()) {
+      const parts = parseLine(line)
+      let email, password, lastName, firstName, lastNameKana, firstNameKana
 
-  for (const line of lines) {
-    // Skip comments or empty
-    if (line.startsWith('#') || !line) continue
+      if (parts.length >= 6) {
+        [email, password, lastName, firstName, lastNameKana, firstNameKana] = parts
+      } else if (parts.length >= 4) {
+        [email, password, lastName, firstName] = parts
+        lastNameKana = ''
+        firstNameKana = ''
+      } else {
+        throw new Error(`無効な形式です (行:${index + 1}): "${line}"`)
+      }
 
-    // Expected format: email,password,last_name,first_name,last_name_kana,first_name_kana
-    let parts = line.split(',').map(s => s.trim())
+      const finalLastNameKana = toHiragana(lastNameKana || '')
+      const finalFirstNameKana = toHiragana(firstNameKana || '')
 
-    // Fallback: If no commas found (length 1), try splitting by whitespace (space or tab)
-    // and ensure we actually have separators
-    if (parts.length === 1 && /\s/.test(line)) {
-      parts = line.split(/\s+/).map(s => s.trim()).filter(Boolean)
-    }
-
-    // Support both 4 and 6 columns for backward compatibility
-    // If 4 cols: assume no kana provided
-    // If 6 cols: extract kana
-    let email, password, lastName, firstName, lastNameKana, firstNameKana
-
-    if (parts.length >= 6) {
-      [email, password, lastName, firstName, lastNameKana, firstNameKana] = parts
-    } else if (parts.length >= 4) {
-      [email, password, lastName, firstName] = parts
-      lastNameKana = ''
-      firstNameKana = ''
-    } else {
-      logs.push(`[SKIP] Invalid format: "${line}" (detected ${parts.length} columns). Usage: email,password,last_name,first_name,last_name_kana,first_name_kana`)
-      failedCount++
-      continue
-    }
-
-    if (!email || !password || !lastName || !firstName) {
-      logs.push(`[SKIP] Missing required fields: "${line}"`)
-      failedCount++
-      continue
-    }
-
-    // Convert keys to Hiragana
-    const toHiragana = (str: string) => {
-      return str.replace(/[\u30a1-\u30f6]/g, function (match) {
-        var chr = match.charCodeAt(0) - 0x60;
-        return String.fromCharCode(chr);
-      });
-    }
-
-    const finalLastNameKana = toHiragana(lastNameKana || '')
-    const finalFirstNameKana = toHiragana(firstNameKana || '')
-
-    try {
-      // 2. Create User
+      // 1. Create User
       const { data: userData, error: userError } = await supabase.auth.admin.createUser({
         email,
         password,
-        email_confirm: true, // Auto confirm
-        user_metadata: {
-          // Store minimal metadata if needed
-        }
+        email_confirm: true,
       })
 
       if (userError) {
-        logs.push(`[ERROR] Failed to create user ${email}: ${userError.message}`)
-        failedCount++
-        continue
+        throw new Error(`ユーザー作成失敗 (${email}): ${userError.message}`)
       }
-
       if (!userData.user) {
-        logs.push(`[ERROR] User creation returned no data for ${email}`)
-        failedCount++
-        continue
+        throw new Error(`ユーザー詳細が取得できませんでした (${email})`)
       }
 
-      // 3. Create Profile
-      // user.id is available now
+      createdUserIds.push(userData.user.id)
+
+      // 2. Create Profile
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
@@ -104,25 +80,145 @@ export async function importUsers(csvContent: string): Promise<ImportResult> {
         })
 
       if (profileError) {
-        logs.push(`[WARNING] User ${email} created but Profile failed: ${profileError.message}`)
-        // We consider this a "success" in terms of account creation, but log warning
-        createdCount++
-      } else {
-        logs.push(`[SUCCESS] Created ${email} (${lastName} ${firstName})`)
-        createdCount++
+        throw new Error(`プロフィール作成失敗 (${email}): ${profileError.message}`)
       }
 
+      logs.push(`[SUCCESS] Registered: ${email} (${lastName} ${firstName})`)
+    }
 
-    } catch (e: any) {
-      logs.push(`[ERROR] Exception for ${email}: ${e.message}`)
-      failedCount++
+    console.log(`[importUsers] Successfully completed all ${createdUserIds.length} creations.`)
+    return {
+      success: true,
+      createdCount: createdUserIds.length,
+      failedCount: 0,
+      logs
+    }
+
+  } catch (err: any) {
+    console.error(`[importUsers] Error occurred: ${err.message}. Rolling back ${createdUserIds.length} users.`)
+    // ROLLBACK manually
+    for (const userId of createdUserIds) {
+      await supabase.auth.admin.deleteUser(userId)
+    }
+
+    return {
+      success: false,
+      createdCount: 0,
+      failedCount: lines.length,
+      logs: [`[FATAL ERROR] 処理を中断しロールバックしました: ${err.message}`, ...logs]
     }
   }
+}
 
-  return {
-    success: true,
-    createdCount,
-    failedCount,
-    logs
+const normalizeDate = (dateStr: string) => {
+  if (!dateStr) return null
+  // 1. Remove Zenkaku spaces and normalize characters
+  let str = dateStr.trim().replace(/　/g, ' ')
+
+  // 2. Handle "YYYY年MM月DD日" format
+  if (str.includes('年')) {
+    str = str.replace(/年/g, '/').replace(/月/g, '/').replace(/日/g, '')
+  }
+
+  // 3. Spilt by delimiter (slash or space)
+  const parts = str.split(/[\/\s-]/).filter(Boolean)
+  if (parts.length === 3) {
+    const y = parts[0]
+    const m = parts[1].padStart(2, '0')
+    const d = parts[2].padStart(2, '0')
+    return `${y}-${m}-${d}`
+  }
+
+  // Fallback to native Date if possible
+  const d = new Date(str)
+  if (!isNaN(d.getTime())) {
+    return d.toISOString().split('T')[0]
+  }
+
+  return null
+}
+
+export async function importChildren(csvContent: string): Promise<ImportResult> {
+  const supabase = createAdminClient()
+  const logs: string[] = []
+  const lines = csvContent.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'))
+  const createdChildIds: string[] = []
+
+  console.log(`[importChildren] Starting import for ${lines.length} lines`)
+  try {
+    for (const [index, line] of lines.entries()) {
+      const parts = parseLine(line)
+      // parent_email, last_name, first_name, last_name_kana, first_name_kana, gender, birthday, allergies, notes
+      if (parts.length < 5) {
+        throw new Error(`無効な形式です (行:${index + 1}): "${line}"`)
+      }
+
+      const [parentEmail, lastName, firstName, lastNameKana, firstNameKana, gender, birthday, allergies, notes] = parts
+
+      // 1. Find parent profile id
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', parentEmail)
+        .is('deleted_at', null)
+        .single()
+
+      if (profileError || !profile) {
+        throw new Error(`保護者が見つかりません (${parentEmail})`)
+      }
+
+      // 2. Insert child
+      const finalLastNameKana = toHiragana(lastNameKana || '')
+      const finalFirstNameKana = toHiragana(firstNameKana || '')
+      const finalBirthday = normalizeDate(birthday)
+
+      const { data: childData, error: childError } = await supabase
+        .from('children')
+        .insert({
+          parent_id: profile.id,
+          last_name: lastName,
+          first_name: firstName,
+          last_name_kana: finalLastNameKana,
+          first_name_kana: finalFirstNameKana,
+          full_name: `${lastName} ${firstName}`,
+          gender: (gender === 'male' || gender === 'female' || gender === 'other') ? gender : null,
+          birthday: finalBirthday,
+          allergies: allergies || '',
+          notes: notes || '',
+        })
+        .select()
+        .single()
+
+      if (childError) {
+        throw new Error(`子供の登録に失敗しました (${lastName} ${firstName}): ${childError.message}`)
+      }
+
+      if (childData) {
+        createdChildIds.push(childData.id)
+      }
+      logs.push(`[SUCCESS] Registered: ${lastName} ${firstName} (Parent: ${parentEmail})`)
+    }
+
+    console.log(`[importChildren] Successfully completed all ${createdChildIds.length} creations.`)
+    return {
+      success: true,
+      createdCount: createdChildIds.length,
+      failedCount: 0,
+      logs
+    }
+
+  } catch (err: any) {
+    console.error(`[importChildren] Error occurred: ${err.message}. Rolling back ${createdChildIds.length} records.`)
+    // ROLLBACK manually
+    for (const childId of createdChildIds) {
+      await supabase.from('children').delete().eq('id', childId)
+    }
+
+    return {
+      success: false,
+      createdCount: 0,
+      failedCount: lines.length,
+      logs: [`[FATAL ERROR] 処理を中断しロールバックしました: ${err.message}`, ...logs]
+    }
   }
 }
