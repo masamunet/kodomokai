@@ -76,6 +76,9 @@ function NavLinks() {
       <Link href="/admin/settings" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
         設定
       </Link>
+      <Link href="/admin/constitution" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        規約
+      </Link>
       <div className="h-5 w-px bg-border mx-2 shrink-0" />
       <Link href="/admin/notifications" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
         配信
