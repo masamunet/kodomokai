@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import AdminFormLayout from '@/components/admin/AdminFormLayout'
+import RoleForm from './RoleForm'
 
 export default async function NewRolePage() {
   const supabase = await createClient()
