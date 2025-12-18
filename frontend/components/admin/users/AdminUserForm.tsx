@@ -90,7 +90,7 @@ export default function AdminUserForm({ profile }: Props) {
             type="button"
             disabled={isDeleting}
             onClick={async () => {
-              if (!confirm('この会員を本当に削除しますか？\n（役員として登録されている場合や、お子様が登録されている場合は削除できません）')) return
+              if (!confirm('この会員を本当に削除しますか？\n（同時にお子様の情報もすべて論理削除されます。現年度以降の役員として登録されている場合は削除できません）')) return
 
               setIsDeleting(true)
               setMessage(null)

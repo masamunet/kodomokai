@@ -227,22 +227,20 @@ export async function adminDeleteProfile(formData: FormData) {
     return { success: false, message: `現在または将来（${assignments[0].fiscal_year}年度など）の役員として登録されているため削除できません。先に役員情報を削除してください。` }
   }
 
-  // 2. Check if the user has non-deleted children
-  // (Note: deleted_at IS NULL means the child is NOT soft-deleted)
-  const { data: children, error: childrenError } = await supabase
+  // 2. Cascade soft-delete children
+  // (Instruction: 子供がいる場合は、子供を先に全て論理削除して、保護者を論理削除)
+  const { error: cascadeError } = await supabase
     .from('children')
-    .select('id')
+    .update({
+      deleted_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
     .eq('parent_id', profileId)
     .is('deleted_at', null)
-    .limit(1)
 
-  if (childrenError) {
-    console.error('Check children error:', childrenError)
-    return { success: false, message: 'お子様情報の確認に失敗しました' }
-  }
-
-  if (children && children.length > 0) {
-    return { success: false, message: 'まだ論理削除されていないお子様が登録されています。先にお子様を全て削除してください。' }
+  if (cascadeError) {
+    console.error('Cascade delete children error:', cascadeError)
+    return { success: false, message: 'お子様の連動削除に失敗しました: ' + cascadeError.message }
   }
 
   // 3. Perform soft delete
