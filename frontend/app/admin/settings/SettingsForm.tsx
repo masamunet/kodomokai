@@ -7,10 +7,20 @@ import { updateSettings } from '../actions/settings'
 type Props = {
   initialName: string
   initialStartMonth: number
+  initialWarekiEraName: string
+  initialWarekiStartYear: number
 }
 
-export default function SettingsForm({ initialName, initialStartMonth }: Props) {
+export default function SettingsForm({ initialName, initialStartMonth, initialWarekiEraName, initialWarekiStartYear }: Props) {
   const [message, setMessage] = useState<string | null>(null)
+
+  // For preview
+  const [eraName, setEraName] = useState(initialWarekiEraName)
+  const [startYear, setStartYear] = useState(initialWarekiStartYear)
+
+  const currentYear = new Date().getFullYear();
+  const previewWarekiYear = currentYear - startYear + 1;
+  const previewString = `${eraName}${previewWarekiYear === 1 ? '元' : previewWarekiYear}年`;
 
   const handleSubmit = async (formData: FormData) => {
     setMessage(null)
@@ -63,6 +73,50 @@ export default function SettingsForm({ initialName, initialStartMonth }: Props) 
               <option key={m} value={m}>{m}月</option>
             ))}
           </select>
+        </div>
+      </div>
+
+      <div className="border-t pt-6">
+        <h3 className="text-base font-semibold leading-7 text-gray-900 mb-4">和暦設定</h3>
+        <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+          <div className="sm:col-span-3">
+            <label htmlFor="wareki_era_name" className="block text-sm font-medium leading-6 text-gray-900">
+              元号名
+            </label>
+            <div className="mt-2">
+              <input
+                type="text"
+                name="wareki_era_name"
+                id="wareki_era_name"
+                value={eraName}
+                onChange={(e) => setEraName(e.target.value)}
+                required
+                className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div className="sm:col-span-3">
+            <label htmlFor="wareki_start_year" className="block text-sm font-medium leading-6 text-gray-900">
+              開始年（西暦）
+            </label>
+            <p className="text-xs text-gray-500 mb-1">この元号が始まった最初の年（元年）</p>
+            <div className="mt-2">
+              <input
+                type="number"
+                name="wareki_start_year"
+                id="wareki_start_year"
+                value={startYear}
+                onChange={(e) => setStartYear(parseInt(e.target.value) || 0)}
+                required
+                className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div className="sm:col-span-6 bg-gray-50 p-3 rounded text-sm text-gray-600">
+            プレビュー: {currentYear}年は <strong>{previewString}</strong> です。
+          </div>
         </div>
       </div>
 

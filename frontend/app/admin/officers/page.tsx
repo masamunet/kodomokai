@@ -1,6 +1,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { deleteAssignment } from '../actions/officer'
+import { toWarekiYear } from '@/lib/date-utils'
 
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 
@@ -22,7 +23,12 @@ export default async function AdminOfficersPage() {
     .order('role(display_order)', { ascending: true })
     .order('created_at', { ascending: false })
 
+  const { data: settings } = await supabase.from('organization_settings').select('*').single()
+  const warekiEraName = settings?.wareki_era_name || '令和'
+  const warekiStartYear = settings?.wareki_start_year || 2019
+
   const currentYear = assignments?.[0]?.fiscal_year || new Date().getFullYear()
+  const titleYear = toWarekiYear(currentYear, warekiEraName, warekiStartYear)
 
   return (
     <div className="print:p-8">
@@ -35,7 +41,7 @@ export default async function AdminOfficersPage() {
       </div>
 
       <div className="hidden print:block mb-8 text-center">
-        <h1 className="text-2xl font-bold border-b-2 border-black pb-2 mb-2">{currentYear}年度 役員名簿</h1>
+        <h1 className="text-2xl font-bold border-b-2 border-black pb-2 mb-2">{titleYear}度 役員名簿</h1>
         <p className="text-right text-sm">発行日: {new Date().toLocaleDateString()}</p>
       </div>
 

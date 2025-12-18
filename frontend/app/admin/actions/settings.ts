@@ -12,6 +12,8 @@ export async function updateSettings(formData: FormData) {
 
   const name = formData.get('name') as string
   const fiscal_year_start_month = parseInt(formData.get('fiscal_year_start_month') as string)
+  const wareki_era_name = formData.get('wareki_era_name') as string
+  const wareki_start_year = parseInt(formData.get('wareki_start_year') as string)
 
   // Check if a row exists
   const { data: existing } = await supabase.from('organization_settings').select('id').single()
@@ -20,13 +22,13 @@ export async function updateSettings(formData: FormData) {
   if (existing) {
     const { error: updateError } = await supabase
       .from('organization_settings')
-      .update({ name, fiscal_year_start_month })
+      .update({ name, fiscal_year_start_month, wareki_era_name, wareki_start_year })
       .eq('id', existing.id)
     error = updateError
   } else {
     const { error: insertError } = await supabase
       .from('organization_settings')
-      .insert({ name, fiscal_year_start_month })
+      .insert({ name, fiscal_year_start_month, wareki_era_name, wareki_start_year })
     error = insertError
   }
 
