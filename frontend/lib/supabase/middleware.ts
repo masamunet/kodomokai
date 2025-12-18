@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
 
   // Deny-all-by-default: If no user, only allow specific public paths.
   if (!user) {
-    const publicPaths = ['/login', '/auth']
+    const publicPaths = ['/login', '/auth', '/register']
     const isPublic = publicPaths.some(path => request.nextUrl.pathname.startsWith(path))
 
     if (!isPublic) {

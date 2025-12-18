@@ -1,6 +1,7 @@
 'use client'
 
 import { Input } from '@/components/ui/input'
+import Link from 'next/link'
 import { useState } from 'react'
 import { login, signup } from './actions'
 
@@ -106,13 +107,22 @@ export default function AuthForm() {
           )}
 
           <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm font-semibold text-primary hover:text-primary/80"
-            >
-              {isLogin ? '新規アカウント作成はこちら' : 'すでにアカウントをお持ちの方はこちら'}
-            </button>
+            {isLogin ? (
+              <Link
+                href="/register"
+                className="text-sm font-semibold text-primary hover:text-primary/80"
+              >
+                入会はこちら
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-sm font-semibold text-primary hover:text-primary/80"
+              >
+                すでにアカウントをお持ちの方はこちら
+              </button>
+            )}
           </div>
         </div>
       </form>
