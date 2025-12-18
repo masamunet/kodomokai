@@ -12,6 +12,7 @@ type Props = {
     display_order: number // or string, depending on DB type, usually number
     description: string | null
     can_edit_members: boolean
+    is_visible_in_docs?: boolean | null
   }
   initialDisplayOrder?: number
 }
@@ -105,6 +106,24 @@ export default function RoleForm({ role, initialDisplayOrder = 1 }: Props) {
             会員情報の編集権限
           </label>
           <p className="text-gray-500">この役職の担当者は、会員名簿の情報を編集できるようになります。</p>
+        </div>
+      </div>
+
+      <div className="relative flex gap-x-3">
+        <div className="flex h-6 items-center">
+          <input
+            id="is_visible_in_docs"
+            name="is_visible_in_docs"
+            type="checkbox"
+            defaultChecked={role?.is_visible_in_docs ?? true}
+            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          />
+        </div>
+        <div className="text-sm leading-6">
+          <label htmlFor="is_visible_in_docs" className="font-medium text-gray-900">
+            資料・名簿への表示
+          </label>
+          <p className="text-gray-500">チェックを入れると、役員名簿などの資料にこの役職が表示されます。</p>
         </div>
       </div>
 

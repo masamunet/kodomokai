@@ -13,10 +13,11 @@ export async function createRole(formData: FormData) {
   const description = formData.get('description') as string
   const display_order = parseInt(formData.get('display_order') as string) || 0
   const can_edit_members = formData.get('can_edit_members') === 'on'
+  const is_visible_in_docs = formData.get('is_visible_in_docs') === 'on'
 
   const { error } = await supabase
     .from('officer_roles')
-    .insert({ name, description, display_order, can_edit_members })
+    .insert({ name, description, display_order, can_edit_members, is_visible_in_docs })
 
   if (error) {
     console.error('Create role error:', error)
@@ -35,6 +36,7 @@ export async function updateRole(formData: FormData) {
   const display_order = parseInt(formData.get('display_order') as string)
   const description = formData.get('description') as string
   const can_edit_members = formData.get('can_edit_members') === 'on'
+  const is_visible_in_docs = formData.get('is_visible_in_docs') === 'on'
 
   if (!id) return { success: false, message: 'IDが指定されていません' }
 
@@ -42,7 +44,7 @@ export async function updateRole(formData: FormData) {
 
   const { error } = await supabase
     .from('officer_roles')
-    .update({ name, display_order, description, can_edit_members })
+    .update({ name, display_order, description, can_edit_members, is_visible_in_docs })
     .eq('id', id)
 
   if (error) {
@@ -52,6 +54,39 @@ export async function updateRole(formData: FormData) {
 
   revalidatePath('/admin/roles')
   redirect('/admin/roles')
+}
+
+export async function updateRoleOrder(updates: { id: string; display_order: number }[]) {
+  const supabase = await createClient()
+
+  for (const { id, display_order } of updates) {
+    const { error } = await supabase.from('officer_roles').update({ display_order }).eq('id', id)
+
+    if (error) {
+      console.error('Update role order error:', error)
+      return { success: false, message: '並び順の更新に失敗しました: ' + error.message }
+    }
+  }
+
+  revalidatePath('/admin/roles')
+  return { success: true, message: '並び順を更新しました' }
+}
+
+export async function toggleRoleVisibility(id: string, is_visible_in_docs: boolean) {
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('officer_roles')
+    .update({ is_visible_in_docs })
+    .eq('id', id)
+
+  if (error) {
+    console.error('Toggle role visibility error:', error)
+    return { success: false, message: '表示設定の更新に失敗しました: ' + error.message }
+  }
+
+  revalidatePath('/admin/roles')
+  return { success: true, message: '表示設定を更新しました' }
 }
 
 // --- Officer Assignment ---
