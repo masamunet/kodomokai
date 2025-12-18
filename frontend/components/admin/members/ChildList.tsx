@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { calculateGrade, calculateAge, getGradeOrder } from '@/lib/grade-utils';
 import CopyToClipboard from '@/components/ui/CopyToClipboard';
 import Link from 'next/link';
-import { Baby } from 'lucide-react';
+import { Baby, ArrowUpDown, ChevronUp, ChevronDown, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 interface ChildListProps {
   profiles: any[]; // Ideally typed properly
@@ -13,7 +14,12 @@ interface ChildListProps {
 }
 
 export default function ChildList({ profiles, targetFiscalYear, canEdit }: ChildListProps) {
-  // Flatten children data
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>({
+    key: 'grade',
+    direction: 'asc',
+  });
+  const [searchQuery, setSearchQuery] = useState('');
+
   const allChildren = useMemo(() => {
     const list: any[] = [];
     profiles.forEach((profile) => {
@@ -32,17 +38,70 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
       }
     });
 
-    // Default sort by grade
-    return list.sort((a, b) => {
-      const gA = getGradeOrder(a.grade);
-      const gB = getGradeOrder(b.grade);
-      if (gA !== gB) return gA - gB;
-      // If same grade, sort by kana
-      const kanaA = `${a.last_name_kana} ${a.first_name_kana}`;
-      const kanaB = `${b.last_name_kana} ${b.first_name_kana}`;
-      return kanaA.localeCompare(kanaB, 'ja');
+    // 検索フィルタ
+    const filteredList = list.filter(child => {
+      const s = searchQuery.toLowerCase();
+      if (!s) return true;
+      return (
+        child.full_name?.toLowerCase().includes(s) ||
+        child.last_name_kana?.includes(s) ||
+        child.first_name_kana?.includes(s) ||
+        child.grade?.toLowerCase().includes(s) ||
+        child.parent_name?.toLowerCase().includes(s) ||
+        child.notes?.toLowerCase().includes(s) ||
+        child.allergies?.toLowerCase().includes(s)
+      );
     });
-  }, [profiles, targetFiscalYear]);
+
+    if (sortConfig !== null) {
+      filteredList.sort((a, b) => {
+        let valA: any = a[sortConfig.key];
+        let valB: any = b[sortConfig.key];
+
+        // Custom logic for specific keys
+        if (sortConfig.key === 'grade') {
+          valA = getGradeOrder(a.grade);
+          valB = getGradeOrder(b.grade);
+        } else if (sortConfig.key === 'full_name') {
+          valA = `${a.last_name_kana} ${a.first_name_kana}`;
+          valB = `${b.last_name_kana} ${b.first_name_kana}`;
+        } else if (sortConfig.key === 'kana') {
+          valA = `${a.last_name_kana} ${a.first_name_kana}`;
+          valB = `${b.last_name_kana} ${b.first_name_kana}`;
+        }
+
+        if (valA === undefined || valA === null) return 1;
+        if (valB === undefined || valB === null) return -1;
+
+        if (valA < valB) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (valA > valB) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+
+    return filteredList;
+  }, [profiles, targetFiscalYear, sortConfig, searchQuery]);
+
+  const requestSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key: string) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return <ArrowUpDown className="h-3 w-3 ml-1 text-muted-foreground/30" />;
+    }
+    return sortConfig.direction === 'asc'
+      ? <ChevronUp className="h-3 w-3 ml-1 text-primary" />
+      : <ChevronDown className="h-3 w-3 ml-1 text-primary" />;
+  };
 
   // Statistics
   const stats = useMemo(() => {
@@ -114,28 +173,67 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
         </div>
       </div>
 
+      {/* Search and Actions */}
+      <div className="mb-4 flex flex-col sm:flex-row gap-3 items-end justify-between">
+        <div className="w-full sm:max-w-xs relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <Input
+            type="text"
+            placeholder="氏名、かな、学年などで検索..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="text-xs text-muted-foreground italic">
+          {allChildren.length}名を表示中
+        </div>
+      </div>
+
       {/* Table Section */}
       <div className="overflow-x-auto shadow-sm ring-1 ring-border rounded-lg bg-background">
         <table className="min-w-full divide-y divide-border">
           <thead className="bg-muted/50">
             <tr>
-              <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 whitespace-nowrap">学年</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">氏名</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">年齢</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">生年月日</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">性別</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">苗字</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">名前</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">かな(姓)</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">かな(名)</th>
+              <th scope="col" onClick={() => requestSort('grade')} className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 whitespace-nowrap cursor-pointer hover:bg-muted/70 flex-shrink-0">
+                <div className="flex items-center">学年 {getSortIcon('grade')}</div>
+              </th>
+              <th scope="col" onClick={() => requestSort('full_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">氏名 {getSortIcon('full_name')}</div>
+              </th>
+              <th scope="col" onClick={() => requestSort('age')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">年齢 {getSortIcon('age')}</div>
+              </th>
+              <th scope="col" onClick={() => requestSort('birthday')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">生年月日 {getSortIcon('birthday')}</div>
+              </th>
+              <th scope="col" onClick={() => requestSort('gender')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">性別 {getSortIcon('gender')}</div>
+              </th>
+              <th scope="col" onClick={() => requestSort('last_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">苗字 {getSortIcon('last_name')}</div>
+              </th>
+              <th scope="col" onClick={() => requestSort('first_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">名前 {getSortIcon('first_name')}</div>
+              </th>
+              <th scope="col" onClick={() => requestSort('last_name_kana')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">かな(姓) {getSortIcon('last_name_kana')}</div>
+              </th>
+              <th scope="col" onClick={() => requestSort('first_name_kana')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">かな(名) {getSortIcon('first_name_kana')}</div>
+              </th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">アレルギー</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">特記事項</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">保護者</th>
+              <th scope="col" onClick={() => requestSort('parent_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                <div className="flex items-center">保護者 {getSortIcon('parent_name')}</div>
+              </th>
               {canEdit && <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">操作</span></th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-border bg-background">
-            {allChildren.map((child) => (
+            {allChildren.map((child, index) => (
               <tr key={child.id} className={`hover:bg-muted/50 ${getGradeOrder(child.grade) % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
                   {child.grade}
