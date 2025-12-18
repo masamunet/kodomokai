@@ -2,12 +2,12 @@
 
 import { useState, useTransition } from 'react'
 import { upsertEvent, deleteEvent } from '@/app/actions/events'
-import { Calendar, Trash2, Edit2, CheckCircle2, HelpCircle, Save, X, Printer, Download } from 'lucide-react'
+import { Calendar, Trash2, Edit2, CheckCircle2, HelpCircle, Save, X, Printer, Download, Calendar as CalendarIcon, AlertTriangle } from 'lucide-react'
 import MarkdownEditor from '@/components/ui/MarkdownEditor'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-// Extended Event type to include is_tentative (needs to match DB)
+// Extended Event type to include is_tentative and is_canceled
 type Event = {
   id: string
   title: string
@@ -17,6 +17,7 @@ type Event = {
   start_time: string | null // Time string HH:MM:SS or null
   location: string | null
   is_tentative: boolean
+  is_canceled: boolean
   organizer: string
 }
 
@@ -52,11 +53,20 @@ export default function AnnualScheduleEditor({ year, events }: Props) {
     document.body.removeChild(a)
   }
 
+  // Get current date/time for "Last Updated" / edition management
+  const now = new Date()
+  const printedDate = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()} 現在`
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center print:hidden">
-        <h2 className="text-xl font-bold">{year}年度 年間活動予定</h2>
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
+        <div>
+          <h2 className="text-xl font-bold print:text-lg">{year}年度 年間活動予定</h2>
+          <p className="text-sm text-gray-500 mt-1 print:text-xs">
+            最終発行: {printedDate}
+          </p>
+        </div>
+        <div className="flex gap-2 flex-wrap">
           <button
             onClick={handleDownloadIcs}
             className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 text-sm font-medium"
@@ -72,68 +82,128 @@ export default function AnnualScheduleEditor({ year, events }: Props) {
         </div>
       </div>
 
-      <div className="print:block hidden mb-4 text-right text-sm text-gray-500">
-        作成日: {new Date().toLocaleDateString('ja-JP')}
+      <div className="hidden print:block mb-4 text-right text-sm text-gray-500">
+        <div>{year}年度 年間活動予定表</div>
+        <div className="text-xs">発行日: {printedDate} (最新版をご確認ください)</div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 print:gap-4">
-        {MONTHS.map(month => {
-          const monthEvents = getEventsForMonth(month)
-          const displayYear = month >= 4 ? year : year + 1
+      {/* Table Structure for Print and Desktop */}
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden print:border-2 print:border-black print:text-xs">
+        <table className="min-w-full divide-y divide-gray-200 print:divide-black">
+          <thead className="bg-gray-50 print:bg-gray-100">
+            <tr>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-24 print:text-black border-r print:border-black print:py-1 print:w-16">月</th>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-32 print:text-black border-r print:border-black print:py-1 print:w-20">日時</th>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider print:text-black border-r print:border-black print:py-1">イベント名 / 詳細</th>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-32 print:text-black border-r print:border-black print:py-1 print:w-20">場所</th>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-24 print:text-black border-r print:border-black print:py-1 print:w-16">主催</th>
+              <th scope="col" className="px-3 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-20 print:hidden">操作</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200 print:divide-black">
+            {MONTHS.map(month => {
+              const monthEvents = getEventsForMonth(month)
+              const displayYear = month >= 4 ? year : year + 1
 
-          return (
-            <div key={month} className="bg-white border border-gray-200 rounded-lg p-4 print:border-gray-900 print:break-inside-avoid">
-              <div className="flex justify-between items-start mb-3 border-b border-gray-100 pb-2">
-                <h3 className="text-lg font-bold flex items-center gap-2">
-                  <span className="text-2xl w-10 text-center text-indigo-600 print:text-black">{month}</span>
-                  <span className="text-sm font-normal text-gray-500">{displayYear}年</span>
-                </h3>
-                <button
-                  onClick={() => {
-                    setIsAddingMonth(month)
-                    setEditingEventId(null)
-                  }}
-                  className="print:hidden text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded hover:bg-indigo-100"
-                >
-                  + 追加
-                </button>
-              </div>
+              if (monthEvents.length === 0 && isAddingMonth !== month) {
+                return (
+                  <tr key={month} className="group hover:bg-gray-50 print:break-inside-avoid print:h-4">
+                    <td className="px-3 py-4 text-sm text-gray-900 border-r border-gray-100 print:border-black font-bold align-top bg-gray-50/50 print:bg-transparent print:py-1 print:text-xs">
+                      <div className="flex items-center justify-between">
+                        <span>{month}月</span>
+                        <button
+                          onClick={() => {
+                            setIsAddingMonth(month)
+                            setEditingEventId(null)
+                          }}
+                          className="print:hidden text-xs text-indigo-600 hover:bg-indigo-50 rounded px-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td colSpan={5} className="px-3 py-4 text-sm text-gray-400 italic text-center print:hidden">
+                      予定なし
+                    </td>
+                    {/* For print, maybe we skip empty months or show them empty? Requirements imply "Schedule", implying list of events. But empty months are placeholders. Let's show empty cell for print too but minimal */}
+                    <td colSpan={3} className="hidden print:table-cell px-3 py-4 text-sm text-gray-400 italic text-center text-xs print:py-1 print:text-[10px] print:h-4">
+                      -
+                    </td>
+                  </tr>
+                )
+              }
 
-              <div className="space-y-3">
-                {monthEvents.map(event => (
-                  <EventItem
-                    key={event.id}
-                    event={event}
-                    isEditing={editingEventId === event.id}
-                    onEdit={() => setEditingEventId(event.id)}
-                    onCancel={() => setEditingEventId(null)}
-                  />
-                ))}
+              // Fragments for mapping
+              return (
+                <>
+                  {monthEvents.map((event, index) => (
+                    <EventRow
+                      key={event.id}
+                      event={event}
+                      year={displayYear}
+                      month={month}
 
-                {isAddingMonth === month && (
-                  <EventForm
-                    year={displayYear}
-                    month={month}
-                    onCancel={() => setIsAddingMonth(null)}
-                    onComplete={() => setIsAddingMonth(null)}
-                  />
-                )}
-
-                {monthEvents.length === 0 && !isAddingMonth && (
-                  <div className="text-sm text-gray-400 text-center py-2 print:hidden italic">
-                    予定なし
-                  </div>
-                )}
-              </div>
-            </div>
-          )
-        })}
+                      rowSpan={monthEvents.length + (isAddingMonth === month ? 1 : 0)}
+                      isEditing={editingEventId === event.id}
+                      onEdit={() => setEditingEventId(event.id)}
+                      onCancel={() => setEditingEventId(null)}
+                      onAdd={() => setIsAddingMonth(month)}
+                      showMonthCell={index === 0}
+                    />
+                  ))}
+                  {isAddingMonth === month && (
+                    <tr className="bg-indigo-50 border-t-2 border-indigo-200 print:hidden">
+                      {monthEvents.length === 0 && (
+                        <td className="px-3 py-4 text-sm font-bold text-gray-900 border-r border-gray-200 bg-gray-50 align-top">
+                          {month}月
+                        </td>
+                      )}
+                      <td colSpan={5} className="p-4">
+                        <div className="bg-white p-4 rounded-lg shadow-sm border border-indigo-200">
+                          <h4 className="font-bold text-indigo-700 mb-3 flex items-center gap-2">
+                            <CalendarIcon size={16} /> {displayYear}年{month}月 新規イベント追加
+                          </h4>
+                          <EventForm
+                            year={displayYear}
+                            month={month}
+                            onCancel={() => setIsAddingMonth(null)}
+                            onComplete={() => setIsAddingMonth(null)}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   )
 }
 
-function EventItem({ event, isEditing, onEdit, onCancel }: { event: Event, isEditing: boolean, onEdit: () => void, onCancel: () => void }) {
+function EventRow({
+  event,
+  year,
+  month,
+  isEditing,
+  onEdit,
+  onCancel,
+  showMonthCell,
+  rowSpan,
+  onAdd
+}: {
+  event: Event,
+  year: number,
+  month: number,
+  isEditing: boolean,
+  onEdit: () => void,
+  onCancel: () => void
+  showMonthCell: boolean
+  rowSpan: number
+  onAdd: () => void
+}) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {
@@ -147,63 +217,127 @@ function EventItem({ event, isEditing, onEdit, onCancel }: { event: Event, isEdi
 
   if (isEditing) {
     return (
-      <div className="bg-gray-50 p-3 rounded border border-indigo-200">
-        <EventForm
-          event={event}
-          year={new Date(event.scheduled_date).getFullYear()}
-          month={new Date(event.scheduled_date).getMonth() + 1}
-          onCancel={onCancel}
-          onComplete={onCancel}
-        />
-      </div>
+      <tr className="bg-indigo-50 print:hidden">
+        {showMonthCell && (
+          <td rowSpan={rowSpan} className="px-3 py-4 text-sm font-bold text-gray-900 border-r border-gray-200 align-top bg-gray-50">
+            {month}月
+          </td>
+        )}
+        <td colSpan={5} className="p-4">
+          <div className="bg-white p-4 rounded border border-indigo-200 shadow-sm">
+            <EventForm
+              event={event}
+              year={year}
+              month={month}
+              onCancel={onCancel}
+              onComplete={onCancel}
+            />
+          </div>
+        </td>
+      </tr>
     )
   }
 
   const eventDate = new Date(event.scheduled_date)
   const timeString = event.start_time ? event.start_time.slice(0, 5) : null
+  const dayName = ['日', '月', '火', '水', '木', '金', '土'][eventDate.getDay()]
+
+  const isCanceled = event.is_canceled
+  const isTentative = event.is_tentative
+
+  const rowClass = isCanceled
+    ? 'bg-gray-100 text-gray-500 print:bg-gray-200'
+    : (isTentative ? 'bg-white' : 'bg-white')
+  const textDecoration = isCanceled ? 'line-through' : ''
+
+  const googleCalUrl = getGoogleCalendarUrl(event)
 
   return (
-    <div className={`group flex items-start gap-3 p-2 rounded hover:bg-gray-50 transition-colors ${event.is_tentative ? 'opacity-80' : ''}`}>
-      <div className={`mt-1 flex-shrink-0 w-16 text-center text-sm font-bold ${event.is_tentative ? 'text-gray-400' : 'text-gray-900'}`}>
-        {event.is_tentative ? (
-          <span className="text-xs border border-gray-300 rounded px-1">未定</span>
+    <tr className={`${rowClass} hover:bg-gray-50 group print:break-inside-avoid`}>
+      {showMonthCell && (
+        <td rowSpan={rowSpan} className="px-3 py-4 text-sm font-bold text-gray-900 border-r border-gray-200 print:border-black align-top bg-gray-50/50 print:bg-transparent min-w-[3rem] print:py-1 print:text-xs">
+          <div className="flex justify-between print:justify-center">
+            <span className="text-xl print:text-sm">{month}</span>
+            <span className="text-xs pt-1 print:hidden">月</span>
+            <button
+              onClick={onAdd}
+              className="print:hidden text-xs text-indigo-600 hover:bg-indigo-50 rounded px-1 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+              title="この月に追加"
+            >
+              +
+            </button>
+          </div>
+        </td>
+      )}
+      <td className="px-3 py-3 text-sm text-gray-900 border-r border-gray-100 print:border-black align-top whitespace-nowrap print:py-1 print:text-xs">
+        {isTentative ? (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-300 print:border-0 print:p-0">
+            日付未定
+          </span>
         ) : (
-          <div className="flex flex-col items-center leading-tight">
-            <span>{eventDate.getDate()}日({['日', '月', '火', '水', '木', '金', '土'][eventDate.getDay()]})</span>
+          <div className={isCanceled ? 'opacity-50' : ''}>
+            <div className="font-bold">
+              {eventDate.getDate()}日 <span className="text-xs font-normal text-gray-500 print:hidden">({dayName})</span><span className="hidden print:inline text-[10px]">({dayName})</span>
+            </div>
             {event.scheduled_end_date && (
-              <span className="text-xs text-gray-500">〜 {new Date(event.scheduled_end_date).getDate()}日</span>
+              <div className="text-xs text-gray-500 print:text-[10px]">
+                〜 {new Date(event.scheduled_end_date).getDate()}日
+              </div>
+            )}
+            {timeString && (
+              <div className="text-xs text-gray-600 mt-1 print:text-[10px] print:mt-0">
+                {timeString} ~
+              </div>
             )}
           </div>
         )}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="font-medium text-gray-900 text-base">{event.title}</span>
-          {event.is_tentative && <HelpCircle size={14} className="text-gray-400" />}
-        </div>
-        <div className="text-sm text-gray-600 mt-0.5 flex gap-3 flex-wrap">
-          {timeString && <span>{timeString}</span>}
-          {event.location && <span>@ {event.location}</span>}
-          {event.organizer && event.organizer !== '単位子ども会' && (
-            <span className="bg-orange-100 text-orange-800 text-xs px-2 py-0.5 rounded-full">{event.organizer}</span>
+      </td>
+      <td className="px-3 py-3 text-sm text-gray-900 border-r border-gray-100 print:border-black align-top print:py-1 print:text-xs">
+        <div className="flex items-center gap-2 flex-wrap">
+          {isCanceled && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800 border border-red-200 print:bg-transparent print:text-gray-500 print:border-black print:text-[10px] print:p-0 print:px-1">
+              中止
+            </span>
+          )}
+          <span className={`font-bold ${textDecoration} ${isCanceled ? 'text-gray-400' : 'text-gray-900'}`}>
+            {event.title}
+          </span>
+          {isTentative && !isCanceled && (
+            <span className="text-xs text-gray-400 border border-gray-200 rounded px-1 print:border-0 print:text-gray-500">(予定)</span>
           )}
         </div>
         {event.description && (
-          <div className="text-sm text-gray-500 mt-1 prose prose-sm dark:prose-invert max-w-none">
+          <div className={`mt-1 text-xs text-gray-600 prose prose-sm max-w-none print:text-black print:text-[10px] print:leading-tight print:mt-0 ${isCanceled ? 'line-through opacity-50' : ''}`}>
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{event.description}</ReactMarkdown>
           </div>
         )}
-      </div>
-
-      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity print:hidden">
-        <button onClick={onEdit} className="p-1 text-gray-400 hover:text-indigo-600">
-          <Edit2 size={16} />
-        </button>
-        <button onClick={handleDelete} className="p-1 text-gray-400 hover:text-red-600">
-          <Trash2 size={16} />
-        </button>
-      </div>
-    </div>
+      </td>
+      <td className={`px-3 py-3 text-sm text-gray-600 border-r border-gray-100 print:border-black align-top ${textDecoration} print:py-1 print:text-xs`}>
+        {event.location || '-'}
+      </td>
+      <td className="px-3 py-3 text-sm text-gray-600 border-r border-gray-100 print:border-black align-top print:py-1 print:text-xs print:w-16">
+        {event.organizer}
+      </td>
+      <td className="px-3 py-3 text-sm text-right print:hidden align-top">
+        <div className="flex justify-end gap-1 opacity-10 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+          <a
+            href={googleCalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded"
+            title="Googleカレンダーに追加"
+          >
+            <CalendarIcon size={16} />
+          </a>
+          <button onClick={onEdit} className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded" title="編集">
+            <Edit2 size={16} />
+          </button>
+          <button onClick={handleDelete} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded" title="削除">
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </td>
+    </tr>
   )
 }
 
@@ -220,6 +354,7 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
 
   const [startDate, setStartDate] = useState(initialDate)
   const [showEndDateInput, setShowEndDateInput] = useState(!!event?.scheduled_end_date)
+  const [isCanceled, setIsCanceled] = useState(event?.is_canceled || false)
 
   const handleSubmit = async (formData: FormData) => {
     if (event?.id) formData.append('id', event.id)
@@ -231,9 +366,10 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
   }
 
   return (
-    <form action={handleSubmit} className="space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="col-span-2">
+    <form action={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+        <div className="sm:col-span-8">
+          <label className="block text-xs font-bold text-gray-700 mb-1">イベント名 <span className="text-red-500">*</span></label>
           <input
             name="title"
             defaultValue={event?.title}
@@ -242,25 +378,36 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
         </div>
-        <div className="col-span-2">
+
+        <div className="sm:col-span-4 rounded bg-red-50 p-2 border border-red-100 flex items-center">
+          <label className="flex items-center gap-2 text-sm text-red-800 font-bold cursor-pointer w-full">
+            <input
+              type="checkbox"
+              name="is_canceled"
+              value="true"
+              checked={isCanceled}
+              onChange={e => setIsCanceled(e.target.checked)}
+              className="rounded border-red-300 text-red-600 focus:ring-red-500"
+            />
+            <AlertTriangle size={16} />
+            中止にする
+          </label>
+        </div>
+
+        <div className="sm:col-span-12">
           <label className="block text-xs text-gray-500 mb-1">主催</label>
-          <div className="flex gap-4">
-            <label className="flex items-center gap-1 text-sm text-gray-700">
-              <input type="radio" name="organizer" value="単位子ども会" defaultChecked={event?.organizer === '単位子ども会' || !event?.organizer} className="text-indigo-600 focus:ring-indigo-500" />
-              単位子ども会
-            </label>
-            <label className="flex items-center gap-1 text-sm text-gray-700">
-              <input type="radio" name="organizer" value="町子供会育成連合会" defaultChecked={event?.organizer === '町子供会育成連合会'} className="text-indigo-600 focus:ring-indigo-500" />
-              町子供会育成連合会
-            </label>
-            <label className="flex items-center gap-1 text-sm text-gray-700">
-              <input type="radio" name="organizer" value="その他" defaultChecked={event?.organizer === 'その他'} className="text-indigo-600 focus:ring-indigo-500" />
-              その他
-            </label>
+          <div className="flex gap-4 flex-wrap">
+            {['単位子ども会', '町子供会育成連合会', 'その他'].map(org => (
+              <label key={org} className="flex items-center gap-1 text-sm text-gray-700 cursor-pointer">
+                <input type="radio" name="organizer" value={org} defaultChecked={(event?.organizer || '単位子ども会') === org} className="text-indigo-600 focus:ring-indigo-500" />
+                {org}
+              </label>
+            ))}
           </div>
         </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">日付</label>
+
+        <div className="sm:col-span-6">
+          <label className="block text-xs text-gray-500 mb-1">日付 <span className="text-red-500">*</span></label>
           <div className="flex items-center gap-2">
             <input
               type="date"
@@ -270,57 +417,46 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
               className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               required
             />
+          </div>
+          <div className="mt-1">
             {!showEndDateInput ? (
               <button
                 type="button"
                 onClick={() => setShowEndDateInput(true)}
-                className="text-sm text-indigo-600 hover:text-indigo-800 underline flex-shrink-0"
+                className="text-xs text-indigo-600 hover:text-indigo-800 underline flex items-center gap-1"
               >
-                + 終了日を追加
+                + 終了日(期間)を追加
               </button>
             ) : (
-              <>
-                <span className="text-gray-400">〜</span>
-                <div className="flex-1 flex items-center gap-1">
-                  <input
-                    type="date"
-                    name="scheduled_end_date"
-                    defaultValue={event?.scheduled_end_date || startDate} // Use current startDate state as default
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowEndDateInput(false)}
-                    className="text-gray-400 hover:text-gray-600"
-                    title="終了日を削除"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-              </>
+              <div className="flex items-center gap-2 mt-1 bg-gray-50 p-1.5 rounded border border-dashed border-gray-300">
+                <span className="text-xs text-gray-500">終了日:</span>
+                <input
+                  type="date"
+                  name="scheduled_end_date"
+                  defaultValue={event?.scheduled_end_date || startDate}
+                  className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs py-1"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowEndDateInput(false)}
+                  className="text-gray-400 hover:text-red-500"
+                >
+                  <X size={14} />
+                </button>
+              </div>
             )}
           </div>
-          <p className="text-xs text-gray-400 mt-1">※終了日を設定すると期間表示になります</p>
-          {/* If hidden, ensure we don't submit a value or submit null? 
-              The form uses FormData. If input is not rendered, it won't be sent? 
-              Wait, if we toggle OFF, the input is gone. So scheduled_end_date is missing.
-              Action needs to handle missing = null. 
-              Our acton: const scheduled_end_date = formData.get('scheduled_end_date') as string | null
-              If missing, get() returns null. Correct.
-           */}
         </div>
-        <div>
-          {/* Re-introduced Time Input, but optional */}
-          <label className="block text-xs text-gray-500 mb-1">時間 (未定の場合は空欄)</label>
+
+        <div className="sm:col-span-6">
+          <label className="block text-xs text-gray-500 mb-1">開始時間 (任意)</label>
           <input
             type="time"
             name="start_time"
             defaultValue={initialTime}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
-        </div>
-        <div className="col-span-2">
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+          <label className="flex items-center gap-2 text-sm text-gray-700 mt-2">
             <input
               type="checkbox"
               name="is_tentative"
@@ -328,32 +464,38 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
               defaultChecked={event?.is_tentative}
               className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
-            日付は未定（仮）
+            <span className="text-xs">日付は未定（仮・月のみ決定）</span>
           </label>
         </div>
-        <div className="col-span-2">
+
+        <div className="sm:col-span-12">
+          <label className="block text-xs text-gray-500 mb-1">場所</label>
           <input
             name="location"
             defaultValue={event?.location || ''}
-            placeholder="場所"
+            placeholder="公民館、小学校など"
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
         </div>
-        <div className="col-span-2">
+
+        <div className="sm:col-span-12">
+          <label className="block text-xs text-gray-500 mb-1">詳細・備考 (Markdown)</label>
           <MarkdownEditor
             name="description"
             defaultValue={event?.description || ''}
-            placeholder="備考・詳細 (Markdown対応)"
+            placeholder="持ち物、注意事項など"
             rows={4}
           />
         </div>
       </div>
-      <div className="flex justify-end gap-2 pt-2">
-        <button type="button" onClick={onCancel} className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 bg-gray-100 rounded">
+
+      <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+        <button type="button" onClick={onCancel} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 bg-white border border-gray-300 rounded shadow-sm">
           キャンセル
         </button>
-        <button type="submit" disabled={isPending} className="px-3 py-1.5 text-sm text-white bg-indigo-600 hover:bg-indigo-700 rounded shadow-sm disabled:opacity-50 flex items-center gap-1">
-          <Save size={14} /> 保存
+        <button type="submit" disabled={isPending} className="px-4 py-2 text-sm text-white bg-indigo-600 hover:bg-indigo-700 rounded shadow-sm disabled:opacity-50 flex items-center gap-2 font-bold">
+          <Save size={16} />
+          {event ? '変更を保存' : '追加する'}
         </button>
       </div>
     </form>
@@ -363,40 +505,28 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
 function generateEventIcs(events: Event[]) {
   let content = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Kodomokai//AnnualEvents//EN\n'
   events.forEach(event => {
-    // Handle optional time
+    if (event.is_canceled) return // Skip canceled events? Or include as cancelled? Usually skip or STATUS:CANCELLED
+    // Implementation: STATUS:CANCELLED exists in ICS.
+
+    // ... (logic from before) ...
+    // Reuse previous logic but add STATUS properties
     const dateStr = event.scheduled_date.replace(/-/g, '')
     const timeStr = event.start_time ? event.start_time.replace(/:/g, '').slice(0, 4) + '00' : '100000'
     const start = `${dateStr}T${timeStr}`
 
     let end = ''
     if (event.scheduled_end_date) {
-      // Multi-day event
-      // If time is not set, we treat end date as inclusive all day -> DTEND is next day? 
-      // Or if time is set, it ends at same time on end date?
-      // User said "Start date only usually", implies Time is for start.
-      // Let's assume end date is inclusive.
-      // For ICS, DTEND is exclusive. So we add 1 day to end date if it's "All Day" logic, 
-      // but here we are mixing Time and Date.
-      // If Time is NULL (default 10:00 used above? No, we used dummy '100000').
-      // Let's treat multi-day with NO time as All Day Event?
-      // Current logic forces T100000.
-
-      // Let's stick to: End Date T Same Time + 2 hours (or just end of day?)
-      // Let's set End Date T 12:00:00 for simplicity if time was 10:00
       const dEnd = new Date(`${event.scheduled_end_date}T${event.start_time || '12:00:00'}`)
       if (!event.start_time) {
-        // If no start time, maybe 17:00 end?
         dEnd.setHours(17)
       } else {
-        dEnd.setHours(dEnd.getHours() + 2) // +2h duration
+        dEnd.setHours(dEnd.getHours() + 2)
       }
-
       const pad = (n: number) => n.toString().padStart(2, '0')
       const endDateStr = `${dEnd.getFullYear()}${pad(dEnd.getMonth() + 1)}${pad(dEnd.getDate())}`
       const endTimeStr = `${pad(dEnd.getHours())}${pad(dEnd.getMinutes())}00`
       end = `${endDateStr}T${endTimeStr}`
     } else {
-      // Single day
       const d = new Date(`${event.scheduled_date}T${event.start_time || '10:00:00'}`)
       d.setHours(d.getHours() + 2)
       const pad = (n: number) => n.toString().padStart(2, '0')
@@ -411,9 +541,71 @@ function generateEventIcs(events: Event[]) {
     content += `DTEND:${end}\n`
     if (event.description) content += `DESCRIPTION:${event.description.replace(/\n/g, '\\n')}\n`
     if (event.location) content += `LOCATION:${event.location}\n`
-    if (event.is_tentative) content += `STATUS:TENTATIVE\n`
+    // Status
+    if (event.is_canceled) content += `STATUS:CANCELLED\n`
+    else if (event.is_tentative) content += `STATUS:TENTATIVE\n`
+    else content += `STATUS:CONFIRMED\n`
+
     content += 'END:VEVENT\n'
   })
   content += 'END:VCALENDAR'
   return content
+}
+
+function getGoogleCalendarUrl(event: Event) {
+  const title = encodeURIComponent(event.title)
+  const details = encodeURIComponent(event.description || '')
+  const location = encodeURIComponent(event.location || '')
+
+  // Dates
+  const d = new Date(event.scheduled_date)
+  const dStr = d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z' // UTC
+
+  // Google Calendar Link Format needs Dates in UTC or specified timezone.
+  // Simplest is YYYYMMDD/YYYYMMDD for all day, or YYYYMMDDThhmmss/YYYYMMDDThhmmss for specific time
+
+  // Let's construct manually to avoid timezone confusion (treat input as local)
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  const YMD = (date: Date) => `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}`
+
+  let start = YMD(new Date(event.scheduled_date))
+  let end = start
+
+  if (event.scheduled_end_date) {
+    end = YMD(new Date(event.scheduled_end_date))
+    // GCal end date is exclusive for all day events.
+    // If it's all day, we need to add 1 day to end.
+    if (!event.start_time) {
+      const nextDay = new Date(event.scheduled_end_date)
+      nextDay.setDate(nextDay.getDate() + 1)
+      end = YMD(nextDay)
+    }
+  } else if (!event.start_time) {
+    // Single day all day -> End is next day
+    const nextDay = new Date(event.scheduled_date)
+    nextDay.setDate(nextDay.getDate() + 1)
+    end = YMD(nextDay)
+  }
+
+  // If time exists
+  if (event.start_time) {
+    const t = event.start_time.replace(/:/g, '') + '00' // HHMMSS
+    start += `T${t}`
+    // End time? Assume +2 hours if not specified
+    // Since we don't have end_time in DB, we guess.
+    // If we had end date but no end time, we assume end of day? No, usually events have duration.
+    // Let's just add 2 hours to start time for end check
+    // But wait, if end date is different...
+
+    // Simplified:
+    // If start time is present, use it.
+    // End time: +2h
+    const [h, m] = event.start_time.split(':').map(Number)
+    const endDateObj = event.scheduled_end_date ? new Date(event.scheduled_end_date) : new Date(event.scheduled_date)
+    endDateObj.setHours(h + 2, m)
+
+    end = YMD(endDateObj) + `T${pad(endDateObj.getHours())}${pad(endDateObj.getMinutes())}00`
+  }
+
+  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${location}`
 }

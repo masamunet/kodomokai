@@ -12,7 +12,7 @@ export default async function AdminLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="bg-card shadow-sm border-b border-border sticky top-0 z-50">
+      <header className="bg-card shadow-sm border-b border-border sticky top-0 z-50 print:hidden">
         <div className="mx-auto flex h-16 w-full max-w-[1920px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 shrink-0">
             <Link href="/admin" className="flex items-center gap-2">
@@ -41,8 +41,10 @@ export default async function AdminLayout({
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-[1920px] flex-1 p-4 sm:p-6 lg:p-8">
-        <Breadcrumbs />
+      <main className="mx-auto w-full max-w-[1920px] flex-1 p-4 sm:p-6 lg:p-8 print:p-0 print:w-auto print:max-w-none">
+        <div className="print:hidden">
+          <Breadcrumbs />
+        </div>
         {children}
       </main>
     </div>
