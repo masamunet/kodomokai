@@ -7,6 +7,8 @@ import OfficerList from '@/components/admin/members/OfficerList'
 import { getTargetFiscalYear } from '../actions/settings'
 import { toWarekiYear } from '@/lib/date-utils'
 
+export const dynamic = 'force-dynamic'
+
 type ViewType = 'child' | 'guardian' | 'officer'
 
 export default async function AdminMembersPage({
@@ -82,9 +84,22 @@ export default async function AdminMembersPage({
           profile:profiles(full_name, email, last_name_kana, first_name_kana, address, phone)
       `)
       .eq('fiscal_year', currentFiscalYear)
-      .order('role(display_order)', { ascending: true })
-      .order('created_at', { ascending: false })
-    assignments = data || []
+    // Sorting by foreign table column is tricky in Supabase JS client depending on version.
+    // We sort in application memory for reliability since list size is small.
+
+    if (data) {
+      assignments = data.sort((a, b) => {
+        // Sort by role display_order (ascending)
+        const orderA = a.role?.display_order ?? 999
+        const orderB = b.role?.display_order ?? 999
+        if (orderA !== orderB) return orderA - orderB
+
+        // Then by created_at (descending)
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      })
+    } else {
+      assignments = []
+    }
   }
 
   return (
