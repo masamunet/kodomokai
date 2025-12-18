@@ -120,7 +120,7 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
     return { total, elementaryCount, gradeCounts };
   }, [allChildren]);
 
-  if (allChildren.length === 0) {
+  if (profiles.length === 0) {
     return <div className="p-4 text-center text-muted-foreground">登録されているお子様はいません。</div>;
   }
 
@@ -194,114 +194,120 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
 
       {/* Table Section */}
       <div className="overflow-x-auto shadow-sm ring-1 ring-border rounded-lg bg-background">
-        <table className="min-w-full divide-y divide-border">
-          <thead className="bg-muted/50">
-            <tr>
-              <th scope="col" onClick={() => requestSort('grade')} className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 whitespace-nowrap cursor-pointer hover:bg-muted/70 flex-shrink-0">
-                <div className="flex items-center">学年 {getSortIcon('grade')}</div>
-              </th>
-              <th scope="col" onClick={() => requestSort('full_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">氏名 {getSortIcon('full_name')}</div>
-              </th>
-              <th scope="col" onClick={() => requestSort('age')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">年齢 {getSortIcon('age')}</div>
-              </th>
-              <th scope="col" onClick={() => requestSort('birthday')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">生年月日 {getSortIcon('birthday')}</div>
-              </th>
-              <th scope="col" onClick={() => requestSort('gender')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">性別 {getSortIcon('gender')}</div>
-              </th>
-              <th scope="col" onClick={() => requestSort('last_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">苗字 {getSortIcon('last_name')}</div>
-              </th>
-              <th scope="col" onClick={() => requestSort('first_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">名前 {getSortIcon('first_name')}</div>
-              </th>
-              <th scope="col" onClick={() => requestSort('last_name_kana')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">かな(姓) {getSortIcon('last_name_kana')}</div>
-              </th>
-              <th scope="col" onClick={() => requestSort('first_name_kana')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">かな(名) {getSortIcon('first_name_kana')}</div>
-              </th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">アレルギー</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">特記事項</th>
-              <th scope="col" onClick={() => requestSort('parent_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
-                <div className="flex items-center">保護者 {getSortIcon('parent_name')}</div>
-              </th>
-              {canEdit && <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">操作</span></th>}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border bg-background">
-            {allChildren.map((child, index) => (
-              <tr key={child.id} className={`hover:bg-muted/50 ${getGradeOrder(child.grade) % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
-                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
-                  {child.grade}
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-foreground group">
-                  <div className="flex items-center gap-1">
-                    {child.full_name}
-                    <CopyToClipboard text={child.full_name} />
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                  {child.age}歳
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                  {child.birthday ? new Date(child.birthday).toLocaleDateString('ja-JP') : '-'}
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                  {child.gender === 'male' ? '男' : child.gender === 'female' ? '女' : child.gender === 'other' ? '他' : '-'}
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    {child.last_name}
-                    <CopyToClipboard text={child.last_name} />
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    {child.first_name}
-                    <CopyToClipboard text={child.first_name} />
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    {child.last_name_kana}
-                    <CopyToClipboard text={child.last_name_kana} />
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    {child.first_name_kana}
-                    <CopyToClipboard text={child.first_name_kana} />
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-primary font-medium">
-                  {child.allergy}
-                </td>
-                <td className=" px-3 py-4 text-sm text-muted-foreground min-w-[150px]">
-                  {child.notes}
-                </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-primary hover:text-primary">
-                  <Link href={`/admin/users/${child.parent_id}?view=child`}>
-                    {child.parent_name}
-                  </Link>
-                </td>
-                {canEdit && (
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
-                    <Link
-                      href={`/admin/users/${child.parent_id}?view=child`}
-                      className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20"
-                    >
-                      編集
+        {allChildren.length === 0 ? (
+          <div className="p-12 text-center text-muted-foreground">
+            検索条件に一致するお子様は見つかりませんでした。
+          </div>
+        ) : (
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted/50">
+              <tr>
+                <th scope="col" onClick={() => requestSort('grade')} className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 whitespace-nowrap cursor-pointer hover:bg-muted/70 flex-shrink-0">
+                  <div className="flex items-center">学年 {getSortIcon('grade')}</div>
+                </th>
+                <th scope="col" onClick={() => requestSort('full_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">氏名 {getSortIcon('full_name')}</div>
+                </th>
+                <th scope="col" onClick={() => requestSort('age')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">年齢 {getSortIcon('age')}</div>
+                </th>
+                <th scope="col" onClick={() => requestSort('birthday')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">生年月日 {getSortIcon('birthday')}</div>
+                </th>
+                <th scope="col" onClick={() => requestSort('gender')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">性別 {getSortIcon('gender')}</div>
+                </th>
+                <th scope="col" onClick={() => requestSort('last_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">苗字 {getSortIcon('last_name')}</div>
+                </th>
+                <th scope="col" onClick={() => requestSort('first_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">名前 {getSortIcon('first_name')}</div>
+                </th>
+                <th scope="col" onClick={() => requestSort('last_name_kana')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">かな(姓) {getSortIcon('last_name_kana')}</div>
+                </th>
+                <th scope="col" onClick={() => requestSort('first_name_kana')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">かな(名) {getSortIcon('first_name_kana')}</div>
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">アレルギー</th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">特記事項</th>
+                <th scope="col" onClick={() => requestSort('parent_name')} className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap cursor-pointer hover:bg-muted/70">
+                  <div className="flex items-center">保護者 {getSortIcon('parent_name')}</div>
+                </th>
+                {canEdit && <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">操作</span></th>}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border bg-background">
+              {allChildren.map((child, index) => (
+                <tr key={child.id} className={`hover:bg-muted/50 ${getGradeOrder(child.grade) % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
+                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
+                    {child.grade}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-foreground group">
+                    <div className="flex items-center gap-1">
+                      {child.full_name}
+                      <CopyToClipboard text={child.full_name} />
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                    {child.age}歳
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                    {child.birthday ? new Date(child.birthday).toLocaleDateString('ja-JP') : '-'}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                    {child.gender === 'male' ? '男' : child.gender === 'female' ? '女' : child.gender === 'other' ? '他' : '-'}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      {child.last_name}
+                      <CopyToClipboard text={child.last_name} />
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      {child.first_name}
+                      <CopyToClipboard text={child.first_name} />
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      {child.last_name_kana}
+                      <CopyToClipboard text={child.last_name_kana} />
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      {child.first_name_kana}
+                      <CopyToClipboard text={child.first_name_kana} />
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-primary font-medium">
+                    {child.allergy}
+                  </td>
+                  <td className=" px-3 py-4 text-sm text-muted-foreground min-w-[150px]">
+                    {child.notes}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-primary hover:text-primary">
+                    <Link href={`/admin/users/${child.parent_id}?view=child`}>
+                      {child.parent_name}
                     </Link>
                   </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  {canEdit && (
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
+                      <Link
+                        href={`/admin/users/${child.parent_id}?view=child`}
+                        className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20"
+                      >
+                        編集
+                      </Link>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
