@@ -12,7 +12,7 @@ export default async function AdminLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="bg-card shadow-sm border-b border-border sticky top-0 z-50 print:hidden">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/70 shadow-sm backdrop-blur-md backdrop-saturate-150 supports-[backdrop-filter]:bg-background/55 print:hidden">
         <div className="mx-auto flex h-16 w-full max-w-[1920px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 shrink-0">
             <Link href="/admin" className="flex items-center gap-2">
@@ -27,7 +27,7 @@ export default async function AdminLayout({
             <Link href="/admin/meetings" className="text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors whitespace-nowrap">
               定例会
             </Link>
-            <Link href="/admin/events/annual" className="text-primary-foreground bg-indigo-500 hover:bg-indigo-600 ml-2 px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors whitespace-nowrap">
+            <Link href="/admin/events/annual" className="text-primary-foreground bg-primary/90 hover:bg-primary px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors whitespace-nowrap ml-2">
               年間予定
             </Link>
             <div className="h-5 w-px bg-border mx-2 shrink-0" />
