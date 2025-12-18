@@ -29,3 +29,6 @@
 - **Server Actions**: Always handle errors gracefully and return typed results (`{ success: boolean, message: string }`).
 - **Authorization**: Ensure RLS policies are backed by actual checks if needed, but primarily rely on Supabase Auth.
 - **Type Safety**: No `any`. Define types for all props and data.
+
+## Database Management
+- **Remote Migration**: ALWAYS apply new migrations to the remote Supabase instance immediately. Use `supabase db push` (or `npx supabase db push`) to ensure the remote database is in sync. Do NOT assume local changes are sufficient.

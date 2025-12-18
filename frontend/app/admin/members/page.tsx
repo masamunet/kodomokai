@@ -1,91 +1,83 @@
 import { createClient } from '@/lib/supabase/server'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import MemberTabs from '@/components/admin/members/MemberTabs'
+import ChildList from '@/components/admin/members/ChildList'
+import GuardianList from '@/components/admin/members/GuardianList'
+import OfficerList from '@/components/admin/members/OfficerList'
+import { getTargetFiscalYear } from '../actions/settings'
+import { toWarekiYear } from '@/lib/date-utils'
 
-export default async function AdminMembersPage() {
+type ViewType = 'child' | 'guardian' | 'officer'
+
+export default async function AdminMembersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const supabase = await createClient()
+  const params = await searchParams
+  const view = (params.view as ViewType) || 'child'
+  const currentFiscalYear = await getTargetFiscalYear()
 
-  // Helper to fetch profiles with children
-  const { data: profiles } = await supabase
-    .from('profiles')
-    .select(`
-        *,
-        children (*)
-    `)
-    .order('created_at', { ascending: false })
+  // Common data needed for some views
+  let profiles: any[] = []
+  let assignments: any[] = []
+  let titleYear = ''
+
+  // Fetch settings for Wareki conversion if needed
+  const { data: settings } = await supabase.from('organization_settings').select('*').single()
+  const warekiEraName = settings?.wareki_era_name || '令和'
+  const warekiStartYear = settings?.wareki_start_year || 2019
+  titleYear = toWarekiYear(currentFiscalYear, warekiEraName, warekiStartYear)
+
+  if (view === 'child' || view === 'guardian') {
+    const { data } = await supabase
+      .from('profiles')
+      .select(`
+          *,
+          children (*)
+      `)
+      .order('joined_at', { ascending: false })
+    profiles = data || []
+  }
+
+  if (view === 'officer') {
+    const { data } = await supabase
+      .from('officer_role_assignments')
+      .select(`
+          *,
+          role:officer_roles(*),
+          profile:profiles(full_name, email, last_name_kana, first_name_kana, address, phone)
+      `)
+      .eq('fiscal_year', currentFiscalYear)
+      .order('role(display_order)', { ascending: true })
+      .order('created_at', { ascending: false })
+    assignments = data || []
+  }
 
   return (
     <div>
       <AdminPageHeader
-        title="会員一覧"
-        description="登録されている全会員（保護者）とそのお子様の一覧です。"
+        title="会員名簿"
+        description="会員（保護者）、お子様、および役員の名簿を管理します。"
       />
-      <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6">
-                      名前 (保護者)
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                      メールアドレス
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                      連絡先
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                      お子様
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
-                      登録日
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-background">
-                  {profiles?.map((person) => (
-                    <tr key={person.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
-                        <div>
-                          {person.full_name || '未設定'}
-                          {person.is_admin && <span className="ml-2 inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">管理者</span>}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {person.last_name_kana} {person.first_name_kana}
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{person.email}</td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">{person.phone || '-'}</td>
-                      <td className="px-3 py-4 text-sm text-muted-foreground">
-                        {person.children && person.children.length > 0 ? (
-                          <ul className="list-disc list-inside">
-                            {person.children.map((child: any) => (
-                              <li key={child.id}>
-                                {child.full_name}
-                                <span className="text-xs text-gray-400 ml-1">({child.last_name_kana} {child.first_name_kana})</span>
-                                <span className="ml-1 text-gray-500">
-                                  - {child.gender === 'male' ? '男' : child.gender === 'female' ? '女' : '他'}
-                                  {child.birthday && ` ${new Date().getFullYear() - new Date(child.birthday).getFullYear()}歳`}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <span className="text-gray-400">登録なし</span>
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {new Date(person.joined_at).toLocaleDateString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+
+      <div className="mt-8">
+        <MemberTabs />
+
+        {view === 'child' && (
+          <ChildList profiles={profiles} targetFiscalYear={currentFiscalYear} />
+        )}
+
+        {view === 'guardian' && (
+          <GuardianList profiles={profiles} targetFiscalYear={currentFiscalYear} />
+        )}
+
+        {view === 'officer' && (
+          <OfficerList assignments={assignments} titleYear={titleYear} />
+        )}
       </div>
     </div>
   )
 }
+
