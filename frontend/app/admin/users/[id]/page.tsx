@@ -37,6 +37,7 @@ export default async function AdminUserEditPage({
     .from('children')
     .select('*')
     .eq('parent_id', id)
+    .is('deleted_at', null)
     .order('birthday', { ascending: false })
 
   const targetFiscalYear = await getTargetFiscalYear()

@@ -196,6 +196,36 @@ export async function adminDeleteChild(formData: FormData) {
   return { success: true, message: '削除しました' }
 }
 
+export async function adminDeleteAllChildrenFromParent(formData: FormData) {
+  // Check auth
+  const supabaseAuth = await createAuthClient()
+  const { data: { user } } = await supabaseAuth.auth.getUser()
+  if (!user) return { success: false, message: '認証されていません' }
+
+  const supabase = getAdminClient()
+  const parentId = formData.get('parent_id') as string
+
+  if (!parentId) return { success: false, message: '保護者IDが指定されていません' }
+
+  // Perform soft delete for all children of this parent
+  const { error } = await supabase
+    .from('children')
+    .update({
+      deleted_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq('parent_id', parentId)
+    .is('deleted_at', null)
+
+  if (error) {
+    console.error('Delete all children error:', error)
+    return { success: false, message: 'お子様の一括削除に失敗しました: ' + error.message }
+  }
+
+  revalidatePath(`/admin/users/${parentId}`)
+  return { success: true, message: 'お子様を全員削除しました' }
+}
+
 export async function adminDeleteProfile(formData: FormData) {
   // Check auth
   const supabaseAuth = await createAuthClient()

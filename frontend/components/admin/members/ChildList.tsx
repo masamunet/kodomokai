@@ -123,6 +123,7 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">氏名</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">年齢</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">生年月日</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">性別</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">苗字</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">名前</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">かな(姓)</th>
@@ -150,6 +151,9 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                   {child.birthday ? new Date(child.birthday).toLocaleDateString('ja-JP') : '-'}
+                </td>
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
+                  {child.gender === 'male' ? '男' : child.gender === 'female' ? '女' : child.gender === 'other' ? '他' : '-'}
                 </td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">

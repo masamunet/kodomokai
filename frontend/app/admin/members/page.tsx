@@ -72,6 +72,7 @@ export default async function AdminMembersPage({
           children (*)
       `)
       .is('deleted_at', null)
+      .is('children.deleted_at', null)
       .order('joined_at', { ascending: false })
     profiles = data || []
   }

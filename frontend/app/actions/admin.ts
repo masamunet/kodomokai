@@ -141,6 +141,15 @@ const normalizeDate = (dateStr: string) => {
   return null
 }
 
+const normalizeGender = (genderStr: string) => {
+  if (!genderStr) return null
+  const s = genderStr.trim().toLowerCase()
+  if (s === 'male' || s === '男' || s === '男の子' || s === 'だんし' || s === '♂') return 'male'
+  if (s === 'female' || s === '女' || s === '女の子' || s === 'じょし' || s === '♀') return 'female'
+  if (s === 'other' || s === 'その他' || s === 'ほか') return 'other'
+  return null
+}
+
 export async function importChildren(csvContent: string): Promise<ImportResult> {
   const supabase = createAdminClient()
   const logs: string[] = []
@@ -186,7 +195,7 @@ export async function importChildren(csvContent: string): Promise<ImportResult> 
           last_name_kana: finalLastNameKana,
           first_name_kana: finalFirstNameKana,
           full_name: `${lastName} ${firstName}`,
-          gender: (gender === 'male' || gender === 'female' || gender === 'other') ? gender : null,
+          gender: normalizeGender(gender),
           birthday: finalBirthday,
           allergies: allergies || '',
           notes: notes || '',
