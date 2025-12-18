@@ -11,14 +11,11 @@ interface GuardianListProps {
 }
 
 export default function GuardianList({ profiles, targetFiscalYear, canEdit }: GuardianListProps) {
-
   const stats = useMemo(() => {
-    // Count 'households' - technically every profile in this list is a guardian/member
-    // The user specifically asked: "Display count of guardians who have children registered as members"
-    const householdCount = profiles.filter(p => p.children && p.children.length > 0).length;
+    const householdCount = profiles.filter((p) => p.children && p.children.length > 0).length;
     return {
       total: profiles.length,
-      householdCount
+      householdCount,
     };
   }, [profiles]);
 
