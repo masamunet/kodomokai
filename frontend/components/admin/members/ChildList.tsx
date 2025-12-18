@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { calculateGrade, calculateAge, getGradeOrder, GRADES } from '@/lib/grade-utils';
+import { calculateGrade, calculateAge, getGradeOrder } from '@/lib/grade-utils';
 import CopyToClipboard from '@/components/ui/CopyToClipboard';
 import Link from 'next/link';
 
@@ -61,31 +61,31 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
   }, [allChildren]);
 
   if (allChildren.length === 0) {
-    return <div className="p-4 text-center text-gray-500">登録されているお子様はいません。</div>;
+    return <div className="p-4 text-center text-muted-foreground">登録されているお子様はいません。</div>;
   }
 
   return (
     <div>
       {/* Statistics Section */}
-      <div className="bg-white p-4 rounded-lg shadow mb-6 border border-gray-200">
-        <h3 className="text-lg font-bold text-gray-900 mb-3">統計情報</h3>
+      <div className="bg-background p-4 rounded-lg shadow-sm mb-6 border border-border">
+        <h3 className="text-lg font-bold text-foreground mb-3">統計情報</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-blue-50 p-3 rounded-md border border-blue-100">
-            <span className="block text-sm text-blue-600 font-medium">子供総数</span>
-            <span className="block text-2xl font-bold text-blue-900">{stats.total}名</span>
+          <div className="bg-primary/10 p-3 rounded-md border border-primary/20">
+            <span className="block text-sm text-primary font-medium">子供総数</span>
+            <span className="block text-2xl font-bold text-foreground">{stats.total}名</span>
           </div>
-          <div className="bg-green-50 p-3 rounded-md border border-green-100">
-            <span className="block text-sm text-green-600 font-medium">小学生総数</span>
-            <span className="block text-2xl font-bold text-green-900">{stats.elementaryCount}名</span>
+          <div className="bg-muted p-3 rounded-md border border-border">
+            <span className="block text-sm text-foreground font-medium">小学生総数</span>
+            <span className="block text-2xl font-bold text-foreground">{stats.elementaryCount}名</span>
           </div>
         </div>
         <div className="mt-4">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">学年別内訳</h4>
+          <h4 className="text-sm font-medium text-foreground mb-2">学年別内訳</h4>
           <div className="flex flex-wrap gap-2">
             {Object.keys(stats.gradeCounts)
               .sort((a, b) => getGradeOrder(a) - getGradeOrder(b))
               .map(grade => (
-                <span key={grade} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                <span key={grade} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground border border-border">
                   {grade}: {stats.gradeCounts[grade]}名
                 </span>
               ))}
@@ -94,82 +94,82 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
       </div>
 
       {/* Table Section */}
-      <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-        <table className="min-w-full divide-y divide-gray-300">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto shadow-sm ring-1 ring-border rounded-lg bg-background">
+        <table className="min-w-full divide-y divide-border">
+          <thead className="bg-muted/50">
             <tr>
-              <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 whitespace-nowrap">学年</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">氏名</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">年齢</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">生年月日</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">苗字</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">名前</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">かな(姓)</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">かな(名)</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">アレルギー</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">特記事項</th>
-              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">保護者</th>
+              <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground sm:pl-6 whitespace-nowrap">学年</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">氏名</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">年齢</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">生年月日</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">苗字</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">名前</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">かな(姓)</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">かな(名)</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">アレルギー</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">特記事項</th>
+              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground whitespace-nowrap">保護者</th>
               {canEdit && <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">操作</span></th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
+          <tbody className="divide-y divide-border bg-background">
             {allChildren.map((child) => (
-              <tr key={child.id} className="hover:bg-gray-50">
-                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+              <tr key={child.id} className="hover:bg-muted/50">
+                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
                   {child.grade}
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 group">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-foreground group">
                   <div className="flex items-center gap-1">
                     {child.full_name}
                     <CopyToClipboard text={child.full_name} />
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                   {child.age}歳
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                   {child.birthday ? new Date(child.birthday).toLocaleDateString('ja-JP') : '-'}
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     {child.last_name}
                     <CopyToClipboard text={child.last_name} />
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     {child.first_name}
                     <CopyToClipboard text={child.first_name} />
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     {child.last_name_kana}
                     <CopyToClipboard text={child.last_name_kana} />
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     {child.first_name_kana}
                     <CopyToClipboard text={child.first_name_kana} />
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-red-600 font-medium">
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-primary font-medium">
                   {child.allergy}
                 </td>
-                <td className=" px-3 py-4 text-sm text-gray-500 min-w-[150px]">
+                <td className=" px-3 py-4 text-sm text-muted-foreground min-w-[150px]">
                   {child.notes}
                 </td>
-                <td className="whitespace-nowrap px-3 py-4 text-sm text-indigo-600 hover:text-indigo-900">
-                  <Link href={`/admin/users/${child.parent_id}`}>
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-primary hover:text-primary">
+                  <Link href={`/admin/users/${child.parent_id}?view=child`}>
                     {child.parent_name}
                   </Link>
                 </td>
                 {canEdit && (
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
                     <Link
-                      href={`/admin/users/${child.parent_id}`}
-                      className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-md text-xs font-medium border border-indigo-100"
+                      href={`/admin/users/${child.parent_id}?view=child`}
+                      className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20"
                     >
                       編集
                     </Link>
