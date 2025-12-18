@@ -11,6 +11,7 @@ type Props = {
     name: string
     display_order: number // or string, depending on DB type, usually number
     description: string | null
+    can_edit_members: boolean
   }
   initialDisplayOrder?: number
 }
@@ -86,6 +87,24 @@ export default function RoleForm({ role, initialDisplayOrder = 1 }: Props) {
             defaultValue={role?.description || ''}
             className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
+        </div>
+      </div>
+
+      <div className="relative flex gap-x-3">
+        <div className="flex h-6 items-center">
+          <input
+            id="can_edit_members"
+            name="can_edit_members"
+            type="checkbox"
+            defaultChecked={role?.can_edit_members}
+            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          />
+        </div>
+        <div className="text-sm leading-6">
+          <label htmlFor="can_edit_members" className="font-medium text-gray-900">
+            会員情報の編集権限
+          </label>
+          <p className="text-gray-500">この役職の担当者は、会員名簿の情報を編集できるようになります。</p>
         </div>
       </div>
 

@@ -12,10 +12,11 @@ export async function createRole(formData: FormData) {
   const name = formData.get('name') as string
   const description = formData.get('description') as string
   const display_order = parseInt(formData.get('display_order') as string) || 0
+  const can_edit_members = formData.get('can_edit_members') === 'on'
 
   const { error } = await supabase
     .from('officer_roles')
-    .insert({ name, description, display_order })
+    .insert({ name, description, display_order, can_edit_members })
 
   if (error) {
     console.error('Create role error:', error)
@@ -33,6 +34,7 @@ export async function updateRole(formData: FormData) {
   const name = formData.get('name') as string
   const display_order = parseInt(formData.get('display_order') as string)
   const description = formData.get('description') as string
+  const can_edit_members = formData.get('can_edit_members') === 'on'
 
   if (!id) return { success: false, message: 'IDが指定されていません' }
 
@@ -40,7 +42,7 @@ export async function updateRole(formData: FormData) {
 
   const { error } = await supabase
     .from('officer_roles')
-    .update({ name, display_order, description })
+    .update({ name, display_order, description, can_edit_members })
     .eq('id', id)
 
   if (error) {
