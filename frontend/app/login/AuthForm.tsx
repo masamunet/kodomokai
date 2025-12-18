@@ -5,13 +5,13 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { login, signup } from './actions'
 
-export default function AuthForm() {
+export default function AuthForm({ orgName = '子供会 管理アプリ' }: { orgName?: string }) {
   const [isLogin, setIsLogin] = useState(true)
 
   return (
     <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-md">
       <div className="text-center">
-        <h2 className="text-3xl font-extrabold text-gray-900">子供会 管理アプリ</h2>
+        <h2 className="text-3xl font-extrabold text-gray-900">{orgName}</h2>
         <p className="mt-2 text-sm text-gray-600">
           {isLogin ? 'ログイン' : '新規アカウント作成'}
         </p>
@@ -82,9 +82,9 @@ export default function AuthForm() {
         <div className="flex items-center justify-between">
           <div className="text-sm">
             {isLogin && (
-              <a href="#" className="font-medium text-primary hover:text-primary/80">
+              <Link href="/forgot-password" className="font-medium text-primary hover:text-primary/80">
                 パスワードを忘れた場合
-              </a>
+              </Link>
             )}
           </div>
         </div>

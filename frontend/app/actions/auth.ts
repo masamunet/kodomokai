@@ -3,53 +3,78 @@
 import { createClient } from '@/lib/supabase/server'
 import { RegistrationData } from '../(auth)/register/RegistrationWizard'
 
-export async function registerUser(data: RegistrationData) {
+export async function sendMagicLink(email: string) {
   const supabase = await createClient()
 
-  // 1. Sign Up
-  // Pass metadata so that trigger can populate profile if configured, 
-  // or we can use it to insert manually if we have service role (which we don't here effectively without admin client).
-  // Assuming standard flow: SignUp -> Trigger creates Profile -> We update Profile.
-  // OR: SignUp -> We insert Profile (if policy allows).
+  // Check if user already exists in profiles
+  const { data: existingProfile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', email)
+    .single()
 
-  // Let's use metadata for Profile data to be safe and robust, 
-  // IF there is a trigger that copies metadata.
-  // If not, we will try to insert/update 'profiles' table directly.
+  if (existingProfile) {
+    return {
+      success: false,
+      code: 'ALREADY_REGISTERED',
+      message: 'このメールアドレスは既に登録されています。'
+    }
+  }
 
-  const { error: signUpError, data: authData } = await supabase.auth.signUp({
-    email: data.account.email,
-    password: data.account.password,
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/callback`,
-      data: {
-        last_name: data.parent.lastName,
-        first_name: data.parent.firstName,
-        last_name_kana: data.parent.lastNameKana,
-        first_name_kana: data.parent.firstNameKana,
-        full_name: `${data.parent.lastName} ${data.parent.firstName}`,
-        phone: data.parent.phone,
-      }
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/callback?next=/register/onboarding`,
+      shouldCreateUser: true,
     }
   })
 
-  if (signUpError) {
-    console.error('SignUp Error:', signUpError)
-    return { success: false, message: signUpError.message }
+  if (error) {
+    return { success: false, message: error.message }
   }
 
-  if (!authData.user) {
-    return { success: false, message: 'ユーザー作成に失敗しました' }
+  return { success: true, message: '確認メールを送信しました' }
+}
+
+export async function sendPasswordResetEmail(email: string) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/callback?next=/update-password`,
+  })
+
+  if (error) {
+    return { success: false, message: error.message }
   }
 
-  const userId = authData.user.id
+  return { success: true, message: 'パスワード再設定用のメールを送信しました' }
+}
 
-  // 2. Update Profile (or Insert if trigger didn't catch it / doesn't exist)
-  // We try to UPDATE first, assuming a trigger might have created a row.
-  // If update returns 0 rows, we might need to INSERT.
-  // Actually, 'upsert' is safest.
+export async function completeRegistration(data: RegistrationData) {
+  const supabase = await createClient()
 
+  // 1. Get current user (should be logged in via magic link)
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    return { success: false, message: 'ログインセッションが切れています。もう一度メール認証からやり直してください。' }
+  }
+
+  // 2. Set Password for the user
+  const { error: passwordError } = await supabase.auth.updateUser({
+    password: data.account.password
+  })
+
+  if (passwordError) {
+    // If the new password is the same as the old one, we can consider it a success
+    if (!passwordError.message.includes('New password should be different')) {
+      return { success: false, message: 'パスワードの設定に失敗しました: ' + passwordError.message }
+    }
+  }
+
+  // 3. Update Profile
   const profileData = {
-    id: userId,
+    id: user.id,
     last_name: data.parent.lastName,
     first_name: data.parent.firstName,
     last_name_kana: data.parent.lastNameKana,
@@ -62,19 +87,19 @@ export async function registerUser(data: RegistrationData) {
 
   const { error: profileError } = await supabase
     .from('profiles')
-    .upsert(profileData)
+    .update(profileData)
+    .eq('id', user.id)
 
   if (profileError) {
     console.error('Profile Upsert Error:', profileError)
-    // If we fail here, the user is created but profile is missing/incomplete.
-    // We might want to return error but the user exists.
-    return { success: false, message: 'プロフィールの保存に失敗しました: ' + profileError.message }
+    // Continue anyway? Or fail? Better to fail.
+    return { success: false, message: 'プロフィールの保存に失敗しました' }
   }
 
-  // 3. Insert Children
+  // 4. Insert Children
   if (data.children.length > 0) {
     const childrenData = data.children.map(child => ({
-      parent_id: userId,
+      parent_id: user.id,
       last_name: child.lastName,
       first_name: child.firstName,
       last_name_kana: child.lastNameKana,
@@ -92,7 +117,7 @@ export async function registerUser(data: RegistrationData) {
 
     if (childrenError) {
       console.error('Children Insert Error:', childrenError)
-      return { success: false, message: 'お子様情報の保存に失敗しました: ' + childrenError.message }
+      return { success: false, message: 'お子様情報の保存に失敗しました' }
     }
   }
 

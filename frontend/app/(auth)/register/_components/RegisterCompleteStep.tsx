@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { RegistrationData } from '../RegistrationWizard'
-import { registerUser } from '@/app/actions/auth'
+import { RegistrationData } from '../onboarding/RegistrationWizard'
+import { completeRegistration } from '@/app/actions/auth'
 import Link from 'next/link'
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 
@@ -18,7 +18,7 @@ export default function RegisterCompleteStep({ data }: Props) {
     const submit = async () => {
       setStatus('loading')
       try {
-        const result = await registerUser(data)
+        const result = await completeRegistration(data)
         if (result.success) {
           setStatus('success')
         } else {
@@ -69,24 +69,18 @@ export default function RegisterCompleteStep({ data }: Props) {
       <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
         <CheckCircle className="h-10 w-10 text-green-600" />
       </div>
-      <h3 className="text-2xl font-bold text-gray-900 mb-2">登録ありがとうございました！</h3>
+      <h3 className="text-2xl font-bold text-gray-900 mb-2">登録完了！</h3>
       <p className="text-gray-600 mb-8">
-        確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。<br />
-        その後、ログインしてダッシュボードにアクセスできます。
+        これですべての手続きが完了しました。<br />
+        ダッシュボードへお進みください。
       </p>
 
       <div className="space-y-4">
         <Link
-          href="/login"
+          href="/"
           className="inline-flex w-full justify-center py-3 px-4 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm"
         >
-          ログイン画面へ
-        </Link>
-        <Link
-          href="/"
-          className="inline-flex w-full justify-center text-sm text-gray-500 hover:text-gray-900"
-        >
-          トップページに戻る
+          ダッシュボードへ
         </Link>
       </div>
     </div>

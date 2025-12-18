@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import RegisterAccountStep from './_components/RegisterAccountStep'
-import RegisterParentStep from './_components/RegisterParentStep'
-import RegisterChildrenStep from './_components/RegisterChildrenStep'
-import RegisterConfirmStep from './_components/RegisterConfirmStep'
-import RegisterCompleteStep from './_components/RegisterCompleteStep'
+import { createClient } from '@/lib/supabase/client'
+import SetPasswordStep from './_components/SetPasswordStep'
+import RegisterParentStep from '../_components/RegisterParentStep'
+import RegisterChildrenStep from '../_components/RegisterChildrenStep'
+import RegisterConfirmStep from '../_components/RegisterConfirmStep'
+import RegisterCompleteStep from '../_components/RegisterCompleteStep'
 
 export type RegistrationData = {
   account: {
@@ -44,10 +45,36 @@ export default function RegistrationWizard() {
   const [formData, setFormData] = useState<RegistrationData>(initialData)
   const totalSteps = 5
 
+<<<<<<< HEAD:frontend/app/(auth)/register/RegistrationWizard.tsx
   const updateFormData = <K extends keyof RegistrationData>(section: K, data: RegistrationData[K]) => {
+=======
+  useEffect(() => {
+    const fetchUser = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.email) {
+        setFormData(prev => ({
+          ...prev,
+          account: { ...prev.account, email: user.email! }
+        }))
+      }
+    }
+    fetchUser()
+  }, [])
+
+  const updateFormData = (section: keyof RegistrationData, data: any) => {
+>>>>>>> origin/master:frontend/app/(auth)/register/onboarding/RegistrationWizard.tsx
     setFormData(prev => ({
       ...prev,
-      [section]: data
+      [section]: { ...prev[section], ...data }
+    }))
+  }
+
+  // Handle nested update for account which renders differently in SetPasswordStep
+  const updatePassword = (data: { password: string }) => {
+    setFormData(prev => ({
+      ...prev,
+      account: { ...prev.account, password: data.password }
     }))
   }
 
@@ -63,6 +90,7 @@ export default function RegistrationWizard() {
             style={{ width: `${(step / totalSteps) * 100}%` }}
           />
         </div>
+<<<<<<< HEAD:frontend/app/(auth)/register/RegistrationWizard.tsx
         <div className="flex justify-between mt-2 text-xs text-muted-foreground">
           {['アカウント', '保護者', 'お子様', '確認', '完了'].map((label, index) => {
             const isActive = step >= index + 1
@@ -75,6 +103,14 @@ export default function RegistrationWizard() {
               </span>
             )
           })}
+=======
+        <div className="flex justify-between mt-2 text-xs text-gray-500">
+          <span className={step >= 1 ? 'text-indigo-600 font-medium' : ''}>パスワード</span>
+          <span className={step >= 2 ? 'text-indigo-600 font-medium' : ''}>保護者</span>
+          <span className={step >= 3 ? 'text-indigo-600 font-medium' : ''}>お子様</span>
+          <span className={step >= 4 ? 'text-indigo-600 font-medium' : ''}>確認</span>
+          <span className={step >= 5 ? 'text-indigo-600 font-medium' : ''}>完了</span>
+>>>>>>> origin/master:frontend/app/(auth)/register/onboarding/RegistrationWizard.tsx
         </div>
       </div>
 
@@ -87,9 +123,9 @@ export default function RegistrationWizard() {
           transition={{ duration: 0.2 }}
         >
           {step === 1 && (
-            <RegisterAccountStep
-              data={formData.account}
-              updateData={(data) => updateFormData('account', data)}
+            <SetPasswordStep
+              data={{ password: formData.account.password }}
+              updateData={updatePassword}
               onNext={nextStep}
             />
           )}
@@ -106,7 +142,7 @@ export default function RegistrationWizard() {
               data={formData.children}
               parentLastName={formData.parent.lastName}
               parentLastNameKana={formData.parent.lastNameKana}
-              updateData={(data) => updateFormData('children', data)}
+              updateData={(data) => setFormData(prev => ({ ...prev, children: data }))}
               onNext={nextStep}
               onPrev={prevStep}
             />

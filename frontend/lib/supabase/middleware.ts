@@ -41,7 +41,8 @@ export async function updateSession(request: NextRequest) {
   // Deny-all-by-default: If no user, only allow specific public paths.
   if (!user) {
     const publicPaths = ['/login', '/auth', '/register']
-    const isPublic = publicPaths.some(path => request.nextUrl.pathname.startsWith(path))
+    const isPublic = publicPaths.some(path => request.nextUrl.pathname.startsWith(path)) &&
+      !request.nextUrl.pathname.startsWith('/register/onboarding')
 
     if (!isPublic) {
       const url = request.nextUrl.clone()

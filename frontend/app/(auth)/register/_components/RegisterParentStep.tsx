@@ -11,7 +11,7 @@ const schema = z.object({
   firstName: z.string().min(1, '名前を入力してください'),
   lastNameKana: z.string().min(1, '苗字（ふりがな）を入力してください').regex(/^[ぁ-んー]+$/, 'ひらがなで入力してください'),
   firstNameKana: z.string().min(1, '名前（ふりがな）を入力してください').regex(/^[ぁ-んー]+$/, 'ひらがなで入力してください'),
-  phone: z.string().regex(/^\d{10,11}$/, '電話番号はハイフンなしの10桁または11桁で入力してください').optional().or(z.literal('')),
+  phone: z.string().optional().or(z.literal('')),
   address: z.string().min(1, '住所を入力してください'),
 })
 
