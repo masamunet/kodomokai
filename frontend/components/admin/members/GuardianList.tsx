@@ -2,13 +2,15 @@
 
 import { useMemo } from 'react';
 import { calculateAge, calculateGrade } from '@/lib/grade-utils';
+import Link from 'next/link';
 
 interface GuardianListProps {
   profiles: any[];
   targetFiscalYear: number;
+  canEdit?: boolean;
 }
 
-export default function GuardianList({ profiles, targetFiscalYear }: GuardianListProps) {
+export default function GuardianList({ profiles, targetFiscalYear, canEdit }: GuardianListProps) {
 
   const stats = useMemo(() => {
     // Count 'households' - technically every profile in this list is a guardian/member
@@ -55,6 +57,7 @@ export default function GuardianList({ profiles, targetFiscalYear }: GuardianLis
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">
                       登録日
                     </th>
+                    {canEdit && <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">操作</span></th>}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-background">
@@ -92,6 +95,16 @@ export default function GuardianList({ profiles, targetFiscalYear }: GuardianLis
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {new Date(person.joined_at).toLocaleDateString()}
                       </td>
+                      {canEdit && (
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
+                          <Link
+                            href={`/admin/users/${person.id}`}
+                            className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-md text-xs font-medium border border-indigo-100"
+                          >
+                            編集
+                          </Link>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>

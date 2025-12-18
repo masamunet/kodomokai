@@ -8,9 +8,10 @@ import Link from 'next/link';
 interface ChildListProps {
   profiles: any[]; // Ideally typed properly
   targetFiscalYear: number;
+  canEdit?: boolean;
 }
 
-export default function ChildList({ profiles, targetFiscalYear }: ChildListProps) {
+export default function ChildList({ profiles, targetFiscalYear, canEdit }: ChildListProps) {
   // Flatten children data
   const allChildren = useMemo(() => {
     const list: any[] = [];
@@ -108,6 +109,7 @@ export default function ChildList({ profiles, targetFiscalYear }: ChildListProps
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">アレルギー</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">特記事項</th>
               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 whitespace-nowrap">保護者</th>
+              {canEdit && <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">操作</span></th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
@@ -163,6 +165,16 @@ export default function ChildList({ profiles, targetFiscalYear }: ChildListProps
                     {child.parent_name}
                   </Link>
                 </td>
+                {canEdit && (
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
+                    <Link
+                      href={`/admin/users/${child.parent_id}`}
+                      className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded-md text-xs font-medium border border-indigo-100"
+                    >
+                      編集
+                    </Link>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

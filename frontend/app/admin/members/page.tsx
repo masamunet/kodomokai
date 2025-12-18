@@ -30,6 +30,38 @@ export default async function AdminMembersPage({
   const warekiStartYear = settings?.wareki_start_year || 2019
   titleYear = toWarekiYear(currentFiscalYear, warekiEraName, warekiStartYear)
 
+  // Permissions check
+  const { data: { user } } = await supabase.auth.getUser()
+  let canEdit = false
+
+  if (user) {
+    // Check if the current user has any officer role with edit permissions for this fiscal year
+    const { data: myRoles } = await supabase
+      .from('officer_role_assignments')
+      .select(`
+        role:officer_roles(can_edit_members)
+      `)
+      .eq('profile_id', user.id)
+      .eq('fiscal_year', currentFiscalYear)
+
+    // Check if any role has edit permission
+    if (myRoles && myRoles.length > 0) {
+      // @ts-ignore - Supabase types might verify this structure but let's be safe with check
+      canEdit = myRoles.some((assignment: any) => assignment.role?.can_edit_members === true)
+    }
+
+    // Fallback: Check if user is an admin in profiles (legacy support or super admin)
+    const { data: myProfile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single()
+
+    if (myProfile?.is_admin) {
+      canEdit = true
+    }
+  }
+
   if (view === 'child' || view === 'guardian') {
     const { data } = await supabase
       .from('profiles')
@@ -66,11 +98,11 @@ export default async function AdminMembersPage({
         <MemberTabs />
 
         {view === 'child' && (
-          <ChildList profiles={profiles} targetFiscalYear={currentFiscalYear} />
+          <ChildList profiles={profiles} targetFiscalYear={currentFiscalYear} canEdit={canEdit} />
         )}
 
         {view === 'guardian' && (
-          <GuardianList profiles={profiles} targetFiscalYear={currentFiscalYear} />
+          <GuardianList profiles={profiles} targetFiscalYear={currentFiscalYear} canEdit={canEdit} />
         )}
 
         {view === 'officer' && (
