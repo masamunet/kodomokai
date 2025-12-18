@@ -34,8 +34,10 @@ export async function upsertEvent(formData: FormData) {
   const description = formData.get('description') as string
   const location = formData.get('location') as string
   const scheduled_date = formData.get('scheduled_date') as string
+  const scheduled_end_date = formData.get('scheduled_end_date') as string | null
   let start_time = formData.get('start_time') as string | null
   const is_tentative = formData.get('is_tentative') === 'true'
+  const organizer = formData.get('organizer') as string
 
   // If start_time is empty string or "09:00" hidden default when we want "undefined", 
   // we need to handle it. 
@@ -55,8 +57,10 @@ export async function upsertEvent(formData: FormData) {
     description: description || null,
     location: location || null,
     scheduled_date,
+    scheduled_end_date: scheduled_end_date || null,
     start_time: start_time || null,
     is_tentative,
+    organizer: organizer || '単位子ども会',
     type: 'recreation',
     rsvp_required: false,
   }

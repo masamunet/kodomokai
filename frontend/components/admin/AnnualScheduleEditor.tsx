@@ -13,9 +13,11 @@ type Event = {
   title: string
   description: string | null
   scheduled_date: string // Date string YYYY-MM-DD
+  scheduled_end_date: string | null // Date string YYYY-MM-DD or null
   start_time: string | null // Time string HH:MM:SS or null
   location: string | null
   is_tentative: boolean
+  organizer: string
 }
 
 type Props = {
@@ -166,7 +168,12 @@ function EventItem({ event, isEditing, onEdit, onCancel }: { event: Event, isEdi
         {event.is_tentative ? (
           <span className="text-xs border border-gray-300 rounded px-1">未定</span>
         ) : (
-          <span>{eventDate.getDate()}日({['日', '月', '火', '水', '木', '金', '土'][eventDate.getDay()]})</span>
+          <div className="flex flex-col items-center leading-tight">
+            <span>{eventDate.getDate()}日({['日', '月', '火', '水', '木', '金', '土'][eventDate.getDay()]})</span>
+            {event.scheduled_end_date && (
+              <span className="text-xs text-gray-500">〜 {new Date(event.scheduled_end_date).getDate()}日</span>
+            )}
+          </div>
         )}
       </div>
       <div className="flex-1 min-w-0">
@@ -174,9 +181,12 @@ function EventItem({ event, isEditing, onEdit, onCancel }: { event: Event, isEdi
           <span className="font-medium text-gray-900 text-base">{event.title}</span>
           {event.is_tentative && <HelpCircle size={14} className="text-gray-400" />}
         </div>
-        <div className="text-sm text-gray-600 mt-0.5 flex gap-3">
+        <div className="text-sm text-gray-600 mt-0.5 flex gap-3 flex-wrap">
           {timeString && <span>{timeString}</span>}
           {event.location && <span>@ {event.location}</span>}
+          {event.organizer && event.organizer !== '単位子ども会' && (
+            <span className="bg-orange-100 text-orange-800 text-xs px-2 py-0.5 rounded-full">{event.organizer}</span>
+          )}
         </div>
         {event.description && (
           <div className="text-sm text-gray-500 mt-1 prose prose-sm dark:prose-invert max-w-none">
@@ -208,6 +218,9 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
   // Initial time default
   const initialTime = event?.start_time ? event.start_time.slice(0, 5) : ''
 
+  const [startDate, setStartDate] = useState(initialDate)
+  const [showEndDateInput, setShowEndDateInput] = useState(!!event?.scheduled_end_date)
+
   const handleSubmit = async (formData: FormData) => {
     if (event?.id) formData.append('id', event.id)
 
@@ -229,14 +242,72 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
         </div>
+        <div className="col-span-2">
+          <label className="block text-xs text-gray-500 mb-1">主催</label>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-1 text-sm text-gray-700">
+              <input type="radio" name="organizer" value="単位子ども会" defaultChecked={event?.organizer === '単位子ども会' || !event?.organizer} className="text-indigo-600 focus:ring-indigo-500" />
+              単位子ども会
+            </label>
+            <label className="flex items-center gap-1 text-sm text-gray-700">
+              <input type="radio" name="organizer" value="町子供会育成連合会" defaultChecked={event?.organizer === '町子供会育成連合会'} className="text-indigo-600 focus:ring-indigo-500" />
+              町子供会育成連合会
+            </label>
+            <label className="flex items-center gap-1 text-sm text-gray-700">
+              <input type="radio" name="organizer" value="その他" defaultChecked={event?.organizer === 'その他'} className="text-indigo-600 focus:ring-indigo-500" />
+              その他
+            </label>
+          </div>
+        </div>
         <div>
           <label className="block text-xs text-gray-500 mb-1">日付</label>
-          <input
-            type="date"
-            name="scheduled_date"
-            defaultValue={initialDate}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              name="scheduled_date"
+              defaultValue={initialDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              required
+            />
+            {!showEndDateInput ? (
+              <button
+                type="button"
+                onClick={() => setShowEndDateInput(true)}
+                className="text-sm text-indigo-600 hover:text-indigo-800 underline flex-shrink-0"
+              >
+                + 終了日を追加
+              </button>
+            ) : (
+              <>
+                <span className="text-gray-400">〜</span>
+                <div className="flex-1 flex items-center gap-1">
+                  <input
+                    type="date"
+                    name="scheduled_end_date"
+                    defaultValue={event?.scheduled_end_date || startDate} // Use current startDate state as default
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowEndDateInput(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                    title="終了日を削除"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+          <p className="text-xs text-gray-400 mt-1">※終了日を設定すると期間表示になります</p>
+          {/* If hidden, ensure we don't submit a value or submit null? 
+              The form uses FormData. If input is not rendered, it won't be sent? 
+              Wait, if we toggle OFF, the input is gone. So scheduled_end_date is missing.
+              Action needs to handle missing = null. 
+              Our acton: const scheduled_end_date = formData.get('scheduled_end_date') as string | null
+              If missing, get() returns null. Correct.
+           */}
         </div>
         <div>
           {/* Re-introduced Time Input, but optional */}
@@ -295,18 +366,44 @@ function generateEventIcs(events: Event[]) {
     // Handle optional time
     const dateStr = event.scheduled_date.replace(/-/g, '')
     const timeStr = event.start_time ? event.start_time.replace(/:/g, '').slice(0, 4) + '00' : '100000'
-
     const start = `${dateStr}T${timeStr}`
 
-    // End time? Assume 2 hours later
-    // Need Date object handling
-    const d = new Date(`${event.scheduled_date}T${event.start_time || '10:00:00'}`)
-    d.setHours(d.getHours() + 2)
+    let end = ''
+    if (event.scheduled_end_date) {
+      // Multi-day event
+      // If time is not set, we treat end date as inclusive all day -> DTEND is next day? 
+      // Or if time is set, it ends at same time on end date?
+      // User said "Start date only usually", implies Time is for start.
+      // Let's assume end date is inclusive.
+      // For ICS, DTEND is exclusive. So we add 1 day to end date if it's "All Day" logic, 
+      // but here we are mixing Time and Date.
+      // If Time is NULL (default 10:00 used above? No, we used dummy '100000').
+      // Let's treat multi-day with NO time as All Day Event?
+      // Current logic forces T100000.
 
-    const pad = (n: number) => n.toString().padStart(2, '0')
-    const endDateStr = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`
-    const endTimeStr = `${pad(d.getHours())}${pad(d.getMinutes())}00`
-    const end = `${endDateStr}T${endTimeStr}`
+      // Let's stick to: End Date T Same Time + 2 hours (or just end of day?)
+      // Let's set End Date T 12:00:00 for simplicity if time was 10:00
+      const dEnd = new Date(`${event.scheduled_end_date}T${event.start_time || '12:00:00'}`)
+      if (!event.start_time) {
+        // If no start time, maybe 17:00 end?
+        dEnd.setHours(17)
+      } else {
+        dEnd.setHours(dEnd.getHours() + 2) // +2h duration
+      }
+
+      const pad = (n: number) => n.toString().padStart(2, '0')
+      const endDateStr = `${dEnd.getFullYear()}${pad(dEnd.getMonth() + 1)}${pad(dEnd.getDate())}`
+      const endTimeStr = `${pad(dEnd.getHours())}${pad(dEnd.getMinutes())}00`
+      end = `${endDateStr}T${endTimeStr}`
+    } else {
+      // Single day
+      const d = new Date(`${event.scheduled_date}T${event.start_time || '10:00:00'}`)
+      d.setHours(d.getHours() + 2)
+      const pad = (n: number) => n.toString().padStart(2, '0')
+      const endDateStr = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`
+      const endTimeStr = `${pad(d.getHours())}${pad(d.getMinutes())}00`
+      end = `${endDateStr}T${endTimeStr}`
+    }
 
     content += 'BEGIN:VEVENT\n'
     content += `SUMMARY:${event.title}\n`
