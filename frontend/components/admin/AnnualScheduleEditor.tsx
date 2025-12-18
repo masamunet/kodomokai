@@ -6,6 +6,7 @@ import { Calendar, Trash2, Edit2, CheckCircle2, HelpCircle, Save, X, Printer, Do
 import MarkdownEditor from '@/components/ui/MarkdownEditor'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { toWarekiYear } from '@/lib/date-utils'
 
 // Extended Event type to include is_tentative and is_canceled
 type Event = {
@@ -24,14 +25,18 @@ type Event = {
 type Props = {
   year: number
   events: Event[]
+  eraName: string
+  startYear: number
 }
 
 const MONTHS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
 
-export default function AnnualScheduleEditor({ year, events }: Props) {
+export default function AnnualScheduleEditor({ year, events, eraName, startYear }: Props) {
   const [isPending, startTransition] = useTransition()
   const [editingEventId, setEditingEventId] = useState<string | null>(null)
   const [isAddingMonth, setIsAddingMonth] = useState<number | null>(null)
+
+  const warekiYear = toWarekiYear(year, eraName, startYear)
 
   const getEventsForMonth = (targetMonth: number) => {
     return events.filter(e => {
@@ -61,7 +66,7 @@ export default function AnnualScheduleEditor({ year, events }: Props) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
         <div>
-          <h2 className="text-xl font-bold print:text-lg">{year}年度 年間活動予定</h2>
+          <h2 className="text-xl font-bold print:text-lg">{warekiYear}度 年間活動予定</h2>
           <p className="text-sm text-gray-500 mt-1 print:text-xs">
             最終発行: {printedDate}
           </p>
@@ -83,7 +88,7 @@ export default function AnnualScheduleEditor({ year, events }: Props) {
       </div>
 
       <div className="hidden print:block mb-4 text-right text-sm text-gray-500">
-        <div>{year}年度 年間活動予定表</div>
+        <div>{warekiYear}度 年間活動予定表</div>
         <div className="text-xs">発行日: {printedDate} (最新版をご確認ください)</div>
       </div>
 
@@ -161,7 +166,7 @@ export default function AnnualScheduleEditor({ year, events }: Props) {
                       <td colSpan={5} className="p-4">
                         <div className="bg-white p-4 rounded-lg shadow-sm border border-indigo-200">
                           <h4 className="font-bold text-indigo-700 mb-3 flex items-center gap-2">
-                            <CalendarIcon size={16} /> {displayYear}年{month}月 新規イベント追加
+                            <CalendarIcon size={16} /> {toWarekiYear(displayYear, eraName, startYear)} {month}月 新規イベント追加
                           </h4>
                           <EventForm
                             year={displayYear}

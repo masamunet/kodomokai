@@ -3,6 +3,8 @@ import { getTargetFiscalYear } from '@/app/admin/actions/settings'
 import AnnualScheduleEditor from '@/components/admin/AnnualScheduleEditor'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { toWarekiYear } from '@/lib/date-utils'
 
 export default async function AnnualEventsPage({
   searchParams,
@@ -15,7 +17,11 @@ export default async function AnnualEventsPage({
   const settingsYear = await getTargetFiscalYear()
   const year = sp.year ? parseInt(sp.year) : settingsYear
 
+  const supabase = await createClient()
   const events = await getAnnualEvents(year)
+  const { data: settings } = await supabase.from('organization_settings').select('*').single()
+  const eraName = settings?.wareki_era_name || '令和'
+  const startYear = settings?.wareki_start_year || 2019
 
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 bg-white shadow rounded-lg print:shadow-none print:p-0 print:max-w-3xl print:mx-auto">
@@ -30,7 +36,7 @@ export default async function AnnualEventsPage({
           </Link>
           <h1 className="text-2xl font-bold text-foreground">年間活動予定 編集</h1>
           <p className="text-sm text-gray-500">
-            {year}年度のイベントスケジュールを管理します。
+            {toWarekiYear(year, eraName, startYear)}度のイベントスケジュールを管理します。
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -39,7 +45,7 @@ export default async function AnnualEventsPage({
         </div>
       </div>
 
-      <AnnualScheduleEditor year={year} events={events || []} />
+      <AnnualScheduleEditor year={year} events={events || []} eraName={eraName} startYear={startYear} />
     </div>
   )
 }
