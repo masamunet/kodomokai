@@ -73,6 +73,9 @@ function NavLinks() {
       <Link href="/admin/officers" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
         任命
       </Link>
+      <Link href="/admin/accounting" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
+        会計
+      </Link>
       <Link href="/admin/settings" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
         設定
       </Link>

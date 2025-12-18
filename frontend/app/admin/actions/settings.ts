@@ -58,8 +58,16 @@ export async function getTargetFiscalYear() {
   const currentMonth = today.getMonth() + 1 // 0-11 -> 1-12
 
   // Assuming 4 (April) is the start. 
-  // TODO: Fetch this from settings if needed, but for now hardcode 4 or fetch settings.
-  // Ideally we should cache module-level or fetch from DB.
-  // For simplicity: if before April, it's previous year.
   return currentMonth < 4 ? currentYear - 1 : currentYear
+}
+
+export async function getOrganizationSettings() {
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('organization_settings').select('*').single()
+
+  if (error) {
+    console.error('Error fetching organization settings:', error)
+    return null
+  }
+  return data
 }
