@@ -9,9 +9,11 @@ type Props = {
   initialStartMonth: number
   initialWarekiEraName: string
   initialWarekiStartYear: number
+  initialAdmissionFee: number
+  initialAnnualFee: number
 }
 
-export default function SettingsForm({ initialName, initialStartMonth, initialWarekiEraName, initialWarekiStartYear }: Props) {
+export default function SettingsForm({ initialName, initialStartMonth, initialWarekiEraName, initialWarekiStartYear, initialAdmissionFee, initialAnnualFee }: Props) {
   const [message, setMessage] = useState<string | null>(null)
 
   // For preview
@@ -73,6 +75,49 @@ export default function SettingsForm({ initialName, initialStartMonth, initialWa
               <option key={m} value={m}>{m}月</option>
             ))}
           </select>
+        </div>
+      </div>
+
+      <div className="border-t pt-6">
+        <h3 className="text-base font-semibold leading-7 text-gray-900 mb-4">会費設定</h3>
+        <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+          <div className="sm:col-span-3">
+            <label htmlFor="admission_fee" className="block text-sm font-medium leading-6 text-gray-900">
+              入会金
+            </label>
+            <div className="mt-2 relative">
+              <input
+                type="number"
+                name="admission_fee"
+                id="admission_fee"
+                defaultValue={initialAdmissionFee}
+                min="0"
+                className="block w-full rounded-md border-0 py-1.5 p-3 pr-8 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <span className="text-gray-500 sm:text-sm">円</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="sm:col-span-3">
+            <label htmlFor="annual_fee" className="block text-sm font-medium leading-6 text-gray-900">
+              年会費
+            </label>
+            <div className="mt-2 relative">
+              <input
+                type="number"
+                name="annual_fee"
+                id="annual_fee"
+                defaultValue={initialAnnualFee}
+                min="0"
+                className="block w-full rounded-md border-0 py-1.5 p-3 pr-8 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <span className="text-gray-500 sm:text-sm">円</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

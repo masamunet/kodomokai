@@ -11,6 +11,8 @@ export default async function AdminSettingsPage() {
   const startMonth = settings?.fiscal_year_start_month || 4
   const warekiEraName = settings?.wareki_era_name || '令和'
   const warekiStartYear = settings?.wareki_start_year || 2019
+  const admissionFee = settings?.admission_fee || 0
+  const annualFee = settings?.annual_fee || 0
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -20,6 +22,8 @@ export default async function AdminSettingsPage() {
         initialStartMonth={startMonth}
         initialWarekiEraName={warekiEraName}
         initialWarekiStartYear={warekiStartYear}
+        initialAdmissionFee={admissionFee}
+        initialAnnualFee={annualFee}
       />
     </div>
   )
