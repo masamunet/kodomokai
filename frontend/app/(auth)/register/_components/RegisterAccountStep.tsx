@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { RegistrationData } from '../RegistrationWizard'
+import { RegistrationData } from '../onboarding/RegistrationWizard'
 
 const schema = z.object({
   email: z.string().email('正しいメールアドレスを入力してください'),

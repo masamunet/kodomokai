@@ -1,6 +1,6 @@
 'use client'
 
-import { RegistrationData } from '../RegistrationWizard'
+import { RegistrationData } from '../onboarding/RegistrationWizard'
 
 type Props = {
   data: RegistrationData

@@ -1,7 +1,7 @@
-
 import { createClient } from '@/lib/supabase/server'
 import { deleteAssignment } from '../actions/officer'
 import { toWarekiYear } from '@/lib/date-utils'
+import { getTargetFiscalYear } from '../actions/settings'
 
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 
@@ -12,14 +12,16 @@ export const dynamic = 'force-dynamic'
 export default async function AdminOfficersPage() {
   const supabase = await createClient()
 
+  const currentFiscalYear = await getTargetFiscalYear()
+
   const { data: assignments } = await supabase
     .from('officer_role_assignments')
     .select(`
         *,
         role:officer_roles(*),
-        profile:profiles(full_name, email, last_name_kana, first_name_kana)
+        profile:profiles(full_name, email, last_name_kana, first_name_kana, address, phone)
     `)
-    .order('fiscal_year', { ascending: false })
+    .eq('fiscal_year', currentFiscalYear)
     .order('role(display_order)', { ascending: true })
     .order('created_at', { ascending: false })
 
@@ -27,8 +29,7 @@ export default async function AdminOfficersPage() {
   const warekiEraName = settings?.wareki_era_name || '令和'
   const warekiStartYear = settings?.wareki_start_year || 2019
 
-  const currentYear = assignments?.[0]?.fiscal_year || new Date().getFullYear()
-  const titleYear = toWarekiYear(currentYear, warekiEraName, warekiStartYear)
+  const titleYear = toWarekiYear(currentFiscalYear, warekiEraName, warekiStartYear)
 
   return (
     <div className="print:p-8">
@@ -55,48 +56,58 @@ export default async function AdminOfficersPage() {
             </div>
             <div className="ml-3">
               <p className="text-sm text-blue-700">
-                現在の任命数: <span className="font-bold text-lg">{(assignments || []).length}名</span>
+                現在の任命数: <span className="font-bold text-lg">{new Set((assignments || []).map((a: any) => a.profile_id)).size}名</span>
               </p>
             </div>
           </div>
         </div>
-        <PrintButton label="役員一覧をPDFにする" />
+        <div className="flex items-center gap-3">
+          <a
+            href="/admin/officers/next-year"
+            className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          >
+            次年度役員選出
+          </a>
+          <PrintButton label="役員一覧をPDFにする" />
+        </div>
       </div>
 
       <div className="hidden print:block mb-4 text-right pr-4 font-bold">
-        計 {(assignments || []).length} 名
+        計 {new Set((assignments || []).map((a: any) => a.profile_id)).size} 名
       </div>
 
-      <div className="flow-root mt-6 print:mt-0">
+      <div className="flow-root mt-6 print:hidden">
 
-        <div className="overflow-hidden bg-white shadow sm:rounded-md print:shadow-none">
-          <ul role="list" className="divide-y divide-gray-200 print:divide-black border-t border-gray-200 print:border-black print:border-b">
+        <div className="overflow-hidden bg-white shadow sm:rounded-md">
+          <ul role="list" className="divide-y divide-gray-200 border-t border-gray-200">
             {(assignments || []).length === 0 ? (
               <li className="px-4 py-4 sm:px-6 text-gray-500 text-center">任命された役員はいません</li>
             ) : (
               (assignments || []).map((assignment: any) => (
-                <li key={assignment.id} className="px-4 py-4 sm:px-6 print:py-2 print:px-2 print:break-inside-avoid">
+                <li key={assignment.id} className="px-4 py-4 sm:px-6">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                     {/* Role & Year - Fixed width on desktop for alignment */}
                     <div className="flex items-center gap-2 sm:w-48 shrink-0">
-                      <span className="font-bold text-gray-900 text-lg print:text-base">{assignment.role?.name}</span>
+                      <span className="font-bold text-gray-900 text-lg">{assignment.role?.name}</span>
                     </div>
 
                     {/* Name & Meta Info - Flex grow */}
                     <div className="flex-1 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 min-w-0">
-                      <div className="flex items-baseline gap-2 shrink-0">
-                        <p className="text-sm font-medium text-indigo-600 print:text-black print:text-lg whitespace-nowrap">{assignment.profile.full_name}</p>
-                        <p className="text-xs text-gray-400 print:hidden whitespace-nowrap">({assignment.profile.last_name_kana} {assignment.profile.first_name_kana})</p>
+                      <div className="flex flex-col">
+                        <div className="flex items-baseline gap-2 shrink-0">
+                          <p className="text-sm font-medium text-indigo-600">{assignment.profile.full_name}</p>
+                          <p className="text-xs text-gray-400 whitespace-nowrap">({assignment.profile.last_name_kana} {assignment.profile.first_name_kana})</p>
+                        </div>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 print:text-black min-w-0">
-                        <span className="print:hidden truncate">{assignment.profile.email}</span>
-                        <span className="print:hidden whitespace-nowrap text-gray-400">任期: {assignment.start_date} 〜 {assignment.end_date}</span>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 min-w-0">
+                        <span className="truncate">{assignment.profile.email}</span>
+                        <span className="whitespace-nowrap text-gray-400">任期: {assignment.start_date} 〜 {assignment.end_date}</span>
                       </div>
                     </div>
 
                     {/* Actions - Right aligned */}
-                    <form action={deleteAssignment} className="print:hidden sm:ml-auto">
+                    <form action={deleteAssignment} className="sm:ml-auto">
                       <input type="hidden" name="id" value={assignment.id} />
                       <button type="submit" className="text-sm text-red-600 hover:text-red-800 border-red-100 border px-2 py-1 rounded bg-red-50 whitespace-nowrap">解除</button>
                     </form>
@@ -106,6 +117,48 @@ export default async function AdminOfficersPage() {
             )}
           </ul>
         </div>
+      </div>
+
+      {/* Print View Table */}
+      <div className="hidden print:block mt-6">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b-2 border-black">
+              <th className="py-2 text-sm font-bold text-gray-900 w-40">役職</th>
+              <th className="py-2 text-sm font-bold text-gray-900 w-48">氏名</th>
+              <th className="py-2 text-sm font-bold text-gray-900">住所</th>
+              <th className="py-2 text-sm font-bold text-gray-900 w-40">電話番号</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(assignments || []).map((assignment: any, index: number) => {
+              const prevAssignment = (assignments || [])[index - 1]
+              const isSameRole = prevAssignment && prevAssignment.role_id === assignment.role_id
+
+              return (
+                <tr key={assignment.id} className={`${isSameRole ? '' : 'border-t border-black'}`}>
+                  <td className="py-2 text-sm text-gray-900 align-top">
+                    {!isSameRole && assignment.role?.name}
+                  </td>
+                  <td className="py-2 text-sm text-gray-900 align-top">
+                    {assignment.profile.full_name}
+                  </td>
+                  <td className="py-2 text-sm text-gray-900 align-top">
+                    {assignment.profile.address}
+                  </td>
+                  <td className="py-2 text-sm text-gray-900 align-top">
+                    {assignment.profile.phone}
+                  </td>
+                </tr>
+              )
+            })}
+            {(assignments || []).length === 0 && (
+              <tr>
+                <td colSpan={4} className="py-4 text-center text-sm text-gray-500">任命された役員はいません</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div >
   )

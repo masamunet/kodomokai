@@ -114,7 +114,7 @@ export default function RoleScheduleEditor({ roleId, tasks }: Props) {
                       {task.description && <div className="text-muted-foreground text-xs mt-1 whitespace-pre-wrap">{task.description}</div>}
                       <div className="absolute top-1 right-1 opacity-0 group-hover/task:opacity-100 flex items-center bg-background/80 rounded shadow-sm">
                         <button onClick={() => handleEdit(task)} className="p-1 hover:text-primary transition-colors"><Pencil size={12} /></button>
-                        <form action={deleteOfficerTask}>
+                        <form action={async (formData) => { await deleteOfficerTask(formData) }}>
                           <input type="hidden" name="id" value={task.id} />
                           <input type="hidden" name="role_id" value={roleId} />
                           <button type="submit" className="p-1 hover:text-destructive transition-colors"><Trash2 size={12} /></button>
@@ -252,7 +252,7 @@ function TaskCard({ task, onEdit, roleId }: { task: Task, onEdit: (t: Task) => v
         >
           <Pencil size={16} />
         </button>
-        <form action={deleteOfficerTask}>
+        <form action={async (formData) => { await deleteOfficerTask(formData) }}>
           <input type="hidden" name="id" value={task.id} />
           <input type="hidden" name="role_id" value={roleId} />
           <button

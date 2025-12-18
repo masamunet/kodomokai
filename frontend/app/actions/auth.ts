@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { RegistrationData } from '../(auth)/register/RegistrationWizard'
+import { RegistrationData } from '../(auth)/register/onboarding/RegistrationWizard'
 
 export async function sendMagicLink(email: string) {
   const supabase = await createClient()

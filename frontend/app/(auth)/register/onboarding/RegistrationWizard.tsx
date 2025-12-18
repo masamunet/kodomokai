@@ -45,29 +45,8 @@ export default function RegistrationWizard() {
   const [formData, setFormData] = useState<RegistrationData>(initialData)
   const totalSteps = 5
 
-<<<<<<< HEAD:frontend/app/(auth)/register/RegistrationWizard.tsx
+  /* Resolved updateFormData */
   const updateFormData = <K extends keyof RegistrationData>(section: K, data: RegistrationData[K]) => {
-=======
-  useEffect(() => {
-    const fetchUser = async () => {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user?.email) {
-        setFormData(prev => ({
-          ...prev,
-          account: { ...prev.account, email: user.email }
-        }))
-      }
-    }
-    fetchUser()
-  }, [])
-
-<<<<<<< HEAD
-  const updateFormData = (section: keyof RegistrationData, data: any) => {
->>>>>>> origin/master:frontend/app/(auth)/register/onboarding/RegistrationWizard.tsx
-=======
-  const updateFormData = <K extends keyof RegistrationData>(section: K, data: RegistrationData[K]) => {
->>>>>>> origin/master
     setFormData(prev => ({
       ...prev,
       [section]: Array.isArray(prev[section])
@@ -95,14 +74,8 @@ export default function RegistrationWizard() {
             style={{ width: `${(step / totalSteps) * 100}%` }}
           />
         </div>
-<<<<<<< HEAD
-<<<<<<< HEAD:frontend/app/(auth)/register/RegistrationWizard.tsx
-        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-          {['アカウント', '保護者', 'お子様', '確認', '完了'].map((label, index) => {
-=======
         <div className="flex justify-between mt-2 text-xs text-muted-foreground">
           {['パスワード', '保護者', 'お子様', '確認', '完了'].map((label, index) => {
->>>>>>> origin/master
             const isActive = step >= index + 1
             return (
               <span
@@ -113,17 +86,6 @@ export default function RegistrationWizard() {
               </span>
             )
           })}
-<<<<<<< HEAD
-=======
-        <div className="flex justify-between mt-2 text-xs text-gray-500">
-          <span className={step >= 1 ? 'text-indigo-600 font-medium' : ''}>パスワード</span>
-          <span className={step >= 2 ? 'text-indigo-600 font-medium' : ''}>保護者</span>
-          <span className={step >= 3 ? 'text-indigo-600 font-medium' : ''}>お子様</span>
-          <span className={step >= 4 ? 'text-indigo-600 font-medium' : ''}>確認</span>
-          <span className={step >= 5 ? 'text-indigo-600 font-medium' : ''}>完了</span>
->>>>>>> origin/master:frontend/app/(auth)/register/onboarding/RegistrationWizard.tsx
-=======
->>>>>>> origin/master
         </div>
       </div>
 

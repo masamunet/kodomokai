@@ -160,3 +160,40 @@ export async function deleteOfficerTask(formData: FormData) {
 
   return { success: true, message: 'タスクを削除しました' }
 }
+
+export async function assignNextYearOfficer(formData: FormData) {
+  const supabase = await createClient()
+
+  const profile_id = formData.get('profile_id') as string
+  const role_id = formData.get('role_id') as string
+  const fiscal_year = parseInt(formData.get('fiscal_year') as string)
+  const start_date = formData.get('start_date') as string
+  const end_date = formData.get('end_date') as string
+
+  const { error } = await supabase
+    .from('officer_role_assignments')
+    .insert({
+      profile_id,
+      role_id,
+      fiscal_year,
+      start_date: start_date || null,
+      end_date: end_date || null,
+    })
+
+  if (error) {
+    console.error('Assign officer error:', error)
+    return { success: false, message: '任命に失敗しました: ' + error.message }
+  }
+
+  revalidatePath('/admin/officers/next-year')
+  redirect('/admin/officers/next-year')
+}
+
+export async function deleteNextYearAssignment(formData: FormData) {
+  const supabase = await createClient()
+  const id = formData.get('id') as string
+
+  await supabase.from('officer_role_assignments').delete().eq('id', id)
+
+  revalidatePath('/admin/officers/next-year')
+}

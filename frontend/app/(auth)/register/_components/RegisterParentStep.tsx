@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { RegistrationData } from '../RegistrationWizard'
+import { RegistrationData } from '../onboarding/RegistrationWizard'
 import { useEffect } from 'react'
 
 const schema = z.object({

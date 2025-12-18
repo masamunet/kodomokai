@@ -4,7 +4,7 @@ import { useState } from 'react' // Import useState
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { RegistrationData } from '../RegistrationWizard'
+import { RegistrationData } from '../onboarding/RegistrationWizard'
 import { Trash2, Plus } from 'lucide-react'
 
 // Schema for a single child
