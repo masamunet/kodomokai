@@ -4,6 +4,8 @@ import { deleteAssignment } from '../actions/officer'
 
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminOfficersPage() {
   const supabase = await createClient()
 
@@ -14,28 +16,9 @@ export default async function AdminOfficersPage() {
         role:officer_roles(*),
         profile:profiles(full_name, email, last_name_kana, first_name_kana)
     `)
-  // .order('fiscal_year', { ascending: false })
-  // .order('display_order', { foreignTable: 'role', ascending: true }) // DB sort attempt
-  // .order('created_at', { ascending: false })
-
-  const { data: rolesDebug } = await supabase.from('officer_roles').select('*')
-  console.log('DEBUG: Officer Roles:', JSON.stringify(rolesDebug, null, 2))
-
-
-  const sortedAssignments = assignments?.sort((a, b) => {
-    // 1. Fiscal Year (desc)
-    if (a.fiscal_year !== b.fiscal_year) {
-      return b.fiscal_year - a.fiscal_year
-    }
-    // 2. Role Display Order (asc)
-    const orderA = a.role?.display_order ?? 999
-    const orderB = b.role?.display_order ?? 999
-    if (orderA !== orderB) {
-      return orderA - orderB
-    }
-    // 3. Created At (desc)
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  })
+    .order('fiscal_year', { ascending: false })
+    .order('display_order', { foreignTable: 'role', ascending: true })
+    .order('created_at', { ascending: false })
 
   return (
     <div>
@@ -45,14 +28,31 @@ export default async function AdminOfficersPage() {
         action={{ label: '役員を任命する', href: '/admin/officers/new' }}
       />
 
-      <div className="flow-root">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4">
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-blue-700">
+                現在の任命数: <span className="font-bold text-lg">{assignments?.length || 0}名</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flow-root mt-6">
 
         <div className="overflow-hidden bg-white shadow sm:rounded-md">
           <ul role="list" className="divide-y divide-gray-200">
-            {sortedAssignments?.length === 0 ? (
+            {assignments?.length === 0 ? (
               <li className="px-4 py-4 sm:px-6 text-gray-500 text-center">任命された役員はいません</li>
             ) : (
-              sortedAssignments?.map((assignment: any) => (
+              assignments?.map((assignment: any) => (
                 <li key={assignment.id} className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">
                     <div>

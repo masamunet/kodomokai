@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import SetPasswordStep from './_components/SetPasswordStep'
 import RegisterParentStep from '../_components/RegisterParentStep'
@@ -43,6 +43,7 @@ const initialData: RegistrationData = {
 export default function RegistrationWizard() {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<RegistrationData>(initialData)
+  const totalSteps = 5
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -51,21 +52,22 @@ export default function RegistrationWizard() {
       if (user?.email) {
         setFormData(prev => ({
           ...prev,
-          account: { ...prev.account, email: user.email! }
+          account: { ...prev.account, email: user.email }
         }))
       }
     }
     fetchUser()
   }, [])
 
-  const updateFormData = (section: keyof RegistrationData, data: any) => {
+  const updateFormData = <K extends keyof RegistrationData>(section: K, data: RegistrationData[K]) => {
     setFormData(prev => ({
       ...prev,
-      [section]: { ...prev[section], ...data }
+      [section]: Array.isArray(prev[section])
+        ? data
+        : { ...(prev[section] as object), ...(data as object) } as RegistrationData[K]
     }))
   }
 
-  // Handle nested update for account which renders differently in SetPasswordStep
   const updatePassword = (data: { password: string }) => {
     setFormData(prev => ({
       ...prev,
@@ -79,18 +81,24 @@ export default function RegistrationWizard() {
   return (
     <div className="overflow-hidden">
       <div className="mb-8">
-        <div className="h-2 bg-gray-200 rounded-full">
+        <div className="h-2 bg-muted rounded-full border border-border">
           <div
-            className="h-2 bg-indigo-600 rounded-full transition-all duration-300"
-            style={{ width: `${(step / 5) * 100}%` }}
+            className="h-2 bg-primary rounded-full transition-all duration-300"
+            style={{ width: `${(step / totalSteps) * 100}%` }}
           />
         </div>
-        <div className="flex justify-between mt-2 text-xs text-gray-500">
-          <span className={step >= 1 ? 'text-indigo-600 font-medium' : ''}>パスワード</span>
-          <span className={step >= 2 ? 'text-indigo-600 font-medium' : ''}>保護者</span>
-          <span className={step >= 3 ? 'text-indigo-600 font-medium' : ''}>お子様</span>
-          <span className={step >= 4 ? 'text-indigo-600 font-medium' : ''}>確認</span>
-          <span className={step >= 5 ? 'text-indigo-600 font-medium' : ''}>完了</span>
+        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+          {['パスワード', '保護者', 'お子様', '確認', '完了'].map((label, index) => {
+            const isActive = step >= index + 1
+            return (
+              <span
+                key={label}
+                className={`${isActive ? 'text-primary font-semibold' : ''} transition-colors`}
+              >
+                {label}
+              </span>
+            )
+          })}
         </div>
       </div>
 
