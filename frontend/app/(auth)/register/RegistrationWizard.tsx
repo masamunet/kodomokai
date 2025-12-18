@@ -42,8 +42,9 @@ const initialData: RegistrationData = {
 export default function RegistrationWizard() {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<RegistrationData>(initialData)
+  const totalSteps = 5
 
-  const updateFormData = (section: keyof RegistrationData, data: any) => {
+  const updateFormData = <K extends keyof RegistrationData>(section: K, data: RegistrationData[K]) => {
     setFormData(prev => ({
       ...prev,
       [section]: data
@@ -56,18 +57,24 @@ export default function RegistrationWizard() {
   return (
     <div className="overflow-hidden">
       <div className="mb-8">
-        <div className="h-2 bg-gray-200 rounded-full">
+        <div className="h-2 bg-muted rounded-full border border-border">
           <div
-            className="h-2 bg-indigo-600 rounded-full transition-all duration-300"
-            style={{ width: `${(step / 5) * 100}%` }}
+            className="h-2 bg-primary rounded-full transition-all duration-300"
+            style={{ width: `${(step / totalSteps) * 100}%` }}
           />
         </div>
-        <div className="flex justify-between mt-2 text-xs text-gray-500">
-          <span className={step >= 1 ? 'text-indigo-600 font-medium' : ''}>アカウント</span>
-          <span className={step >= 2 ? 'text-indigo-600 font-medium' : ''}>保護者</span>
-          <span className={step >= 3 ? 'text-indigo-600 font-medium' : ''}>お子様</span>
-          <span className={step >= 4 ? 'text-indigo-600 font-medium' : ''}>確認</span>
-          <span className={step >= 5 ? 'text-indigo-600 font-medium' : ''}>完了</span>
+        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+          {['アカウント', '保護者', 'お子様', '確認', '完了'].map((label, index) => {
+            const isActive = step >= index + 1
+            return (
+              <span
+                key={label}
+                className={`${isActive ? 'text-primary font-semibold' : ''} transition-colors`}
+              >
+                {label}
+              </span>
+            )
+          })}
         </div>
       </div>
 
