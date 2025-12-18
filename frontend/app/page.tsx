@@ -58,8 +58,8 @@ export default async function DashboardPage() {
   const { data: events } = await supabase
     .from('events')
     .select('*')
-    .gte('start_time', new Date().toISOString())
-    .order('start_time', { ascending: true })
+    .gte('scheduled_date', new Date().toISOString().split('T')[0])
+    .order('scheduled_date', { ascending: true })
     .limit(5)
 
   // Get officer roles FOR THE TARGET FISCAL YEAR
@@ -210,7 +210,7 @@ export default async function DashboardPage() {
                           <div className="flex flex-col">
                             <p className="text-sm font-medium text-indigo-600 truncate">{event.title}</p>
                             <p className="mt-1 text-sm text-gray-500">
-                              {new Date(event.start_time).toLocaleDateString()} {new Date(event.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {new Date(event.scheduled_date).toLocaleDateString()} {event.start_time ? event.start_time.slice(0, 5) : ''}
                               {event.location && ` @ ${event.location}`}
                             </p>
                           </div>

@@ -11,6 +11,7 @@ import { toWarekiYear } from '@/lib/date-utils'
 // Extended Event type to include is_tentative and is_canceled
 type Event = {
   id: string
+  public_status: 'draft' | 'date_undecided' | 'details_undecided' | 'finalized'
   title: string
   description: string | null
   scheduled_date: string // Date string YYYY-MM-DD
@@ -248,11 +249,11 @@ function EventRow({
   const dayName = ['日', '月', '火', '水', '木', '金', '土'][eventDate.getDay()]
 
   const isCanceled = event.is_canceled
-  const isTentative = event.is_tentative
+  const publicStatus = event.public_status || (event.is_tentative ? 'date_undecided' : 'finalized')
 
   const rowClass = isCanceled
     ? 'bg-gray-100 text-gray-500 print:bg-gray-200'
-    : (isTentative ? 'bg-white' : 'bg-white')
+    : (publicStatus === 'draft' ? 'bg-gray-100 border-l-4 border-gray-400' : 'bg-white')
   const textDecoration = isCanceled ? 'line-through' : ''
 
   const googleCalUrl = getGoogleCalendarUrl(event)
@@ -275,9 +276,9 @@ function EventRow({
         </td>
       )}
       <td className="px-3 py-3 text-sm text-gray-900 border-r border-gray-100 print:border-black align-top whitespace-nowrap print:py-1 print:text-xs">
-        {isTentative ? (
+        {publicStatus === 'date_undecided' ? (
           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-300 print:border-0 print:p-0">
-            日付未定
+            日時未定
           </span>
         ) : (
           <div className={isCanceled ? 'opacity-50' : ''}>
@@ -299,15 +300,25 @@ function EventRow({
       </td>
       <td className="px-3 py-3 text-sm text-gray-900 border-r border-gray-100 print:border-black align-top print:py-1 print:text-xs">
         <div className="flex items-center gap-2 flex-wrap">
+          {publicStatus === 'draft' && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-gray-500 text-white print:hidden">
+              下書き (非公開)
+            </span>
+          )}
           {isCanceled && (
             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800 border border-red-200 print:bg-transparent print:text-gray-500 print:border-black print:text-[10px] print:p-0 print:px-1">
               中止
             </span>
           )}
+          {!isCanceled && publicStatus === 'details_undecided' && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-200 print:border-black print:text-[10px] print:p-0 print:px-1">
+              詳細未定
+            </span>
+          )}
           <span className={`font-bold ${textDecoration} ${isCanceled ? 'text-gray-400' : 'text-gray-900'}`}>
             {event.title}
           </span>
-          {isTentative && !isCanceled && (
+          {publicStatus === 'date_undecided' && !isCanceled && (
             <span className="text-xs text-gray-400 border border-gray-200 rounded px-1 print:border-0 print:text-gray-500">(予定)</span>
           )}
         </div>
@@ -461,16 +472,26 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
             defaultValue={initialTime}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
-          <label className="flex items-center gap-2 text-sm text-gray-700 mt-2">
-            <input
-              type="checkbox"
-              name="is_tentative"
-              value="true"
-              defaultChecked={event?.is_tentative}
-              className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            <span className="text-xs">日付は未定（仮・月のみ決定）</span>
-          </label>
+          <label className="block text-xs font-bold text-gray-700 mb-1">公開ステータス</label>
+          <div className="flex flex-col gap-2">
+            {[
+              { value: 'draft', label: '告知前（下書き/役員のみ）' },
+              { value: 'date_undecided', label: '告知・日時未定' },
+              { value: 'details_undecided', label: '告知・日時決定・詳細未定' },
+              { value: 'finalized', label: '告知・詳細決定' },
+            ].map(status => (
+              <label key={status.value} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                <input
+                  type="radio"
+                  name="public_status"
+                  value={status.value}
+                  defaultChecked={event?.public_status ? event.public_status === status.value : (status.value === 'finalized')}
+                  className="text-indigo-600 focus:ring-indigo-500"
+                />
+                {status.label}
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="sm:col-span-12">

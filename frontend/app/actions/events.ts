@@ -36,16 +36,14 @@ export async function upsertEvent(formData: FormData) {
   const scheduled_date = formData.get('scheduled_date') as string
   const scheduled_end_date = formData.get('scheduled_end_date') as string | null
   let start_time = formData.get('start_time') as string | null
-  const is_tentative = formData.get('is_tentative') === 'true'
+  const public_status = formData.get('public_status') as string || 'finalized'
   const is_canceled = formData.get('is_canceled') === 'true'
   const organizer = formData.get('organizer') as string
 
-  // If start_time is empty string or "09:00" hidden default when we want "undefined", 
-  // we need to handle it. 
-  // But wait, the previous code had hidden input "09:00".
-  // Now we want optional.
-  // We will remove the hidden input in Frontend.
-  // So if start_time is empty, treat as null.
+  // Logic for is_tentative based on public_status
+  // is_tentative is mainly for "Date Undecided"
+  const is_tentative = public_status === 'date_undecided'
+
   if (!start_time) {
     start_time = null
   } else if (start_time.length === 5) {
@@ -60,6 +58,7 @@ export async function upsertEvent(formData: FormData) {
     scheduled_date,
     scheduled_end_date: scheduled_end_date || null,
     start_time: start_time || null,
+    public_status,
     is_tentative,
     is_canceled,
     organizer: organizer || '単位子ども会',
