@@ -36,8 +36,8 @@ export default async function AccountingListPage() {
                     {report.fiscal_year}年度
                   </span>
                   <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent ${report.report_type === 'settlement'
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                      : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
+                      ? 'bg-primary/10 text-primary'
+                      : 'bg-muted text-muted-foreground'
                     }`}>
                     {report.report_type === 'settlement' ? '決算報告' : '予算案'}
                   </span>

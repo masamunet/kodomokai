@@ -20,8 +20,8 @@ export default async function EditAccountingPage({ params }: Props) {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#cdd6f4]">会計報告の編集</h1>
-        <p className="text-[#a6adc8] text-sm">{report.title} の内容を編集します</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">会計報告の編集</h1>
+        <p className="text-muted-foreground text-sm">{report.title} の内容を編集します</p>
       </div>
 
       <AccountingEditor initialData={report} currentYear={currentYear} />
