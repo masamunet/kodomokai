@@ -121,13 +121,13 @@ export default async function AdminOfficersPage() {
 
       {/* Print View Table */}
       <div className="hidden print:block mt-6">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-left border-collapse border border-black">
           <thead>
-            <tr className="border-b-2 border-black">
-              <th className="py-2 text-sm font-bold text-gray-900 w-40">役職</th>
-              <th className="py-2 text-sm font-bold text-gray-900 w-48">氏名</th>
-              <th className="py-2 text-sm font-bold text-gray-900">住所</th>
-              <th className="py-2 text-sm font-bold text-gray-900 w-40">電話番号</th>
+            <tr className="border-b-2 border-black bg-gray-50">
+              <th className="px-4 py-2 text-sm font-bold text-gray-900 w-40 border-r border-black">役職</th>
+              <th className="px-4 py-2 text-sm font-bold text-gray-900 w-48 border-r border-black">氏名</th>
+              <th className="px-4 py-2 text-sm font-bold text-gray-900 border-r border-black">住所</th>
+              <th className="px-4 py-2 text-sm font-bold text-gray-900 w-40">電話番号</th>
             </tr>
           </thead>
           <tbody>
@@ -137,16 +137,16 @@ export default async function AdminOfficersPage() {
 
               return (
                 <tr key={assignment.id} className={`${isSameRole ? '' : 'border-t border-black'}`}>
-                  <td className="py-2 text-sm text-gray-900 align-top">
+                  <td className="px-4 py-2 text-sm text-gray-900 align-top border-r border-black">
                     {!isSameRole && assignment.role?.name}
                   </td>
-                  <td className="py-2 text-sm text-gray-900 align-top">
+                  <td className="px-4 py-2 text-sm text-gray-900 align-top border-r border-black">
                     {assignment.profile.full_name}
                   </td>
-                  <td className="py-2 text-sm text-gray-900 align-top">
+                  <td className="px-4 py-2 text-sm text-gray-900 align-top border-r border-black">
                     {assignment.profile.address}
                   </td>
-                  <td className="py-2 text-sm text-gray-900 align-top">
+                  <td className="px-4 py-2 text-sm text-gray-900 align-top">
                     {assignment.profile.phone}
                   </td>
                 </tr>
@@ -154,7 +154,7 @@ export default async function AdminOfficersPage() {
             })}
             {(assignments || []).length === 0 && (
               <tr>
-                <td colSpan={4} className="py-4 text-center text-sm text-gray-500">任命された役員はいません</td>
+                <td colSpan={4} className="px-4 py-4 text-center text-sm text-gray-500">任命された役員はいません</td>
               </tr>
             )}
           </tbody>

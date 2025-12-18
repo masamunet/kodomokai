@@ -11,14 +11,13 @@ export default async function AdminUserEditPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+  params: { id: string }
+  searchParams?: { [key: string]: string | string[] | undefined }
 }) {
-  const { id } = await params
-  const resolvedSearchParams = await searchParams
+  const { id } = params
   const supabase = await createClient()
 
-  const requestedView = resolvedSearchParams?.view as string | undefined
+  const requestedView = searchParams?.view as string | undefined
   const backView: MemberView =
     requestedView === 'guardian' || requestedView === 'officer' ? requestedView : 'child'
 
