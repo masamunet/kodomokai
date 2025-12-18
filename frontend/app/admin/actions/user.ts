@@ -181,7 +181,11 @@ export async function adminDeleteChild(formData: FormData) {
 
   if (!childId) return { success: false, message: 'IDが指定されていません' }
 
-  const { error } = await supabase.from('children').delete().eq('id', childId)
+  // Use soft delete
+  const { error } = await supabase
+    .from('children')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', childId)
 
   if (error) {
     console.error('Delete child error:', error)
@@ -190,4 +194,71 @@ export async function adminDeleteChild(formData: FormData) {
 
   revalidatePath(`/admin/users/${parentId}`)
   return { success: true, message: '削除しました' }
+}
+
+export async function adminDeleteProfile(formData: FormData) {
+  // Check auth
+  const supabaseAuth = await createAuthClient()
+  const { data: { user } } = await supabaseAuth.auth.getUser()
+  if (!user) return { success: false, message: '認証されていません' }
+
+  const supabase = getAdminClient()
+  const profileId = formData.get('id') as string
+
+  if (!profileId) {
+    return { success: false, message: 'IDが指定されていません' }
+  }
+
+  // 1. Check if the user is currently or in future an officer
+  const currentYear = new Date().getFullYear() // Or use getTargetFiscalYear logic if preferred
+  const { data: assignments, error: assignmentsError } = await supabase
+    .from('officer_role_assignments')
+    .select('id, fiscal_year')
+    .eq('profile_id', profileId)
+    .gte('fiscal_year', currentYear) // Only block if they are assigned for current or future years
+    .limit(1)
+
+  if (assignmentsError) {
+    console.error('Check assignments error:', assignmentsError)
+    return { success: false, message: '役員情報の確認に失敗しました' }
+  }
+
+  if (assignments && assignments.length > 0) {
+    return { success: false, message: `現在または将来（${assignments[0].fiscal_year}年度など）の役員として登録されているため削除できません。先に役員情報を削除してください。` }
+  }
+
+  // 2. Check if the user has non-deleted children
+  // (Note: deleted_at IS NULL means the child is NOT soft-deleted)
+  const { data: children, error: childrenError } = await supabase
+    .from('children')
+    .select('id')
+    .eq('parent_id', profileId)
+    .is('deleted_at', null)
+    .limit(1)
+
+  if (childrenError) {
+    console.error('Check children error:', childrenError)
+    return { success: false, message: 'お子様情報の確認に失敗しました' }
+  }
+
+  if (children && children.length > 0) {
+    return { success: false, message: 'まだ論理削除されていないお子様が登録されています。先にお子様を全て削除してください。' }
+  }
+
+  // 3. Perform soft delete
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      deleted_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', profileId)
+
+  if (error) {
+    console.error('Delete profile error:', error)
+    return { success: false, message: '会員の削除に失敗しました: ' + error.message }
+  }
+
+  revalidatePath('/admin/members')
+  return { success: true, message: '会員を削除しました' }
 }

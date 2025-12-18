@@ -71,6 +71,7 @@ export default async function AdminMembersPage({
           *,
           children (*)
       `)
+      .is('deleted_at', null)
       .order('joined_at', { ascending: false })
     profiles = data || []
   }
@@ -81,11 +82,10 @@ export default async function AdminMembersPage({
       .select(`
           *,
           role:officer_roles(*),
-          profile:profiles(full_name, email, last_name_kana, first_name_kana, address, phone)
+          profile:profiles!inner(full_name, email, last_name_kana, first_name_kana, address, phone, deleted_at)
       `)
       .eq('fiscal_year', currentFiscalYear)
-    // Sorting by foreign table column is tricky in Supabase JS client depending on version.
-    // We sort in application memory for reliability since list size is small.
+      .is('profile.deleted_at', null)
 
     if (data) {
       assignments = data.sort((a, b) => {

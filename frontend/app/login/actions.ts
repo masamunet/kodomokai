@@ -12,13 +12,28 @@ export async function login(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: { user }, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
     redirect('/error')
+  }
+
+  // Check if profile is soft-deleted
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('deleted_at')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.deleted_at) {
+      // If deleted, sign out immediately
+      await supabase.auth.signOut()
+      redirect('/login?error=account_deleted')
+    }
   }
 
   revalidatePath('/', 'layout')
