@@ -4,6 +4,7 @@ import AdminFormLayout from '@/components/admin/AdminFormLayout'
 import AdminUserForm from '@/components/admin/users/AdminUserForm'
 import AdminChildList from '@/components/admin/users/AdminChildList'
 import Link from 'next/link'
+import { getTargetFiscalYear } from '@/app/admin/actions/settings'
 
 type MemberView = 'child' | 'guardian' | 'officer'
 
@@ -38,6 +39,8 @@ export default async function AdminUserEditPage({
     .eq('parent_id', id)
     .order('birthday', { ascending: false })
 
+  const targetFiscalYear = await getTargetFiscalYear()
+
   return (
     <AdminFormLayout
       title="会員情報の編集"
@@ -70,7 +73,11 @@ export default async function AdminUserEditPage({
             </Link>
           </div>
           <div className="px-4 py-5 sm:p-6">
-            <AdminChildList childrenData={children || []} parentId={id} />
+            <AdminChildList
+              childrenData={children || []}
+              parentId={id}
+              targetFiscalYear={targetFiscalYear}
+            />
           </div>
         </div>
       </div>

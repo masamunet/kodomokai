@@ -1,12 +1,15 @@
 'use server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
+import { calculateGrade } from '@/lib/grade-utils'
+import { getTargetFiscalYear } from '@/lib/fiscal-year'
 
 type ImportResult = {
   success: boolean
   createdCount: number
   failedCount: number
   logs: string[]
+  gradeSummary?: Record<string, number>
 }
 
 const toHiragana = (str: string) => {
@@ -143,8 +146,10 @@ export async function importChildren(csvContent: string): Promise<ImportResult> 
   const logs: string[] = []
   const lines = csvContent.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'))
   const createdChildIds: string[] = []
+  const gradeSummary: Record<string, number> = {}
+  const targetFiscalYear = await getTargetFiscalYear()
 
-  console.log(`[importChildren] Starting import for ${lines.length} lines`)
+  console.log(`[importChildren] Starting import for ${lines.length} lines. FiscalYear: ${targetFiscalYear}`)
   try {
     for (const [index, line] of lines.entries()) {
       const parts = parseLine(line)
@@ -195,6 +200,13 @@ export async function importChildren(csvContent: string): Promise<ImportResult> 
 
       if (childData) {
         createdChildIds.push(childData.id)
+        // 3. Count grade
+        if (finalBirthday) {
+          const grade = calculateGrade(finalBirthday, targetFiscalYear)
+          gradeSummary[grade] = (gradeSummary[grade] || 0) + 1
+        } else {
+          gradeSummary['不明'] = (gradeSummary['不明'] || 0) + 1
+        }
       }
       logs.push(`[SUCCESS] Registered: ${lastName} ${firstName} (Parent: ${parentEmail})`)
     }
@@ -204,7 +216,8 @@ export async function importChildren(csvContent: string): Promise<ImportResult> 
       success: true,
       createdCount: createdChildIds.length,
       failedCount: 0,
-      logs
+      logs,
+      gradeSummary
     }
 
   } catch (err: any) {

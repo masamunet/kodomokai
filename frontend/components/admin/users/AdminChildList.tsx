@@ -3,13 +3,15 @@
 import { adminDeleteChild } from '@/app/admin/actions/user'
 import Link from 'next/link'
 import { useState } from 'react'
+import { calculateGrade, getGradeOrder } from '@/lib/grade-utils'
 
 type Props = {
   childrenData: any[]
   parentId: string
+  targetFiscalYear: number
 }
 
-export default function AdminChildList({ childrenData, parentId }: Props) {
+export default function AdminChildList({ childrenData, parentId, targetFiscalYear }: Props) {
 
   // Internal delete button component to handle state per child
   const DeleteButton = ({ childId }: { childId: string }) => {
@@ -40,33 +42,60 @@ export default function AdminChildList({ childrenData, parentId }: Props) {
   }
 
   return (
-    <ul role="list" className="divide-y divide-gray-200 bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
-      {childrenData.map((child) => (
-        <li key={child.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50 transition-colors">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <p className="font-medium text-gray-900">{child.full_name}</p>
-                <Link
-                  href={`/admin/users/${parentId}/children/${child.id}`}
-                  className="text-indigo-600 hover:text-indigo-900 text-sm bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100"
-                >
-                  編集
-                </Link>
-              </div>
-              <div className="mt-1 text-sm text-gray-500">
-                {child.gender === 'male' ? '男' : child.gender === 'female' ? '女' : '他'}
-                {' / '}
-                {child.birthday ? new Date(child.birthday).toLocaleDateString() : '誕生日未登録'}
-              </div>
-              {child.allergies && (
-                <p className="text-xs text-red-500 mt-1">アレルギー: {child.allergies}</p>
-              )}
-            </div>
-            <DeleteButton childId={child.id} />
-          </div>
-        </li>
-      ))}
-    </ul>
+    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+      <table className="min-w-full divide-y divide-gray-200 text-sm">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-4 py-3 text-left font-semibold text-gray-900">学年</th>
+            <th className="px-4 py-3 text-left font-semibold text-gray-900">氏名</th>
+            <th className="px-4 py-3 text-left font-semibold text-gray-900">生年月日 / 性別</th>
+            <th className="px-4 py-3 text-left font-semibold text-gray-900">アレルギー / 備考</th>
+            <th className="px-4 py-3 text-right font-semibold text-gray-900">操作</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200 bg-white">
+          {childrenData.map((child) => {
+            const grade = calculateGrade(child.birthday, targetFiscalYear)
+            const isEven = getGradeOrder(grade) % 2 === 0
+
+            return (
+              <tr key={child.id} className={`hover:bg-gray-50/80 transition-colors ${isEven ? 'bg-white' : 'bg-indigo-50/30'}`}>
+                <td className="px-4 py-4 whitespace-nowrap font-medium text-gray-900">{grade}</td>
+                <td className="px-4 py-4 whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-gray-900">{child.full_name}</span>
+                    <span className="text-xs text-gray-500">({child.last_name_kana} {child.first_name_kana})</span>
+                  </div>
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-gray-500">
+                  {child.birthday ? new Date(child.birthday).toLocaleDateString() : '-'}
+                  {' / '}
+                  {child.gender === 'male' ? '男' : child.gender === 'female' ? '女' : '他'}
+                </td>
+                <td className="px-4 py-4 text-gray-500">
+                  {child.allergies && (
+                    <p className="text-red-500 font-medium mb-1 line-clamp-1" title={child.allergies}>⚠ {child.allergies}</p>
+                  )}
+                  {child.notes && (
+                    <p className="text-xs line-clamp-1" title={child.notes}>{child.notes}</p>
+                  )}
+                </td>
+                <td className="px-4 py-4 text-right">
+                  <div className="flex justify-end items-center gap-3">
+                    <Link
+                      href={`/admin/users/${parentId}/children/${child.id}`}
+                      className="text-sm text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-2 py-1 rounded border border-indigo-100"
+                    >
+                      編集
+                    </Link>
+                    <DeleteButton childId={child.id} />
+                  </div>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
   )
 }

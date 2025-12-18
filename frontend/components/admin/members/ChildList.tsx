@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { calculateGrade, calculateAge, getGradeOrder } from '@/lib/grade-utils';
 import CopyToClipboard from '@/components/ui/CopyToClipboard';
 import Link from 'next/link';
+import { Baby } from 'lucide-react';
 
 interface ChildListProps {
   profiles: any[]; // Ideally typed properly
@@ -79,16 +80,36 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
             <span className="block text-2xl font-bold text-foreground">{stats.elementaryCount}名</span>
           </div>
         </div>
-        <div className="mt-4">
-          <h4 className="text-sm font-medium text-foreground mb-2">学年別内訳</h4>
-          <div className="flex flex-wrap gap-2">
-            {Object.keys(stats.gradeCounts)
-              .sort((a, b) => getGradeOrder(a) - getGradeOrder(b))
-              .map(grade => (
-                <span key={grade} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground border border-border">
-                  {grade}: {stats.gradeCounts[grade]}名
-                </span>
-              ))}
+        <div className="mt-6">
+          <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+            <Baby className="h-4 w-4 text-primary" />
+            学年別内訳
+          </h4>
+          <div className="max-w-md bg-background rounded-md border border-border overflow-hidden">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="bg-muted text-foreground border-b border-border">
+                  <th className="text-left py-2 px-4 font-bold">学年</th>
+                  <th className="text-right py-2 px-4 font-bold">人数</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {Object.keys(stats.gradeCounts)
+                  .sort((a, b) => getGradeOrder(a) - getGradeOrder(b))
+                  .map((grade, index) => (
+                    <tr key={grade} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                      <td className="py-2 px-4 text-foreground">{grade}</td>
+                      <td className="py-2 px-4 text-right font-medium text-primary">{stats.gradeCounts[grade]}名</td>
+                    </tr>
+                  ))}
+              </tbody>
+              <tfoot>
+                <tr className="bg-muted/50 font-bold border-t border-border">
+                  <td className="py-2 px-4 text-foreground">合計</td>
+                  <td className="py-2 px-4 text-right text-foreground">{stats.total}名</td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
         </div>
       </div>
@@ -114,7 +135,7 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
           </thead>
           <tbody className="divide-y divide-border bg-background">
             {allChildren.map((child) => (
-              <tr key={child.id} className="hover:bg-muted/50">
+              <tr key={child.id} className={`hover:bg-muted/50 ${getGradeOrder(child.grade) % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
                   {child.grade}
                 </td>

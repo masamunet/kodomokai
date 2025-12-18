@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { importUsers, importChildren } from '@/app/actions/admin'
 import { Loader2, AlertCircle, CheckCircle, Users, Baby } from 'lucide-react'
+import { getGradeOrder } from '@/lib/grade-utils'
 
 type ImportMode = 'user' | 'child'
 
@@ -15,6 +16,7 @@ export default function BulkImportPage() {
     createdCount: number
     failedCount: number
     logs: string[]
+    gradeSummary?: Record<string, number>
   } | null>(null)
 
   const handleImport = async () => {
@@ -145,6 +147,41 @@ export default function BulkImportPage() {
               </span>
             </div>
           </div>
+
+          {result.gradeSummary && Object.keys(result.gradeSummary).length > 0 && (
+            <div className="bg-indigo-50 p-6 rounded-lg border border-indigo-100 space-y-3">
+              <h4 className="font-bold text-indigo-900 flex items-center gap-2">
+                <Baby size={18} />
+                登録お子様の学年別内訳
+              </h4>
+              <div className="bg-white rounded border border-indigo-200 overflow-hidden">
+                <table className="min-w-full text-sm">
+                  <thead>
+                    <tr className="bg-indigo-100 text-indigo-900">
+                      <th className="text-left py-2 px-4 font-bold">学年</th>
+                      <th className="text-right py-2 px-4 font-bold">人数</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-indigo-50">
+                    {Object.entries(result.gradeSummary)
+                      .sort(([a], [b]) => getGradeOrder(a) - getGradeOrder(b))
+                      .map(([grade, count], index) => (
+                        <tr key={grade} className={`hover:bg-indigo-50/50 ${index % 2 === 0 ? 'bg-white' : 'bg-indigo-50/30'}`}>
+                          <td className="py-2 px-4 text-gray-700">{grade}</td>
+                          <td className="py-2 px-4 text-right font-medium text-indigo-700">{count}名</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-indigo-50 font-bold border-t-2 border-indigo-100">
+                      <td className="py-2 px-4 text-indigo-900">合計</td>
+                      <td className="py-2 px-4 text-right text-indigo-900">{result.createdCount}名</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          )}
 
           <div className={`bg-gray-50 p-4 rounded border h-64 overflow-y-auto font-mono text-xs ${!result.success ? 'border-red-200' : ''}`}>
             {result.logs.map((log, i) => (
