@@ -6,6 +6,21 @@ import { RegistrationData } from '../(auth)/register/RegistrationWizard'
 export async function sendMagicLink(email: string) {
   const supabase = await createClient()
 
+  // Check if user already exists in profiles
+  const { data: existingProfile } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('email', email)
+    .single()
+
+  if (existingProfile) {
+    return {
+      success: false,
+      code: 'ALREADY_REGISTERED',
+      message: 'このメールアドレスは既に登録されています。'
+    }
+  }
+
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
@@ -15,11 +30,24 @@ export async function sendMagicLink(email: string) {
   })
 
   if (error) {
-    console.error('Magic Link Error:', error)
     return { success: false, message: error.message }
   }
 
-  return { success: true }
+  return { success: true, message: '確認メールを送信しました' }
+}
+
+export async function sendPasswordResetEmail(email: string) {
+  const supabase = await createClient()
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/callback?next=/update-password`,
+  })
+
+  if (error) {
+    return { success: false, message: error.message }
+  }
+
+  return { success: true, message: 'パスワード再設定用のメールを送信しました' }
 }
 
 export async function completeRegistration(data: RegistrationData) {

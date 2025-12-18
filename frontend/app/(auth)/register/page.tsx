@@ -3,17 +3,21 @@
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { sendMagicLink } from '@/app/actions/auth'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
+
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [errorCode, setErrorCode] = useState('') // Added errorCode state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setErrorCode('') // Reset errorCode
     setLoading(true)
 
     try {
@@ -22,6 +26,9 @@ export default function RegisterPage() {
         setIsSubmitted(true)
       } else {
         setError(result.message || 'メール送信に失敗しました')
+        if (result.code) { // Check for result.code
+          setErrorCode(result.code) // Set errorCode
+        }
       }
     } catch (err) {
       setError('予期せぬエラーが発生しました')
@@ -85,8 +92,26 @@ export default function RegisterPage() {
         </div>
 
         {error && (
-          <div className="text-red-600 text-sm text-center">
-            {error}
+          <div className="bg-red-50 border border-red-200 rounded-md p-4 space-y-3">
+            <div className="text-red-600 text-sm text-center font-medium">
+              {error}
+            </div>
+            {errorCode === 'ALREADY_REGISTERED' && (
+              <div className="flex flex-col space-y-2 mt-2">
+                <Link
+                  href="/login"
+                  className="text-center text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+                >
+                  ログイン画面へ移動
+                </Link>
+                <Link
+                  href="/forgot-password"
+                  className="text-center text-sm text-gray-500 hover:text-gray-700 underline"
+                >
+                  パスワードをお忘れの方
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
