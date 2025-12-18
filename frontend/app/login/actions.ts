@@ -21,7 +21,8 @@ export async function login(formData: FormData) {
     redirect('/error')
   }
 
-  // Check if profile is soft-deleted
+  // Check if profile is soft-deleted logic removed (physical delete used now)
+  /* 
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
@@ -35,6 +36,7 @@ export async function login(formData: FormData) {
       redirect('/login?error=account_deleted')
     }
   }
+  */
 
   revalidatePath('/', 'layout')
   redirect('/')

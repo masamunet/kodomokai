@@ -181,10 +181,9 @@ export async function adminDeleteChild(formData: FormData) {
 
   if (!childId) return { success: false, message: 'IDが指定されていません' }
 
-  // Use soft delete
   const { error } = await supabase
     .from('children')
-    .update({ deleted_at: new Date().toISOString() })
+    .delete()
     .eq('id', childId)
 
   if (error) {
@@ -207,15 +206,11 @@ export async function adminDeleteAllChildrenFromParent(formData: FormData) {
 
   if (!parentId) return { success: false, message: '保護者IDが指定されていません' }
 
-  // Perform soft delete for all children of this parent
+  // Perform physical delete for all children of this parent
   const { error } = await supabase
     .from('children')
-    .update({
-      deleted_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    })
+    .delete()
     .eq('parent_id', parentId)
-    .is('deleted_at', null)
 
   if (error) {
     console.error('Delete all children error:', error)
@@ -257,34 +252,36 @@ export async function adminDeleteProfile(formData: FormData) {
     return { success: false, message: `現在または将来（${assignments[0].fiscal_year}年度など）の役員として登録されているため削除できません。先に役員情報を削除してください。` }
   }
 
-  // 2. Cascade soft-delete children
-  // (Instruction: 子供がいる場合は、子供を先に全て論理削除して、保護者を論理削除)
+  // 2. Cascade delete children
+  // (Instruction: 子供がいる場合は、子供を先に全て削除して、保護者を削除)
   const { error: cascadeError } = await supabase
     .from('children')
-    .update({
-      deleted_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    })
+    .delete()
     .eq('parent_id', profileId)
-    .is('deleted_at', null)
 
   if (cascadeError) {
     console.error('Cascade delete children error:', cascadeError)
     return { success: false, message: 'お子様の連動削除に失敗しました: ' + cascadeError.message }
   }
 
-  // 3. Perform soft delete
-  const { error } = await supabase
-    .from('profiles')
-    .update({
-      deleted_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    })
-    .eq('id', profileId)
+  // 3. Perform physical delete via Auth Admin (cascades to Profile if configured, or we delete profile explicitly)
+  // Deleting user from auth.users is the correct way to physically remove a user.
+  // Using Service Role Key allows this.
+  const { error } = await supabase.auth.admin.deleteUser(profileId)
 
   if (error) {
-    console.error('Delete profile error:', error)
-    return { success: false, message: '会員の削除に失敗しました: ' + error.message }
+    // If auth delete fails (e.g. not found), try deleting profile directly just in case
+    console.error('Delete auth user error, trying profile delete:', error)
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('id', profileId)
+
+    if (profileError) {
+      console.error('Delete profile error:', profileError)
+      return { success: false, message: '会員の削除に失敗しました: ' + profileError.message }
+    }
+    // Fallback succeeded
   }
 
   revalidatePath('/admin/members')

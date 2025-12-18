@@ -174,7 +174,7 @@ export async function importChildren(csvContent: string): Promise<ImportResult> 
         .from('profiles')
         .select('id')
         .eq('email', parentEmail)
-        .is('deleted_at', null)
+        .eq('email', parentEmail)
         .single()
 
       if (profileError || !profile) {

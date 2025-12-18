@@ -71,8 +71,6 @@ export default async function AdminMembersPage({
           *,
           children (*)
       `)
-      .is('deleted_at', null)
-      .is('children.deleted_at', null)
       .order('joined_at', { ascending: false })
     profiles = data || []
   }
@@ -86,7 +84,6 @@ export default async function AdminMembersPage({
           profile:profiles!inner(full_name, email, last_name_kana, first_name_kana, address, phone, deleted_at)
       `)
       .eq('fiscal_year', currentFiscalYear)
-      .is('profile.deleted_at', null)
 
     if (data) {
       assignments = data.sort((a, b) => {
