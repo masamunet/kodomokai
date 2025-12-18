@@ -14,8 +14,28 @@ export default async function AdminOfficersPage() {
         role:officer_roles(*),
         profile:profiles(full_name, email, last_name_kana, first_name_kana)
     `)
-    .order('fiscal_year', { ascending: false })
-    .order('created_at', { ascending: false })
+  // .order('fiscal_year', { ascending: false })
+  // .order('display_order', { foreignTable: 'role', ascending: true }) // DB sort attempt
+  // .order('created_at', { ascending: false })
+
+  const { data: rolesDebug } = await supabase.from('officer_roles').select('*')
+  console.log('DEBUG: Officer Roles:', JSON.stringify(rolesDebug, null, 2))
+
+
+  const sortedAssignments = assignments?.sort((a, b) => {
+    // 1. Fiscal Year (desc)
+    if (a.fiscal_year !== b.fiscal_year) {
+      return b.fiscal_year - a.fiscal_year
+    }
+    // 2. Role Display Order (asc)
+    const orderA = a.role?.display_order ?? 999
+    const orderB = b.role?.display_order ?? 999
+    if (orderA !== orderB) {
+      return orderA - orderB
+    }
+    // 3. Created At (desc)
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
 
   return (
     <div>
@@ -29,10 +49,10 @@ export default async function AdminOfficersPage() {
 
         <div className="overflow-hidden bg-white shadow sm:rounded-md">
           <ul role="list" className="divide-y divide-gray-200">
-            {assignments?.length === 0 ? (
+            {sortedAssignments?.length === 0 ? (
               <li className="px-4 py-4 sm:px-6 text-gray-500 text-center">任命された役員はいません</li>
             ) : (
-              assignments?.map((assignment: any) => (
+              sortedAssignments?.map((assignment: any) => (
                 <li key={assignment.id} className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">
                     <div>
