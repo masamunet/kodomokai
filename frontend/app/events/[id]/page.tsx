@@ -23,18 +23,42 @@ export default async function EventPage({
     return <div>イベントが見つかりません</div>
   }
 
-  // Get current user rsvp
+  // Get current user's children and their rsvp status
   const { data: { user } } = await supabase.auth.getUser()
-  let currentRsvp = null
+
+  let children: any[] = []
+  let participantMap: Record<string, any> = {}
 
   if (user) {
-    const { data: participant } = await supabase
-      .from('event_participants')
+    // 1. Get children
+    const { data: userChildren } = await supabase
+      .from('children')
       .select('*')
-      .eq('event_id', id)
-      .eq('profile_id', user.id)
-      .single()
-    currentRsvp = participant
+      .eq('parent_id', user.id)
+      .order('birthday', { ascending: false }) // Sort by age (youngest first usually bottom, but birthday descending means youngest first?) 
+      // Usually older child first is better? birthday ascending -> older first
+      .order('created_at', { ascending: true }) // fallback
+
+    // Sort by birthday ascending (Oldest first)
+    if (userChildren) {
+      children = userChildren.sort((a, b) => (a.birthday > b.birthday ? 1 : -1))
+    }
+
+    // 2. Get existing participants records for these children
+    if (children.length > 0) {
+      const { data: participants } = await supabase
+        .from('event_participants')
+        .select('*')
+        .eq('event_id', id)
+        .eq('profile_id', user.id)
+        .not('child_id', 'is', null)
+
+      if (participants) {
+        participants.forEach(p => {
+          if (p.child_id) participantMap[p.child_id] = p
+        })
+      }
+    }
   }
 
   return (
@@ -73,65 +97,61 @@ export default async function EventPage({
           </div>
 
           {event.rsvp_required && (
-            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 bg-gray-50">
-              <h4 className="text-lg font-medium text-gray-900">出欠登録</h4>
-              {event.rsvp_deadline && (
-                <p className="text-sm text-red-600 mb-4">締切: {new Date(event.rsvp_deadline).toLocaleString()}</p>
-              )}
+            <div className="border-t border-gray-200 px-4 py-5 sm:px-6 bg-indigo-50/50">
+              <h4 className="text-lg font-bold text-indigo-900">出欠登録</h4>
 
-              <form action={submitRsvp} className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <input type="hidden" name="event_id" value={event.id} />
-
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="attending"
-                      defaultChecked={currentRsvp?.status === 'attending'}
-                      required
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <span className="text-gray-900">出席</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="declined"
-                      defaultChecked={currentRsvp?.status === 'declined'}
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <span className="text-gray-900">欠席</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="status"
-                      value="maybe"
-                      defaultChecked={currentRsvp?.status === 'maybe'}
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <span className="text-gray-900">未定</span>
-                  </label>
+              {children.length === 0 ? (
+                <div className="mt-4 p-4 bg-yellow-50 rounded border border-yellow-200 text-yellow-800">
+                  <p>お子様の情報が登録されていません。「マイページ」からお子様を登録してください。</p>
+                  <Link href="/profile" className="text-indigo-600 underline mt-2 inline-block">マイページへ</Link>
                 </div>
+              ) : (
+                <>
+                  {event.rsvp_deadline && (
+                    <p className="text-sm text-red-600 mb-4 mt-1">締切: {new Date(event.rsvp_deadline).toLocaleString()}</p>
+                  )}
 
-                <button
-                  type="submit"
-                  className="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  {currentRsvp ? '更新する' : '登録する'}
-                </button>
-              </form>
-              {currentRsvp && (
-                <p className="mt-2 text-sm text-green-700">
-                  現在のステータス:
-                  {currentRsvp.status === 'attending' && ' 出席'}
-                  {currentRsvp.status === 'declined' && ' 欠席'}
-                  {currentRsvp.status === 'maybe' && ' 未定'}
-                </p>
+                  <form action={submitRsvp} className="mt-6 space-y-4">
+                    <input type="hidden" name="event_id" value={event.id} />
+
+                    <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+                      {children.map(child => {
+                        const rsvp = participantMap[child.id]
+                        const isAttending = rsvp?.status === 'attending'
+
+                        return (
+                          <div key={child.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <label htmlFor={`status_${child.id}`} className="flex items-center gap-4 cursor-pointer flex-1">
+                              <input
+                                type="checkbox"
+                                id={`status_${child.id}`}
+                                name={`status_${child.id}`}
+                                value="attending"
+                                defaultChecked={isAttending}
+                                className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+                              />
+                              <div className="flex flex-col">
+                                <span className="font-bold text-gray-900 text-lg">{child.full_name} <span className="text-sm font-normal text-gray-500">さん</span></span>
+                                <span className="text-sm text-gray-500">
+                                  参加する場合はチェック
+                                </span>
+                              </div>
+                            </label>
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    <div className="pt-4 flex justify-end">
+                      <button
+                        type="submit"
+                        className="w-full sm:w-auto inline-flex justify-center rounded-md bg-indigo-600 px-8 py-3 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        保存する
+                      </button>
+                    </div>
+                  </form>
+                </>
               )}
             </div>
           )}

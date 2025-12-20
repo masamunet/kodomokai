@@ -87,6 +87,38 @@ export default async function DashboardPage() {
 
   // No slice/limit as per user request
 
+  // Get user's children for granular attendance display
+  const { data: children } = await supabase
+    .from('children')
+    .select('id, first_name')
+    .eq('parent_id', currentUser.id)
+    .order('birthday', { ascending: true }) // Consistent order
+
+  // Get attendance status for these events
+  const eventIds = events.map(e => e.id)
+  // Map<EventId, Set<ChildId>>
+  let eventAttendanceMap = new Map<string, Set<string>>()
+
+  if (currentUser && eventIds.length > 0 && children && children.length > 0) {
+    const { data: participations } = await supabase
+      .from('event_participants')
+      .select('event_id, child_id')
+      .eq('profile_id', currentUser.id)
+      .eq('status', 'attending')
+      .in('event_id', eventIds)
+
+    if (participations) {
+      participations.forEach(p => {
+        if (p.child_id) {
+          if (!eventAttendanceMap.has(p.event_id)) {
+            eventAttendanceMap.set(p.event_id, new Set())
+          }
+          eventAttendanceMap.get(p.event_id)!.add(p.child_id)
+        }
+      })
+    }
+  }
+
   // Get officer roles FOR THE TARGET FISCAL YEAR
   const { data: officerRoles } = await supabase
     .from('officer_role_assignments')
@@ -121,13 +153,13 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex justify-between items-center">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-4">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">ダッシュボード</h1>
             <FiscalYearSwitcher currentYear={targetFiscalYear} />
           </div>
-          <div className="flex gap-4 items-center">
-            <Link href="/forum" className="text-sm font-semibold leading-6 text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-lg px-4 py-2 hover:bg-indigo-100 transition-colors flex items-center gap-2">
+          <div className="flex gap-2 sm:gap-4 items-center flex-wrap justify-center">
+            <Link href="/forum" className="text-sm font-semibold leading-6 text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-lg px-3 py-2 hover:bg-indigo-100 transition-colors flex items-center gap-2">
               <MessageCircleQuestion size={18} />
               質問掲示板
             </Link>
@@ -151,9 +183,9 @@ export default async function DashboardPage() {
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
 
           {/* Officer Dashboard Section */}
-          {(officerRoles && officerRoles.length > 0) ? (
+          {(officerRoles && officerRoles.length > 0) && (
             <div className="bg-indigo-50 border-l-4 border-indigo-500 p-4 mb-8">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div>
                   <h2 className="text-lg font-bold text-indigo-900">役員メニュー ({targetFiscalYear}年度)</h2>
                   <p className="text-sm text-indigo-700 mt-1">
@@ -166,7 +198,7 @@ export default async function DashboardPage() {
                     </Link>
                   )}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Link href="/admin/notifications/new" className="bg-white text-indigo-700 px-3 py-1 rounded text-sm font-semibold shadow-sm border hover:bg-gray-50">
                     お知らせ作成
                   </Link>
@@ -196,8 +228,6 @@ export default async function DashboardPage() {
                 )}
               </div>
             </div>
-          ) : (
-            null
           )}
 
           {/* Notifications Section */}
@@ -257,6 +287,40 @@ export default async function DashboardPage() {
                                 {status === 'details_undecided' && !isCanceled && (
                                   <span className="inline-flex items-center rounded-md bg-yellow-50 px-1.5 py-0.5 text-xs font-bold text-yellow-700 ring-1 ring-inset ring-yellow-600/10">詳細未定</span>
                                 )}
+
+                                {/* Child Attendance Icons */}
+                                {children && children.length > 0 && !isCanceled && (
+                                  <div className="flex items-center gap-1 ml-1" title="出席状況">
+                                    {children.map(child => {
+                                      const isAttending = eventAttendanceMap.get(event.id)?.has(child.id)
+                                      return (
+                                        <div
+                                          key={child.id}
+                                          title={`${child.first_name}: ${isAttending ? '参加' : '参加しない'}`}
+                                          className={`
+                                            flex items-center justify-center w-5 h-5 rounded-full border 
+                                            ${isAttending
+                                              ? 'bg-green-100 border-green-200 text-green-700'
+                                              : 'bg-gray-50 border-gray-200 text-gray-300'
+                                            }
+                                          `}
+                                        >
+                                          {/* Use simple circle or initial or icon. User asked for visual pattern like 000/010. 
+                                               Let's use a User icon or Smile icon. Smile is friendly.
+                                           */}
+                                          <span className="text-[10px] font-bold">
+                                            {/* If we want an icon: <Smile size={12} /> */}
+                                            {/* If we want just color distinction as requested "icon": */}
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={isAttending ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" className="w-3 h-3">
+                                              <circle cx="12" cy="12" r="10" />
+                                            </svg>
+                                          </span>
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                )}
+
                                 <p className={`text-sm font-bold text-indigo-600 truncate ${isCanceled ? 'line-through opacity-50' : ''}`}>{event.title}</p>
                               </div>
                               <p className={`mt-1 text-xs text-gray-500 ${isCanceled ? 'line-through opacity-50' : ''}`}>
@@ -293,6 +357,6 @@ export default async function DashboardPage() {
 
         </div>
       </main>
-    </div >
+    </div>
   )
 }

@@ -6,7 +6,13 @@ import { useState } from 'react'
 import { addChild } from '../../../actions/profile'
 import Link from 'next/link'
 
-export default function ChildForm() {
+export default function ChildForm({
+  initialLastName,
+  initialLastNameKana
+}: {
+  initialLastName?: string
+  initialLastNameKana?: string
+}) {
   const [message, setMessage] = useState<string | null>(null)
 
   const handleSubmit = async (formData: FormData) => {
@@ -37,6 +43,7 @@ export default function ChildForm() {
               name="last_name"
               required
               placeholder="苗字"
+              defaultValue={initialLastName}
             />
           </div>
           <div className="w-1/2">
@@ -59,6 +66,7 @@ export default function ChildForm() {
               type="text"
               name="last_name_kana"
               placeholder="みょうじ"
+              defaultValue={initialLastNameKana}
             />
           </div>
           <div className="w-1/2">
