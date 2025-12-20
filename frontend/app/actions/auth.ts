@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { RegistrationData } from '../(auth)/register/onboarding/RegistrationWizard'
+import { getBaseUrl } from '@/lib/utils'
 
 export async function sendMagicLink(email: string) {
   const supabase = await createClient()
@@ -24,7 +25,7 @@ export async function sendMagicLink(email: string) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/callback?next=/register/onboarding`,
+      emailRedirectTo: `${getBaseUrl()}/auth/callback?next=/register/onboarding`,
       shouldCreateUser: true,
     }
   })
@@ -40,7 +41,7 @@ export async function sendPasswordResetEmail(email: string) {
   const supabase = await createClient()
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/callback?next=/update-password`,
+    redirectTo: `${getBaseUrl()}/auth/callback?next=/update-password`,
   })
 
   if (error) {
