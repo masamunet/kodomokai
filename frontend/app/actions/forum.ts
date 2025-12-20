@@ -102,10 +102,9 @@ export async function toggleReaction(target_type: 'question' | 'answer', target_
   const { data: existing } = await supabase
     .from('forum_reactions')
     .select('id')
-    .eq('target_type', target_type)
-    .eq('target_id', target_id)
     .eq('profile_id', user.id)
     .eq('emoji', emoji)
+    .eq(target_type === 'question' ? 'question_id' : 'answer_id', target_id)
     .maybeSingle()
 
   if (existing) {
@@ -114,8 +113,7 @@ export async function toggleReaction(target_type: 'question' | 'answer', target_
   } else {
     // Add
     await supabase.from('forum_reactions').insert({
-      target_type,
-      target_id,
+      [target_type === 'question' ? 'question_id' : 'answer_id']: target_id,
       profile_id: user.id,
       emoji
     })
@@ -128,9 +126,9 @@ export async function toggleReaction(target_type: 'question' | 'answer', target_
   return { success: true }
 }
 
-export async function getQuestions() {
+export async function getQuestions(query?: string) {
   const supabase = await createClient()
-  const { data, error } = await supabase
+  let dbQuery = supabase
     .from('forum_questions')
     .select(`
       *,
@@ -138,13 +136,31 @@ export async function getQuestions() {
         first_name,
         last_name
       ),
-      forum_answers (id),
+      forum_answers (
+        id,
+        content,
+        created_at,
+        profiles (
+          first_name,
+          last_name
+        )
+      ),
       forum_reactions (emoji)
     `)
-    .order('created_at', { ascending: false })
+
+  if (query) {
+    dbQuery = dbQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+  }
+
+  const { data, error } = await dbQuery.order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching questions:', error)
+    console.error('Error fetching questions:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code
+    })
     return []
   }
 
@@ -177,4 +193,25 @@ export async function getQuestionDetail(id: string) {
   }
 
   return data
+}
+
+/**
+ * 回答が0件の質問の数を取得する
+ */
+export async function getUnansweredCount() {
+  const supabase = await createClient()
+
+  // 質問とその回答（のIDのみ）を取得
+  const { data, error } = await supabase
+    .from('forum_questions')
+    .select('id, forum_answers(id)')
+
+  if (error) {
+    console.error('Error fetching unanswered count:', error)
+    return 0
+  }
+
+  // 回答リストが空、または存在しないものをカウント
+  const unanswered = data.filter(q => !q.forum_answers || (q.forum_answers as any[]).length === 0)
+  return unanswered.length
 }

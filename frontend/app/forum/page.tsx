@@ -1,13 +1,19 @@
 import { getQuestions } from '@/app/actions/forum'
 import ForumCard from '@/components/forum/ForumCard'
 import QuestionDialog from '@/components/forum/QuestionDialog'
-import { MessageCircleQuestion, Search } from 'lucide-react'
+import ForumSearch from '@/components/forum/ForumSearch'
+import { MessageCircleQuestion } from 'lucide-react'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ForumPage() {
-  const questions = await getQuestions()
+export default async function ForumPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>
+}) {
+  const { q } = await searchParams
+  const questions = await getQuestions(q)
 
   return (
     <div className="min-h-screen bg-[#FDFEFF]">
@@ -31,7 +37,7 @@ export default async function ForumPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-10">
-        <section className="mb-12">
+        <section className="mb-0"> {/* Adjusted margin to merge with search component */}
           <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-indigo-200 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
             <div className="relative z-10 max-w-2xl">
@@ -39,37 +45,15 @@ export default async function ForumPage() {
                 子ども会のことで<br />わからないことはありますか？
               </h2>
               <p className="text-indigo-100 text-lg opacity-90 max-w-md leading-relaxed mb-8">
-                役員への質問や、会員同士の相談など、気軽にお使いください。みんなで支え合うコミュニティです。
+                役員への質問や、会員同士の相談など、気軽にお使いください。
               </p>
 
-              <div className="relative max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-300" size={20} />
-                <input
-                  type="text"
-                  placeholder="キーワードで検索"
-                  className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-indigo-200 focus:outline-none focus:bg-white/20 transition-all backdrop-blur-md"
-                />
-              </div>
+              <ForumSearch />
             </div>
           </div>
         </section>
 
-        <section>
-          <div className="flex items-center justify-between mb-8 px-2">
-            <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-              最近の質問
-              <span className="text-sm font-medium text-gray-400">({questions.length})</span>
-            </h3>
-            <div className="flex gap-2 text-sm">
-              <button className="px-4 py-2 bg-indigo-50 text-indigo-600 font-bold rounded-xl whitespace-nowrap">
-                全て
-              </button>
-              <button className="px-4 py-2 text-gray-500 font-bold hover:bg-gray-50 rounded-xl whitespace-nowrap transition-colors">
-                未解決
-              </button>
-            </div>
-          </div>
-
+        <section className="mt-8">
           {questions.length === 0 ? (
             <div className="bg-white border-2 border-dashed border-gray-100 rounded-[2rem] p-20 text-center">
               <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-300 mx-auto mb-4">

@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { getTargetFiscalYear } from './actions/settings'
 import FiscalYearSwitcher from '@/components/FiscalYearSwitcher'
 import Breadcrumbs from '@/components/Breadcrumbs'
+import { getUnansweredCount } from '@/app/actions/forum'
+import { HelpCircle } from 'lucide-react'
 
 export default async function AdminLayout({
   children,
@@ -9,6 +11,7 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   const targetFiscalYear = await getTargetFiscalYear()
+  const unansweredCount = await getUnansweredCount()
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -21,6 +24,12 @@ export default async function AdminLayout({
             <div className="bg-muted rounded p-1 hidden sm:block">
               <FiscalYearSwitcher currentYear={targetFiscalYear} theme="light" />
             </div>
+            {unansweredCount > 0 && (
+              <Link href="/forum" className="flex items-center gap-1.5 ml-2 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold hover:bg-pink-200 transition-colors shadow-sm">
+                <HelpCircle size={14} />
+                掲示板: {unansweredCount}
+              </Link>
+            )}
           </div>
 
           <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar ml-4">

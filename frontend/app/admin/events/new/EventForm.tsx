@@ -146,6 +146,37 @@ export default function EventForm() {
         </div>
       </div>
 
+      <div>
+        <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+          公開ステータス
+        </label>
+        <div className="space-y-2">
+          {[
+            { value: 'draft', label: '下書き (役員のみに表示)' },
+            { value: 'date_undecided', label: '告知・日時未定' },
+            { value: 'details_undecided', label: '告知・日時決定・詳細未定' },
+            { value: 'finalized', label: '告知・詳細決定' },
+          ].map((status) => (
+            <div key={status.value} className="flex items-center">
+              <input
+                id={`status-${status.value}`}
+                name="public_status"
+                type="radio"
+                value={status.value}
+                defaultChecked={status.value === 'finalized'}
+                className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+              />
+              <label htmlFor={`status-${status.value}`} className="ml-3 block text-sm leading-6 text-gray-900 cursor-pointer">
+                {status.label}
+              </label>
+            </div>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-gray-500">
+          「下書き」の間は、一般会員のダッシュボードや年間予定表には表示されません。
+        </p>
+      </div>
+
       <div className="flex justify-end gap-3 pt-4">
         <Link href="/admin/events" className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
           キャンセル

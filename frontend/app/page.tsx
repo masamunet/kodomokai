@@ -3,7 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { getTargetFiscalYear } from '@/lib/fiscal-year'
 import FiscalYearSwitcher from '@/components/FiscalYearSwitcher'
-import { MessageCircleQuestion } from 'lucide-react'
+import { MessageCircleQuestion, HelpCircle } from 'lucide-react'
+import { getUnansweredCount } from '@/app/actions/forum'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -70,6 +71,7 @@ export default async function DashboardPage() {
 
   // Get officer tasks if any role
   let officerTasks: any[] = []
+  let unansweredCount = 0
   if (officerRoles && officerRoles.length > 0) {
     const roleIds = officerRoles.map(r => r.role_id)
     const { data: tasks } = await supabase
@@ -77,6 +79,9 @@ export default async function DashboardPage() {
       .select('*')
       .in('role_id', roleIds)
     officerTasks = tasks || []
+
+    // Get unanswered forum questions count
+    unansweredCount = await getUnansweredCount()
   }
 
   return (
@@ -120,6 +125,12 @@ export default async function DashboardPage() {
                   <p className="text-sm text-indigo-700 mt-1">
                     現在の役職: {officerRoles.map((r: any) => r.role?.name).join(', ')}
                   </p>
+                  {unansweredCount > 0 && (
+                    <Link href="/forum" className="inline-flex items-center gap-1.5 mt-2 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold hover:bg-pink-200 transition-colors">
+                      <HelpCircle size={14} />
+                      未回答の質問が {unansweredCount} 件あります
+                    </Link>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <Link href="/admin/notifications/new" className="bg-white text-indigo-700 px-3 py-1 rounded text-sm font-semibold shadow-sm border hover:bg-gray-50">
@@ -194,30 +205,52 @@ export default async function DashboardPage() {
                   <div className="px-4 py-5 sm:px-6 text-gray-500">直近のイベントはありません。</div>
                 ) : (
                   <ul role="list" className="divide-y divide-gray-200">
-                    {events?.map((event) => (
-                      <li key={event.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                        <div className="flex items-center justify-between">
-                          <div className="flex flex-col">
-                            <p className="text-sm font-medium text-indigo-600 truncate">{event.title}</p>
-                            <p className="mt-1 text-sm text-gray-500">
-                              {new Date(event.scheduled_date).toLocaleDateString()} {event.start_time ? event.start_time.slice(0, 5) : ''}
-                              {event.location && ` @ ${event.location}`}
-                            </p>
+                    {events?.map((event) => {
+                      const isCanceled = event.is_canceled
+                      const status = event.public_status || (event.is_tentative ? 'date_undecided' : 'finalized')
+
+                      return (
+                        <li key={event.id} className={`px-4 py-4 sm:px-6 hover:bg-gray-50 ${isCanceled ? 'bg-gray-50' : ''}`}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex flex-col">
+                              <div className="flex items-center gap-2 mb-1">
+                                {status === 'draft' && (
+                                  <span className="inline-flex items-center rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-bold text-gray-600 ring-1 ring-inset ring-gray-500/10">下書き</span>
+                                )}
+                                {isCanceled && (
+                                  <span className="inline-flex items-center rounded-md bg-red-50 px-1.5 py-0.5 text-xs font-bold text-red-700 ring-1 ring-inset ring-red-600/10">中止</span>
+                                )}
+                                {status === 'details_undecided' && !isCanceled && (
+                                  <span className="inline-flex items-center rounded-md bg-yellow-50 px-1.5 py-0.5 text-xs font-bold text-yellow-700 ring-1 ring-inset ring-yellow-600/10">詳細未定</span>
+                                )}
+                                <p className={`text-sm font-bold text-indigo-600 truncate ${isCanceled ? 'line-through opacity-50' : ''}`}>{event.title}</p>
+                              </div>
+                              <p className={`mt-1 text-xs text-gray-500 ${isCanceled ? 'line-through opacity-50' : ''}`}>
+                                {status === 'date_undecided' ? (
+                                  <span className="text-pink-600 font-bold">【日時未定】</span>
+                                ) : (
+                                  <>
+                                    {new Date(event.scheduled_date).toLocaleDateString()} {event.start_time ? event.start_time.slice(0, 5) : ''}
+                                  </>
+                                )}
+                                {event.location && ` @ ${event.location}`}
+                              </p>
+                            </div>
+                            <div>
+                              {event.rsvp_required && !isCanceled ? (
+                                <Link href={`/events/${event.id}`} className="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                  詳細・出欠
+                                </Link>
+                              ) : (
+                                <span className="inline-flex items-center rounded-md bg-gray-50 px-2.5 py-1.5 text-xs font-medium text-gray-500 border border-gray-200">
+                                  {isCanceled ? '受付停止' : '自由参加'}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            {event.rsvp_required ? (
-                              <Link href={`/events/${event.id}`} className="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                詳細・出欠
-                              </Link>
-                            ) : (
-                              <span className="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-medium text-gray-800">
-                                自由参加
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      )
+                    })}
                   </ul>
                 )}
               </div>
