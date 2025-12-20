@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { getTargetFiscalYear } from '@/lib/fiscal-year'
 import FiscalYearSwitcher from '@/components/FiscalYearSwitcher'
+import { MessageCircleQuestion } from 'lucide-react'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -87,16 +88,20 @@ export default async function DashboardPage() {
             <FiscalYearSwitcher currentYear={targetFiscalYear} />
           </div>
           <div className="flex gap-4 items-center">
+            <Link href="/forum" className="text-sm font-semibold leading-6 text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-lg px-4 py-2 hover:bg-indigo-100 transition-colors flex items-center gap-2">
+              <MessageCircleQuestion size={18} />
+              質問掲示板
+            </Link>
             {profile?.is_admin && (
-              <Link href="/admin/templates" className="text-sm font-semibold leading-6 text-gray-900 border rounded px-3 py-1 hover:bg-gray-50">
+              <Link href="/admin/templates" className="text-sm font-semibold leading-6 text-gray-900 border rounded-lg px-3 py-2 hover:bg-gray-50 flex items-center gap-2 text-xs">
                 管理者メニューへ
               </Link>
             )}
-            <Link href="/profile" className="text-sm font-semibold leading-6 text-gray-900 border rounded px-3 py-1 hover:bg-gray-50">
+            <Link href="/profile" className="text-sm font-semibold leading-6 text-gray-900 border rounded-lg px-3 py-2 hover:bg-gray-50 flex items-center gap-2 text-xs">
               マイページ
             </Link>
             <form action="/auth/signout" method="post">
-              <button className="text-sm font-semibold leading-6 text-gray-900 border rounded px-3 py-1 hover:bg-gray-50">
+              <button className="text-sm font-semibold leading-6 text-gray-900 border rounded-lg px-3 py-2 hover:bg-gray-50 flex items-center gap-2 text-xs">
                 ログアウト
               </button>
             </form>
@@ -221,6 +226,6 @@ export default async function DashboardPage() {
 
         </div>
       </main>
-    </div>
+    </div >
   )
 }
