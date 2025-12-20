@@ -3,6 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { calculateGrade } from '@/lib/grade-utils'
 import { getTargetFiscalYear } from '@/lib/fiscal-year'
+import { requireOfficer } from '@/lib/security'
 
 type ImportResult = {
   success: boolean
@@ -28,6 +29,7 @@ const parseLine = (line: string) => {
 }
 
 export async function importUsers(csvContent: string): Promise<ImportResult> {
+  await requireOfficer()
   const supabase = createAdminClient()
   const logs: string[] = []
   const lines = csvContent.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'))
@@ -151,6 +153,7 @@ const normalizeGender = (genderStr: string) => {
 }
 
 export async function importChildren(csvContent: string): Promise<ImportResult> {
+  await requireOfficer()
   const supabase = createAdminClient()
   const logs: string[] = []
   const lines = csvContent.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'))

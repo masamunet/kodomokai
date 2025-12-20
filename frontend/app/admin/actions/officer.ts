@@ -4,9 +4,11 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { requireOfficer } from '@/lib/security'
 
 // --- Role Management ---
 export async function createRole(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
 
   const name = formData.get('name') as string
@@ -29,6 +31,7 @@ export async function createRole(formData: FormData) {
 }
 
 export async function updateRole(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
 
   const id = formData.get('id') as string
@@ -57,6 +60,7 @@ export async function updateRole(formData: FormData) {
 }
 
 export async function updateRoleOrder(updates: { id: string; display_order: number }[]) {
+  await requireOfficer()
   const supabase = await createClient()
 
   for (const { id, display_order } of updates) {
@@ -73,6 +77,7 @@ export async function updateRoleOrder(updates: { id: string; display_order: numb
 }
 
 export async function toggleRoleVisibility(id: string, is_visible_in_docs: boolean) {
+  await requireOfficer()
   const supabase = await createClient()
 
   const { error } = await supabase
@@ -91,6 +96,7 @@ export async function toggleRoleVisibility(id: string, is_visible_in_docs: boole
 
 // --- Officer Assignment ---
 export async function assignOfficer(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
 
   const profile_id = formData.get('profile_id') as string
@@ -119,6 +125,7 @@ export async function assignOfficer(formData: FormData) {
 }
 
 export async function deleteAssignment(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
   const id = formData.get('id') as string
 
@@ -130,6 +137,7 @@ export async function deleteAssignment(formData: FormData) {
 // --- Task Management ---
 
 export async function upsertOfficerTask(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
 
   const id = formData.get('id') as string // If present, update. If empty, insert.
@@ -176,6 +184,7 @@ export async function upsertOfficerTask(formData: FormData) {
 }
 
 export async function deleteOfficerTask(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
   const id = formData.get('id') as string
   const role_id = formData.get('role_id') as string // Passed for revalidation context if needed
@@ -199,6 +208,7 @@ export async function deleteOfficerTask(formData: FormData) {
 }
 
 export async function assignNextYearOfficer(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
 
   const profile_id = formData.get('profile_id') as string
@@ -227,6 +237,7 @@ export async function assignNextYearOfficer(formData: FormData) {
 }
 
 export async function deleteNextYearAssignment(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
   const id = formData.get('id') as string
 

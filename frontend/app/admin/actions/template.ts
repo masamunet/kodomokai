@@ -4,8 +4,10 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { requireOfficer } from '@/lib/security'
 
 export async function createTemplate(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
 
   const name = formData.get('name') as string

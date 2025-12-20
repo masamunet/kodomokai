@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { requireOfficer } from '@/lib/security'
 
 export type AccountingItem = {
   id?: string
@@ -24,9 +25,10 @@ export type FiscalReportPayload = {
 }
 
 export async function getFiscalReports(year?: number) {
+  await requireOfficer()
   const supabase = await createClient()
   let query = supabase.from('fiscal_reports').select('*').order('fiscal_year', { ascending: false })
-  
+
   if (year) {
     query = query.eq('fiscal_year', year)
   }
@@ -40,8 +42,9 @@ export async function getFiscalReports(year?: number) {
 }
 
 export async function getFiscalReportWithItems(id: string) {
+  await requireOfficer()
   const supabase = await createClient()
-  
+
   const { data: report, error: reportError } = await supabase
     .from('fiscal_reports')
     .select('*')
@@ -68,6 +71,7 @@ export async function getFiscalReportWithItems(id: string) {
 }
 
 export async function upsertFiscalReport(id: string | null, payload: FiscalReportPayload) {
+  await requireOfficer()
   const supabase = await createClient()
   const { items, ...reportData } = payload
 
@@ -79,7 +83,7 @@ export async function upsertFiscalReport(id: string | null, payload: FiscalRepor
       .from('fiscal_reports')
       .update(reportData)
       .eq('id', id)
-    
+
     if (updateError) {
       return { success: false, message: '基本情報の更新に失敗しました: ' + updateError.message }
     }
@@ -128,9 +132,10 @@ export async function upsertFiscalReport(id: string | null, payload: FiscalRepor
 }
 
 export async function deleteFiscalReport(id: string) {
+  await requireOfficer()
   const supabase = await createClient()
   const { error } = await supabase.from('fiscal_reports').delete().eq('id', id)
-  
+
   if (error) {
     return { success: false, message: '削除に失敗しました: ' + error.message }
   }

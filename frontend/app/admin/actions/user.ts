@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient as createAuthClient } from '@/lib/supabase/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireOfficer } from '@/lib/security'
 
 // Helper to get admin client
 const getAdminClient = () => {
@@ -20,12 +21,7 @@ const getAdminClient = () => {
 // --- Profile Management ---
 
 export async function adminUpdateProfile(formData: FormData) {
-  // Check auth first
-  const supabaseAuth = await createAuthClient()
-  const { data: { user } } = await supabaseAuth.auth.getUser()
-  if (!user) {
-    return { success: false, message: '認証されていません' }
-  }
+  await requireOfficer()
 
   const supabase = getAdminClient()
   const id = formData.get('id') as string
@@ -72,10 +68,7 @@ export async function adminUpdateProfile(formData: FormData) {
 // --- Child Management ---
 
 export async function adminAddChild(formData: FormData) {
-  // Check auth
-  const supabaseAuth = await createAuthClient()
-  const { data: { user } } = await supabaseAuth.auth.getUser()
-  if (!user) redirect('/login')
+  await requireOfficer()
 
   const supabase = getAdminClient()
   const parentId = formData.get('parent_id') as string
@@ -120,10 +113,7 @@ export async function adminAddChild(formData: FormData) {
 }
 
 export async function adminUpdateChild(formData: FormData) {
-  // Check auth
-  const supabaseAuth = await createAuthClient()
-  const { data: { user } } = await supabaseAuth.auth.getUser()
-  if (!user) redirect('/login')
+  await requireOfficer()
 
   const supabase = getAdminClient()
   const childId = formData.get('child_id') as string
@@ -170,10 +160,7 @@ export async function adminUpdateChild(formData: FormData) {
 }
 
 export async function adminDeleteChild(formData: FormData) {
-  // Check auth
-  const supabaseAuth = await createAuthClient()
-  const { data: { user } } = await supabaseAuth.auth.getUser()
-  if (!user) return { success: false, message: '認証されていません' }
+  await requireOfficer()
 
   const supabase = getAdminClient()
   const childId = formData.get('child_id') as string
@@ -196,10 +183,7 @@ export async function adminDeleteChild(formData: FormData) {
 }
 
 export async function adminDeleteAllChildrenFromParent(formData: FormData) {
-  // Check auth
-  const supabaseAuth = await createAuthClient()
-  const { data: { user } } = await supabaseAuth.auth.getUser()
-  if (!user) return { success: false, message: '認証されていません' }
+  await requireOfficer()
 
   const supabase = getAdminClient()
   const parentId = formData.get('parent_id') as string
@@ -222,10 +206,7 @@ export async function adminDeleteAllChildrenFromParent(formData: FormData) {
 }
 
 export async function adminDeleteProfile(formData: FormData) {
-  // Check auth
-  const supabaseAuth = await createAuthClient()
-  const { data: { user } } = await supabaseAuth.auth.getUser()
-  if (!user) return { success: false, message: '認証されていません' }
+  await requireOfficer()
 
   const supabase = getAdminClient()
   const profileId = formData.get('id') as string

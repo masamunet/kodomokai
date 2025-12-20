@@ -38,13 +38,22 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const publicPaths = ['/login', '/auth', '/register']
-  const isPublic = publicPaths.some(path => request.nextUrl.pathname.startsWith(path))
-  const isOnboarding = request.nextUrl.pathname.startsWith('/register/onboarding')
+  const pathname = request.nextUrl.pathname
 
-  // 1. If no user, only allow public paths + onboarding
+  // Define public paths strictly
+  const isPublic =
+    pathname === '/' ||
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/auth') ||
+    pathname === '/register' ||
+    pathname.startsWith('/forgot-password') ||
+    pathname.startsWith('/update-password')
+
+  const isOnboarding = pathname.startsWith('/register/onboarding')
+
+  // 1. If no user, only allow public paths
   if (!user) {
-    if (!isPublic && !isOnboarding) {
+    if (!isPublic) {
       const url = request.nextUrl.clone()
       url.pathname = '/login'
 

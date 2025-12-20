@@ -2,8 +2,10 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { requireOfficer } from '@/lib/security'
 
 export async function getConstitution() {
+  await requireOfficer()
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -25,6 +27,7 @@ export async function getConstitution() {
 }
 
 export async function upsertConstitution(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
 
   const title = formData.get('title') as string

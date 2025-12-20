@@ -3,8 +3,10 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { requireOfficer } from '@/lib/security'
 
 export async function updateSettings(formData: FormData) {
+  await requireOfficer()
   const supabase = await createClient()
 
   // We assume there's only one row, or we grab the first one.
