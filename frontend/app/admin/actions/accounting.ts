@@ -21,6 +21,7 @@ export type FiscalReportPayload = {
   accountant_name: string
   auditor_names: string[]
   report_date: string
+  is_audited: boolean
   items: AccountingItem[]
 }
 
@@ -39,6 +40,52 @@ export async function getFiscalReports(year?: number) {
     return []
   }
   return data
+}
+
+export async function getAccountingInfo(fiscalYear: number) {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return { canAudit: false, accountantName: null }
+  }
+
+  // 1. Check if current user has audit role for the given year
+  const { data: auditAssignments, error: auditError } = await supabase
+    .from('officer_role_assignments')
+    .select('role_id, officer_roles!inner(is_audit)')
+    .eq('fiscal_year', fiscalYear)
+    .eq('profile_id', user.id)
+    .eq('officer_roles.is_audit', true)
+
+  const canAudit = (auditAssignments && auditAssignments.length > 0) || false
+
+  // 2. Find the user assigned to the accounting role for the given year
+  const { data: accountingAssignments, error: accountingError } = await supabase
+    .from('officer_role_assignments')
+    .select('profiles!inner(full_name), officer_roles!inner(is_accounting)')
+    .eq('fiscal_year', fiscalYear)
+    .eq('officer_roles.is_accounting', true)
+
+  // @ts-ignore
+  const accountantName = accountingAssignments?.flatMap((assignment: any) => {
+    const profiles = assignment.profiles
+    return Array.isArray(profiles) ? profiles.map(p => p.full_name) : [profiles?.full_name]
+  }).filter((name): name is string => !!name).join('／') || null
+
+  // 3. Find list of auditors for the given year
+  const { data: auditorAssignments, error: auditorError } = await supabase
+    .from('officer_role_assignments')
+    .select('profiles!inner(full_name), officer_roles!inner(is_audit)')
+    .eq('fiscal_year', fiscalYear)
+    .eq('officer_roles.is_audit', true)
+
+  const auditorNames = auditorAssignments?.flatMap((assignment: any) => {
+    const profiles = assignment.profiles
+    return Array.isArray(profiles) ? profiles.map(p => p.full_name) : [profiles?.full_name]
+  }).filter((name): name is string => !!name) || []
+
+  return { canAudit, accountantName, auditorNames }
 }
 
 export async function getFiscalReportWithItems(id: string) {

@@ -7,17 +7,29 @@ import { AccountingItem, FiscalReportPayload, upsertFiscalReport } from '@/app/a
 interface Props {
   initialData?: any
   currentYear: number
+  accountingInfo: {
+    canAudit: boolean
+    accountantName: string | null
+  }
 }
 
-export default function AccountingEditor({ initialData, currentYear }: Props) {
+export default function AccountingEditor({ initialData, currentYear, accountingInfo }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [fiscalYear, setFiscalYear] = useState(initialData?.fiscal_year || currentYear)
   const [reportType, setReportType] = useState<'settlement' | 'budget'>(initialData?.report_type || 'settlement')
   const [title, setTitle] = useState(initialData?.title || `${currentYear}年度 会計決算報告書`)
-  const [accountant, setAccountant] = useState(initialData?.accountant_name || '')
+  const [accountant, setAccountant] = useState(initialData?.accountant_name || accountingInfo.accountantName || '')
   const [auditorNames, setAuditorNames] = useState<string>(initialData?.auditor_names?.join('／') || '')
   const [reportDate, setReportDate] = useState(initialData?.report_date || new Date().toISOString().split('T')[0])
+  const [isAudited, setIsAudited] = useState<boolean>(initialData?.is_audited || false)
+
+  useEffect(() => {
+    // If an accountant is assigned via role, force it.
+    if (accountingInfo.accountantName) {
+      setAccountant(accountingInfo.accountantName)
+    }
+  }, [accountingInfo.accountantName])
 
   const [incomeItems, setIncomeItems] = useState<AccountingItem[]>(
     initialData?.items?.filter((i: any) => i.category === 'income') || [
@@ -94,7 +106,8 @@ export default function AccountingEditor({ initialData, currentYear }: Props) {
       accountant_name: accountant,
       auditor_names: auditorNames.split('／').filter(n => n.trim() !== ''),
       report_date: reportDate,
-      items: [...incomeItems, ...expenseItems].map((item, idx) => ({ ...item, sort_order: idx }))
+      items: [...incomeItems, ...expenseItems].map((item, idx) => ({ ...item, sort_order: idx })),
+      is_audited: isAudited
     }
 
     const res = await upsertFiscalReport(initialData?.id || null, payload)
@@ -264,23 +277,48 @@ export default function AccountingEditor({ initialData, currentYear }: Props) {
             <div className="space-y-6 md:border-l md:border-border md:pl-12">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-muted-foreground">会計担当者</label>
+                <div className="text-xs text-muted-foreground mb-1">
+                  ※ 役職設定で「会計担当」に設定されたユーザーが自動表示されます
+                </div>
                 <input
                   type="text"
                   value={accountant}
-                  onChange={(e) => setAccountant(e.target.value)}
-                  placeholder="氏名を入力"
-                  className="w-full bg-background border border-input rounded-md px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  readOnly
+                  disabled
+                  placeholder="（役職設定から会計担当を割り当ててください）"
+                  className="w-full bg-muted/50 border border-input rounded-md px-4 py-2 text-foreground/70 cursor-not-allowed focus:outline-none"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-muted-foreground">会計監査（「／」区切りで複数入力）</label>
-                <input
-                  type="text"
-                  value={auditorNames}
-                  onChange={(e) => setAuditorNames(e.target.value)}
-                  placeholder="氏名1／氏名2"
-                  className="w-full bg-background border border-input rounded-md px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
+                <label className="text-sm font-semibold text-muted-foreground">会計監査</label>
+                <div className="space-y-3">
+                  <div className="text-xs text-muted-foreground mb-1">
+                    ※ 会計監査が署名したら表示されます
+                  </div>
+                  <input
+                    type="text"
+                    value={auditorNames}
+                    readOnly
+                    disabled
+                    placeholder="（役職設定から会計監査を割り当ててください）"
+                    className="w-full bg-muted/50 border border-input rounded-md px-4 py-2 text-foreground/70 cursor-not-allowed focus:outline-none"
+                  />
+
+                  {accountingInfo.canAudit && (
+                    <div className="flex items-center gap-2 mt-4 p-3 bg-primary/5 border border-primary/20 rounded-md">
+                      <input
+                        type="checkbox"
+                        id="auditCheck"
+                        checked={isAudited}
+                        onChange={(e) => setIsAudited(e.target.checked)}
+                        className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <label htmlFor="auditCheck" className="text-sm font-bold text-foreground cursor-pointer select-none">
+                        会計監査の署名（チェック）を入れる
+                      </label>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-muted-foreground">報告日</label>
@@ -422,6 +460,12 @@ export default function AccountingEditor({ initialData, currentYear }: Props) {
             <div>
               <span className="font-bold mr-2">会計監査：</span>
               <span>{auditorNames}</span>
+              {isAudited && (
+                <span className="ml-2 inline-flex items-center text-green-700">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                  <span className="text-[10px] ml-1 border border-green-700 px-1 rounded">監査済</span>
+                </span>
+              )}
             </div>
           </div>
         </div>

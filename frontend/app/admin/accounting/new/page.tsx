@@ -1,9 +1,11 @@
 import { getOrganizationSettings } from '@/app/admin/actions/settings'
+import { getAccountingInfo } from '@/app/admin/actions/accounting'
 import AccountingEditor from '@/components/admin/accounting/AccountingEditor'
 
 export default async function NewAccountingPage() {
   const settings = await getOrganizationSettings()
   const currentYear = settings?.fiscal_year || new Date().getFullYear()
+  const accountingInfo = await getAccountingInfo(currentYear)
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -12,7 +14,7 @@ export default async function NewAccountingPage() {
         <p className="text-muted-foreground text-sm">項目を入力して、決算報告書または予算案を作成します</p>
       </div>
 
-      <AccountingEditor currentYear={currentYear} />
+      <AccountingEditor currentYear={currentYear} accountingInfo={accountingInfo} />
     </div>
   )
 }

@@ -13,6 +13,8 @@ type Props = {
     description: string | null
     can_edit_members: boolean
     is_visible_in_docs?: boolean | null
+    is_audit?: boolean | null
+    is_accounting?: boolean | null
   }
   initialDisplayOrder?: number
 }
@@ -124,6 +126,42 @@ export default function RoleForm({ role, initialDisplayOrder = 1 }: Props) {
             資料・名簿への表示
           </label>
           <p className="text-gray-500">チェックを入れると、役員名簿などの資料にこの役職が表示されます。</p>
+        </div>
+      </div>
+
+      <div className="relative flex gap-x-3">
+        <div className="flex h-6 items-center">
+          <input
+            id="is_accounting"
+            name="is_accounting"
+            type="checkbox"
+            defaultChecked={role?.is_accounting ?? false}
+            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          />
+        </div>
+        <div className="text-sm leading-6">
+          <label htmlFor="is_accounting" className="font-medium text-gray-900">
+            会計担当
+          </label>
+          <p className="text-gray-500">この役職の担当者は、会計報告書の「会計担当者」欄に自動的に表示されます。</p>
+        </div>
+      </div>
+
+      <div className="relative flex gap-x-3">
+        <div className="flex h-6 items-center">
+          <input
+            id="is_audit"
+            name="is_audit"
+            type="checkbox"
+            defaultChecked={role?.is_audit ?? false}
+            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          />
+        </div>
+        <div className="text-sm leading-6">
+          <label htmlFor="is_audit" className="font-medium text-gray-900">
+            会計監査の署名
+          </label>
+          <p className="text-gray-500">この役職は、会計報告書に署名（チェック）を入れることができます。</p>
         </div>
       </div>
 

@@ -16,10 +16,12 @@ export async function createRole(formData: FormData) {
   const display_order = parseInt(formData.get('display_order') as string) || 0
   const can_edit_members = formData.get('can_edit_members') === 'on'
   const is_visible_in_docs = formData.get('is_visible_in_docs') === 'on'
+  const is_audit = formData.get('is_audit') === 'on'
+  const is_accounting = formData.get('is_accounting') === 'on'
 
   const { error } = await supabase
     .from('officer_roles')
-    .insert({ name, description, display_order, can_edit_members, is_visible_in_docs })
+    .insert({ name, description, display_order, can_edit_members, is_visible_in_docs, is_audit, is_accounting })
 
   if (error) {
     console.error('Create role error:', error)
@@ -40,6 +42,8 @@ export async function updateRole(formData: FormData) {
   const description = formData.get('description') as string
   const can_edit_members = formData.get('can_edit_members') === 'on'
   const is_visible_in_docs = formData.get('is_visible_in_docs') === 'on'
+  const is_audit = formData.get('is_audit') === 'on'
+  const is_accounting = formData.get('is_accounting') === 'on'
 
   if (!id) return { success: false, message: 'IDが指定されていません' }
 
@@ -47,7 +51,7 @@ export async function updateRole(formData: FormData) {
 
   const { error } = await supabase
     .from('officer_roles')
-    .update({ name, display_order, description, can_edit_members, is_visible_in_docs })
+    .update({ name, display_order, description, can_edit_members, is_visible_in_docs, is_audit, is_accounting })
     .eq('id', id)
 
   if (error) {

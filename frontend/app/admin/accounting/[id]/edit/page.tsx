@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getFiscalReportWithItems } from '@/app/admin/actions/accounting'
+import { getFiscalReportWithItems, getAccountingInfo } from '@/app/admin/actions/accounting'
 import { getOrganizationSettings } from '@/app/admin/actions/settings'
 import AccountingEditor from '@/components/admin/accounting/AccountingEditor'
 
@@ -12,6 +12,8 @@ export default async function EditAccountingPage({ params }: Props) {
   const report = await getFiscalReportWithItems(id)
   const settings = await getOrganizationSettings()
   const currentYear = settings?.fiscal_year || new Date().getFullYear()
+  // Use report's fiscal year, or current year if somehow missing (though it shouldn't be)
+  const accountingInfo = await getAccountingInfo(report?.fiscal_year || currentYear)
 
   if (!report) {
     notFound()
@@ -24,7 +26,7 @@ export default async function EditAccountingPage({ params }: Props) {
         <p className="text-muted-foreground text-sm">{report.title} の内容を編集します</p>
       </div>
 
-      <AccountingEditor initialData={report} currentYear={currentYear} />
+      <AccountingEditor initialData={report} currentYear={currentYear} accountingInfo={accountingInfo} />
     </div>
   )
 }
