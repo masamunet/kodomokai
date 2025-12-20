@@ -81,7 +81,7 @@ export default async function AdminMembersPage({
       .select(`
           *,
           role:officer_roles(*),
-          profile:profiles!inner(full_name, email, last_name_kana, first_name_kana, address, phone, deleted_at)
+          profile:profiles(full_name, email, last_name_kana, first_name_kana, address, phone)
       `)
       .eq('fiscal_year', currentFiscalYear)
 
