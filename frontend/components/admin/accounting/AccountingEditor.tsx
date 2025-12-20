@@ -10,6 +10,7 @@ interface Props {
   accountingInfo: {
     canAudit: boolean
     accountantName: string | null
+    auditorNames: string[]
   }
 }
 
@@ -29,7 +30,10 @@ export default function AccountingEditor({ initialData, currentYear, accountingI
     if (accountingInfo.accountantName) {
       setAccountant(accountingInfo.accountantName)
     }
-  }, [accountingInfo.accountantName])
+    if (accountingInfo.auditorNames && accountingInfo.auditorNames.length > 0) {
+      setAuditorNames(accountingInfo.auditorNames.join('／'))
+    }
+  }, [accountingInfo])
 
   const [incomeItems, setIncomeItems] = useState<AccountingItem[]>(
     initialData?.items?.filter((i: any) => i.category === 'income') || [
@@ -460,12 +464,6 @@ export default function AccountingEditor({ initialData, currentYear, accountingI
             <div>
               <span className="font-bold mr-2">会計監査：</span>
               <span>{auditorNames}</span>
-              {isAudited && (
-                <span className="ml-2 inline-flex items-center text-green-700">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                  <span className="text-[10px] ml-1 border border-green-700 px-1 rounded">監査済</span>
-                </span>
-              )}
             </div>
           </div>
         </div>
