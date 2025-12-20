@@ -61,15 +61,16 @@ export async function completeRegistration(data: RegistrationData) {
     return { success: false, message: 'ログインセッションが切れています。もう一度メール認証からやり直してください。' }
   }
 
-  // 2. Set Password for the user
-  const { error: passwordError } = await supabase.auth.updateUser({
-    password: data.account.password
-  })
+  // 2. Set Password for the user (only if provided, i.e., non-OAuth flow)
+  if (data.account.password) {
+    const { error: passwordError } = await supabase.auth.updateUser({
+      password: data.account.password
+    })
 
-  if (passwordError) {
-    // If the new password is the same as the old one, we can consider it a success
-    if (!passwordError.message.includes('New password should be different')) {
-      return { success: false, message: 'パスワードの設定に失敗しました: ' + passwordError.message }
+    if (passwordError) {
+      if (!passwordError.message.includes('New password should be different')) {
+        return { success: false, message: 'パスワードの設定に失敗しました: ' + passwordError.message }
+      }
     }
   }
 

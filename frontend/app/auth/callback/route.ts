@@ -15,12 +15,13 @@ export async function GET(request: Request) {
       // Check if profile is complete
       const { data: profile } = await supabase
         .from('profiles')
-        .select('address')
+        .select('last_name, first_name, address')
         .eq('id', user.id)
         .single()
 
       const baseUrl = getBaseUrl()
-      if (!profile?.address) {
+
+      if (!profile?.last_name || !profile?.first_name || !profile?.address) {
         return NextResponse.redirect(`${baseUrl}/register/onboarding`)
       }
 

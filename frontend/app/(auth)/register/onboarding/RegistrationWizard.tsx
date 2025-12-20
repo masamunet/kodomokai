@@ -41,9 +41,35 @@ const initialData: RegistrationData = {
 }
 
 export default function RegistrationWizard() {
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(0) // 0 indicates initializing
   const [formData, setFormData] = useState<RegistrationData>(initialData)
+  const [isOAuthUser, setIsOAuthUser] = useState(false)
   const totalSteps = 5
+
+  useEffect(() => {
+    const init = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (user) {
+        const email = user.email || ''
+        const isOAuth = user.app_metadata.provider !== 'email'
+
+        setFormData(prev => ({
+          ...prev,
+          account: { ...prev.account, email }
+        }))
+        setIsOAuthUser(isOAuth)
+
+        // If OAuth user, start from step 2 (Parent info)
+        // Otherwise start from step 1 (Password)
+        setStep(isOAuth ? 2 : 1)
+      } else {
+        setStep(1)
+      }
+    }
+    init()
+  }, [])
 
   /* Resolved updateFormData */
   const updateFormData = <K extends keyof RegistrationData>(section: K, data: RegistrationData[K]) => {
@@ -63,7 +89,18 @@ export default function RegistrationWizard() {
   }
 
   const nextStep = () => setStep(prev => prev + 1)
-  const prevStep = () => setStep(prev => prev - 1)
+  const prevStep = () => {
+    if (isOAuthUser && step === 2) return
+    setStep(prev => prev - 1)
+  }
+
+  if (step === 0) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+    )
+  }
 
   return (
     <div className="overflow-hidden">
@@ -76,11 +113,18 @@ export default function RegistrationWizard() {
         </div>
         <div className="flex justify-between mt-2 text-xs text-muted-foreground">
           {['パスワード', '保護者', 'お子様', '確認', '完了'].map((label, index) => {
-            const isActive = step >= index + 1
+            const stepNum = index + 1
+            const isActive = step >= stepNum
+            const isCompleted = step > stepNum
+
+            // Highlight step 1 as completed for OAuth users even if they are on step 2
+            const showCompleted = isCompleted || (isOAuthUser && stepNum === 1)
+            const showActive = isActive || (isOAuthUser && stepNum === 1)
+
             return (
               <span
                 key={label}
-                className={`${isActive ? 'text-primary font-semibold' : ''} transition-colors`}
+                className={`${showActive ? 'text-primary font-semibold' : ''} ${showCompleted ? 'text-green-600' : ''} transition-colors`}
               >
                 {label}
               </span>

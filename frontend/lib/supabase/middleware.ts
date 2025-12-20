@@ -38,16 +38,46 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Deny-all-by-default: If no user, only allow specific public paths.
-  if (!user) {
-    const publicPaths = ['/login', '/auth', '/register']
-    const isPublic = publicPaths.some(path => request.nextUrl.pathname.startsWith(path)) &&
-      !request.nextUrl.pathname.startsWith('/register/onboarding')
+  const publicPaths = ['/login', '/auth', '/register']
+  const isPublic = publicPaths.some(path => request.nextUrl.pathname.startsWith(path))
+  const isOnboarding = request.nextUrl.pathname.startsWith('/register/onboarding')
 
-    if (!isPublic) {
+  // 1. If no user, only allow public paths + onboarding
+  if (!user) {
+    if (!isPublic && !isOnboarding) {
       const url = request.nextUrl.clone()
       url.pathname = '/login'
-      return NextResponse.redirect(url)
+
+      // IMPORTANT: Even when redirecting, we must carry over the updated cookies
+      const response = NextResponse.redirect(url)
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        const { name, value, ...options } = cookie
+        response.cookies.set(name, value, options)
+      })
+      return response
+    }
+    return supabaseResponse
+  }
+
+  // 2. If user exists, check if profile is complete
+  if (!isPublic && !isOnboarding) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('last_name, first_name, address')
+      .eq('id', user.id)
+      .single()
+
+    if (!profile?.last_name || !profile?.first_name || !profile?.address) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/register/onboarding'
+
+      // IMPORTANT: carry over the updated cookies
+      const response = NextResponse.redirect(url)
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        const { name, value, ...options } = cookie
+        response.cookies.set(name, value, options)
+      })
+      return response
     }
   }
 
