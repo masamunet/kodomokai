@@ -9,10 +9,13 @@ export function getBaseUrl() {
   let url =
     process.env?.NEXT_PUBLIC_BASE_URL ??
     process.env?.VERCEL_URL ?? // Automatically set by Vercel.
-    'http://localhost:3000/'
-  // Make sure to include `https://` when not localhost.
-  url = url.includes('http') ? url : `https://${url}`
-  // Make sure to remove trailing `/`.
-  if (url.endsWith('/')) url = url.slice(0, -1)
-  return url
+    'http://localhost:3000'
+
+  // Make sure to include `http` prefix if missing
+  if (!url.startsWith('http')) {
+    url = `https://${url}`
+  }
+
+  // Remove trailing slash
+  return url.replace(/\/$/, '')
 }
