@@ -99,13 +99,7 @@ export default function AdminUserForm({ profile }: Props) {
               formData.append('id', profile.id)
 
               const result = await adminDeleteProfile(formData)
-              if (result.success) {
-                setMessage('会員を削除しました。一覧に戻ります...')
-                setTimeout(() => {
-                  router.push('/admin/members?view=guardian')
-                  router.refresh()
-                }, 2000)
-              } else {
+              if (result && !result.success) {
                 setMessage(result.message)
                 setIsDeleting(false)
               }

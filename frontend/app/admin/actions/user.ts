@@ -266,5 +266,5 @@ export async function adminDeleteProfile(formData: FormData) {
   }
 
   revalidatePath('/admin/members')
-  return { success: true, message: '会員を削除しました' }
+  redirect('/admin/members?view=guardian')
 }
