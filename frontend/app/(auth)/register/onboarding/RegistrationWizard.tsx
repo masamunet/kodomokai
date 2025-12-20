@@ -58,11 +58,35 @@ export default function RegistrationWizard({ admissionFee, annualFee }: Props) {
 
       if (user) {
         const email = user.email || ''
-        const isOAuth = user.app_metadata.provider !== 'email'
+        const providers = user.app_metadata.providers || []
+        const isOAuth = providers.length > 0 && !providers.includes('email') || providers.includes('google')
+
+        // Extract names from OAuth metadata
+        const metadata = user.user_metadata || {}
+        let lastName = metadata.family_name || ''
+        let firstName = metadata.given_name || ''
+
+        // If Google doesn't provide family/given separately, try parsing full_name
+        if (!lastName && !firstName && metadata.full_name) {
+          const parts = metadata.full_name.split(' ')
+          if (parts.length >= 2) {
+            lastName = parts[0]
+            firstName = parts.slice(1).join(' ')
+          } else {
+            lastName = metadata.full_name
+          }
+        }
+
+        console.log('[RegistrationWizard] User Info:', { email, providers, isOAuth, metadata })
 
         setFormData(prev => ({
           ...prev,
-          account: { ...prev.account, email }
+          account: { ...prev.account, email },
+          parent: {
+            ...prev.parent,
+            lastName: lastName || prev.parent.lastName,
+            firstName: firstName || prev.parent.firstName,
+          }
         }))
         setIsOAuthUser(isOAuth)
 

@@ -69,7 +69,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // 2. If user exists, check if profile is complete
-  if (!isPublic && !isOnboarding) {
+  if (!isOnboarding && !pathname.startsWith('/auth')) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('last_name, first_name, address')
