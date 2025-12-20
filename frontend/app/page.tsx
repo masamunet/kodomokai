@@ -4,6 +4,7 @@ import { getTargetFiscalYear } from '@/lib/fiscal-year'
 import FiscalYearSwitcher from '@/components/FiscalYearSwitcher'
 import { MessageCircleQuestion, HelpCircle, ChevronRight } from 'lucide-react'
 import { getUnansweredCount } from '@/app/actions/forum'
+import GoogleCalendarButton from '@/components/GoogleCalendarButton'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -18,6 +19,10 @@ export default async function DashboardPage() {
     .select('*')
     .eq('id', currentUser.id)
     .single()
+
+  // Get association settings
+  const { data: settings } = await supabase.from('organization_settings').select('name').single()
+  const associationName = settings?.name || '子供会'
 
   // Get unread notifications
   const { data: unreadNotifications } = await supabase
@@ -273,11 +278,15 @@ id,
                       const status = event.public_status || (event.is_tentative ? 'date_undecided' : 'finalized')
 
                       return (
-                        <li key={event.id}>
-                          <Link href={`/events/${event.id}`} className={`group block w-full cursor-pointer px-4 py-4 sm:px-6 hover:bg-gray-50 ${isCanceled ? 'bg-gray-50' : ''}`}>
+                        <li key={event.id} className={`group relative hover:bg-gray-50 ${isCanceled ? 'bg-gray-50' : ''}`}>
+                          <div className="px-4 py-4 sm:px-6">
                             <div className="flex items-center justify-between">
-                              <div className="flex flex-col">
-                                <div className="flex items-center gap-2 mb-1">
+                              {/* Main Content Area - Clickable via absolute link */}
+                              <div className="flex flex-col relative z-0">
+                                <Link href={`/events/${event.id}`} className="absolute inset-0 z-10 w-full h-full focus:outline-none">
+                                  <span className="sr-only">イベント詳細を見る</span>
+                                </Link>
+                                <div className="flex items-center gap-2 mb-1 pointer-events-none">
                                   {status === 'draft' && (
                                     <span className="inline-flex items-center rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-bold text-gray-600 ring-1 ring-inset ring-gray-500/10">下書き</span>
                                   )}
@@ -318,7 +327,7 @@ id,
 
                                   <p className={`text-sm font-bold text-indigo-600 truncate ${isCanceled ? 'line-through opacity-50' : ''}`}>{event.title}</p>
                                 </div>
-                                <p className={`mt-1 text-xs text-gray-500 ${isCanceled ? 'line-through opacity-50' : ''}`}>
+                                <p className={`mt-1 text-xs text-gray-500 pointer-events-none ${isCanceled ? 'line-through opacity-50' : ''}`}>
                                   {status === 'date_undecided' ? (
                                     <span className="text-pink-600 font-bold">【日時未定】</span>
                                   ) : (
@@ -329,7 +338,20 @@ id,
                                   {event.location && ` @ ${event.location}`}
                                 </p>
                               </div>
-                              <div className="flex items-center gap-2">
+
+                              {/* Right Side Actions - z-index higher than link to be clickable */}
+                              <div className="flex items-center gap-3 relative z-20">
+                                {!isCanceled && !event.is_tentative && (
+                                  <GoogleCalendarButton
+                                    title={event.title}
+                                    description={event.description}
+                                    date={event.scheduled_date}
+                                    startTime={event.start_time}
+                                    location={event.location}
+                                    associationName={associationName}
+                                  />
+                                )}
+
                                 {event.rsvp_required && !isCanceled ? (
                                   <span className="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                                     詳細・出欠
@@ -342,7 +364,7 @@ id,
                                 <ChevronRight className="h-5 w-5 text-gray-400" aria-hidden="true" />
                               </div>
                             </div>
-                          </Link>
+                          </div>
                         </li>
                       )
                     })}
