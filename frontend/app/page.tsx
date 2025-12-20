@@ -1,9 +1,8 @@
-
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { getTargetFiscalYear } from '@/lib/fiscal-year'
 import FiscalYearSwitcher from '@/components/FiscalYearSwitcher'
-import { MessageCircleQuestion, HelpCircle } from 'lucide-react'
+import { MessageCircleQuestion, HelpCircle, ChevronRight } from 'lucide-react'
 import { getUnansweredCount } from '@/app/actions/forum'
 
 export default async function DashboardPage() {
@@ -24,14 +23,14 @@ export default async function DashboardPage() {
   const { data: unreadNotifications } = await supabase
     .from('notification_recipients')
     .select(`
-      id,
-      is_read,
-      read_token,
-      notification:notifications (
-        id,
-        subject,
-        sent_at
-      )
+id,
+  is_read,
+  read_token,
+  notification: notifications(
+    id,
+    subject,
+    sent_at
+  )
     `)
     .eq('profile_id', currentUser.id)
     .eq('is_read', false)
@@ -123,8 +122,8 @@ export default async function DashboardPage() {
   const { data: officerRoles } = await supabase
     .from('officer_role_assignments')
     .select(`
-        *,
-        role:officer_roles(*)
+  *,
+  role: officer_roles(*)
     `)
     .eq('profile_id', currentUser.id)
     .eq('fiscal_year', targetFiscalYear) // Use target year
@@ -243,7 +242,7 @@ export default async function DashboardPage() {
                     const notification = recipient.notification as any
                     return (
                       <li key={recipient.id} className="px-6 py-4 hover:bg-gray-50">
-                        <Link href={`/notifications/read?token=${recipient.read_token}`} className="block">
+                        <Link href={`/ notifications / read ? token = ${recipient.read_token} `} className="block">
                           <div className="flex items-center justify-between">
                             <span className="font-medium text-indigo-600">{notification?.subject}</span>
                             <span className="text-sm text-gray-500">
@@ -274,78 +273,76 @@ export default async function DashboardPage() {
                       const status = event.public_status || (event.is_tentative ? 'date_undecided' : 'finalized')
 
                       return (
-                        <li key={event.id} className={`px-4 py-4 sm:px-6 hover:bg-gray-50 ${isCanceled ? 'bg-gray-50' : ''}`}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex flex-col">
-                              <div className="flex items-center gap-2 mb-1">
-                                {status === 'draft' && (
-                                  <span className="inline-flex items-center rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-bold text-gray-600 ring-1 ring-inset ring-gray-500/10">下書き</span>
-                                )}
-                                {isCanceled && (
-                                  <span className="inline-flex items-center rounded-md bg-red-50 px-1.5 py-0.5 text-xs font-bold text-red-700 ring-1 ring-inset ring-red-600/10">中止</span>
-                                )}
-                                {status === 'details_undecided' && !isCanceled && (
-                                  <span className="inline-flex items-center rounded-md bg-yellow-50 px-1.5 py-0.5 text-xs font-bold text-yellow-700 ring-1 ring-inset ring-yellow-600/10">詳細未定</span>
-                                )}
+                        <li key={event.id}>
+                          <Link href={`/events/${event.id}`} className={`group block w-full cursor-pointer px-4 py-4 sm:px-6 hover:bg-gray-50 ${isCanceled ? 'bg-gray-50' : ''}`}>
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-col">
+                                <div className="flex items-center gap-2 mb-1">
+                                  {status === 'draft' && (
+                                    <span className="inline-flex items-center rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-bold text-gray-600 ring-1 ring-inset ring-gray-500/10">下書き</span>
+                                  )}
+                                  {isCanceled && (
+                                    <span className="inline-flex items-center rounded-md bg-red-50 px-1.5 py-0.5 text-xs font-bold text-red-700 ring-1 ring-inset ring-red-600/10">中止</span>
+                                  )}
+                                  {status === 'details_undecided' && !isCanceled && (
+                                    <span className="inline-flex items-center rounded-md bg-yellow-50 px-1.5 py-0.5 text-xs font-bold text-yellow-700 ring-1 ring-inset ring-yellow-600/10">詳細未定</span>
+                                  )}
 
-                                {/* Child Attendance Icons */}
-                                {children && children.length > 0 && !isCanceled && (
-                                  <div className="flex items-center gap-1 ml-1" title="出席状況">
-                                    {children.map(child => {
-                                      const isAttending = eventAttendanceMap.get(event.id)?.has(child.id)
-                                      return (
-                                        <div
-                                          key={child.id}
-                                          title={`${child.first_name}: ${isAttending ? '参加' : '参加しない'}`}
-                                          className={`
-                                            flex items-center justify-center w-5 h-5 rounded-full border 
-                                            ${isAttending
-                                              ? 'bg-green-100 border-green-200 text-green-700'
-                                              : 'bg-gray-50 border-gray-200 text-gray-300'
-                                            }
-                                          `}
-                                        >
-                                          {/* Use simple circle or initial or icon. User asked for visual pattern like 000/010. 
-                                               Let's use a User icon or Smile icon. Smile is friendly.
-                                           */}
-                                          <span className="text-[10px] font-bold">
-                                            {/* If we want an icon: <Smile size={12} /> */}
-                                            {/* If we want just color distinction as requested "icon": */}
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={isAttending ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" className="w-3 h-3">
-                                              <circle cx="12" cy="12" r="10" />
-                                            </svg>
-                                          </span>
-                                        </div>
-                                      )
-                                    })}
-                                  </div>
-                                )}
+                                  {/* Child Attendance Icons */}
+                                  {children && children.length > 0 && !isCanceled && (
+                                    <div className="flex items-center gap-1 ml-1" title="出席状況">
+                                      {(children || []).map(child => {
+                                        const isAttending = eventAttendanceMap.get(event.id)?.has(child.id)
+                                        return (
+                                          <div
+                                            key={child.id}
+                                            title={`${child.first_name}: ${isAttending ? '参加' : '参加しない'}`}
+                                            className={`
+                                              flex items-center justify-center w-5 h-5 rounded-full border 
+                                              ${isAttending
+                                                ? 'bg-green-100 border-green-200 text-green-700'
+                                                : 'bg-gray-50 border-gray-200 text-gray-300'
+                                              }
+                                            `}
+                                          >
+                                            <span className="text-[10px] font-bold">
+                                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={isAttending ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.5" className="w-3 h-3">
+                                                <circle cx="12" cy="12" r="10" />
+                                              </svg>
+                                            </span>
+                                          </div>
+                                        )
+                                      })}
+                                    </div>
+                                  )}
 
-                                <p className={`text-sm font-bold text-indigo-600 truncate ${isCanceled ? 'line-through opacity-50' : ''}`}>{event.title}</p>
+                                  <p className={`text-sm font-bold text-indigo-600 truncate ${isCanceled ? 'line-through opacity-50' : ''}`}>{event.title}</p>
+                                </div>
+                                <p className={`mt-1 text-xs text-gray-500 ${isCanceled ? 'line-through opacity-50' : ''}`}>
+                                  {status === 'date_undecided' ? (
+                                    <span className="text-pink-600 font-bold">【日時未定】</span>
+                                  ) : (
+                                    <>
+                                      {new Date(event.scheduled_date).toLocaleDateString()} {event.start_time ? event.start_time.slice(0, 5) : ''}
+                                    </>
+                                  )}
+                                  {event.location && ` @ ${event.location}`}
+                                </p>
                               </div>
-                              <p className={`mt-1 text-xs text-gray-500 ${isCanceled ? 'line-through opacity-50' : ''}`}>
-                                {status === 'date_undecided' ? (
-                                  <span className="text-pink-600 font-bold">【日時未定】</span>
+                              <div className="flex items-center gap-2">
+                                {event.rsvp_required && !isCanceled ? (
+                                  <span className="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                    詳細・出欠
+                                  </span>
                                 ) : (
-                                  <>
-                                    {new Date(event.scheduled_date).toLocaleDateString()} {event.start_time ? event.start_time.slice(0, 5) : ''}
-                                  </>
+                                  <span className="inline-flex items-center rounded-md bg-gray-50 px-2.5 py-1.5 text-xs font-medium text-gray-500 border border-gray-200">
+                                    {isCanceled ? '受付停止' : '自由参加'}
+                                  </span>
                                 )}
-                                {event.location && ` @ ${event.location}`}
-                              </p>
+                                <ChevronRight className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                              </div>
                             </div>
-                            <div>
-                              {event.rsvp_required && !isCanceled ? (
-                                <Link href={`/events/${event.id}`} className="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                  詳細・出欠
-                                </Link>
-                              ) : (
-                                <span className="inline-flex items-center rounded-md bg-gray-50 px-2.5 py-1.5 text-xs font-medium text-gray-500 border border-gray-200">
-                                  {isCanceled ? '受付停止' : '自由参加'}
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                          </Link>
                         </li>
                       )
                     })}

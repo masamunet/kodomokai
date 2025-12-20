@@ -1,8 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Edit } from 'lucide-react'
-
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
+import EventListEditButton from '@/components/admin/EventListEditButton'
 
 export default async function AdminEventsPage() {
   const supabase = await createClient()
@@ -26,20 +25,11 @@ export default async function AdminEventsPage() {
             <li className="px-4 py-4 sm:px-6 text-gray-500 text-center">イベントがありません</li>
           ) : (
             events?.map((event) => (
-              <li key={event.id} className="block hover:bg-gray-50">
-                <div className="px-4 py-4 sm:px-6">
+              <li key={event.id} className="relative block hover:bg-gray-50">
+                <Link href={`/admin/events/${event.id}`} className="block px-4 py-4 sm:px-6 cursor-pointer">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Link href={`/admin/events/${event.id}`} className="block hover:underline">
-                        <p className="truncate text-sm font-medium text-indigo-600">{event.title}</p>
-                      </Link>
-                      <Link
-                        href={`/admin/events/${event.id}/edit`}
-                        className="text-gray-400 hover:text-indigo-600 p-1 hover:bg-indigo-50 rounded"
-                        title="編集"
-                      >
-                        <Edit size={16} />
-                      </Link>
+                      <p className="truncate text-sm font-medium text-indigo-600">{event.title}</p>
                     </div>
                     <div className="ml-2 flex flex-shrink-0">
                       <p className="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold leading-5 text-blue-800">
@@ -60,6 +50,9 @@ export default async function AdminEventsPage() {
                       </div>
                     )}
                   </div>
+                </Link>
+                <div className="absolute top-4 right-4 sm:static sm:ml-4 sm:flex-shrink-0">
+                  <EventListEditButton eventId={event.id} />
                 </div>
               </li>
             ))
