@@ -8,20 +8,14 @@ export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    return (
-      <div className="p-8">
-        <p>ログインしてください</p>
-        <Link href="/login" className="text-indigo-600">ログイン画面へ</Link>
-      </div>
-    )
-  }
+  // user is guaranteed to exist because of middleware redirection
+  const currentUser = user!
 
   // Get user profile
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user.id)
+    .eq('id', currentUser.id)
     .single()
 
   // Get unread notifications
@@ -37,7 +31,7 @@ export default async function DashboardPage() {
         sent_at
       )
     `)
-    .eq('profile_id', user.id)
+    .eq('profile_id', currentUser.id)
     .eq('is_read', false)
     .order('created_at', { ascending: false })
 
@@ -68,7 +62,7 @@ export default async function DashboardPage() {
         *,
         role:officer_roles(*)
     `)
-    .eq('profile_id', user.id)
+    .eq('profile_id', currentUser.id)
     .eq('fiscal_year', targetFiscalYear) // Use target year
 
   // ... (rest of logic)

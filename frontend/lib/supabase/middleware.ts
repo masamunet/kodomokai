@@ -42,7 +42,6 @@ export async function updateSession(request: NextRequest) {
 
   // Define public paths strictly
   const isPublic =
-    pathname === '/' ||
     pathname.startsWith('/login') ||
     pathname.startsWith('/auth') ||
     pathname === '/register' ||
