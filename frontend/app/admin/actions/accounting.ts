@@ -73,19 +73,19 @@ export async function getAccountingInfo(fiscalYear: number) {
     return Array.isArray(profiles) ? profiles.map(p => p.full_name) : [profiles?.full_name]
   }).filter((name): name is string => !!name).join('／') || null
 
-  // 3. Find list of auditors for the given year
-  const { data: auditorAssignments, error: auditorError } = await supabase
+  // 3. Check if current user is an auditor and get their name
+  const { data: currentAuditorDocs, error: auditorError } = await supabase
     .from('officer_role_assignments')
     .select('profiles!inner(full_name), officer_roles!inner(is_audit)')
     .eq('fiscal_year', fiscalYear)
+    .eq('profile_id', user.id)
     .eq('officer_roles.is_audit', true)
 
-  const auditorNames = auditorAssignments?.flatMap((assignment: any) => {
-    const profiles = assignment.profiles
-    return Array.isArray(profiles) ? profiles.map(p => p.full_name) : [profiles?.full_name]
-  }).filter((name): name is string => !!name) || []
+  // @ts-ignore
+  const currentAuditorProfile: any = currentAuditorDocs?.[0]?.profiles
+  const currentAuditorName = currentAuditorProfile?.full_name || null
 
-  return { canAudit, accountantName, auditorNames }
+  return { canAudit, accountantName, currentAuditorName }
 }
 
 export async function getFiscalReportWithItems(id: string) {

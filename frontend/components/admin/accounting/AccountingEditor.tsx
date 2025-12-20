@@ -11,6 +11,7 @@ interface Props {
     canAudit: boolean
     accountantName: string | null
     auditorNames: string[]
+    currentAuditorName: string | null
   }
 }
 
@@ -30,10 +31,27 @@ export default function AccountingEditor({ initialData, currentYear, accountingI
     if (accountingInfo.accountantName) {
       setAccountant(accountingInfo.accountantName)
     }
-    if (accountingInfo.auditorNames && accountingInfo.auditorNames.length > 0) {
-      setAuditorNames(accountingInfo.auditorNames.join('／'))
-    }
   }, [accountingInfo])
+
+  const toggleMySignature = (checked: boolean) => {
+    if (!accountingInfo.currentAuditorName) return
+
+    const currentNames = auditorNames.split('／').filter(n => n.trim() !== '')
+    let newNames: string[] = []
+
+    if (checked) {
+      // Add if not exists
+      if (!currentNames.includes(accountingInfo.currentAuditorName)) {
+        newNames = [...currentNames, accountingInfo.currentAuditorName]
+      } else {
+        newNames = currentNames
+      }
+    } else {
+      // Remove
+      newNames = currentNames.filter(n => n !== accountingInfo.currentAuditorName)
+    }
+    setAuditorNames(newNames.join('／'))
+  }
 
   const [incomeItems, setIncomeItems] = useState<AccountingItem[]>(
     initialData?.items?.filter((i: any) => i.category === 'income') || [
@@ -308,17 +326,17 @@ export default function AccountingEditor({ initialData, currentYear, accountingI
                     className="w-full bg-muted/50 border border-input rounded-md px-4 py-2 text-foreground/70 cursor-not-allowed focus:outline-none"
                   />
 
-                  {accountingInfo.canAudit && (
+                  {accountingInfo.canAudit && accountingInfo.currentAuditorName && (
                     <div className="flex items-center gap-2 mt-4 p-3 bg-primary/5 border border-primary/20 rounded-md">
                       <input
                         type="checkbox"
                         id="auditCheck"
-                        checked={isAudited}
-                        onChange={(e) => setIsAudited(e.target.checked)}
+                        checked={auditorNames.includes(accountingInfo.currentAuditorName)}
+                        onChange={(e) => toggleMySignature(e.target.checked)}
                         className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary"
                       />
                       <label htmlFor="auditCheck" className="text-sm font-bold text-foreground cursor-pointer select-none">
-                        会計監査の署名（チェック）を入れる
+                        会計監査の署名を入れる（{accountingInfo.currentAuditorName}）
                       </label>
                     </div>
                   )}
