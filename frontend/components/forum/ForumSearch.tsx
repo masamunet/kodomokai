@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { useDebounce } from '@/lib/hooks/use-debounce'
 
 export default function ForumSearch() {
@@ -42,8 +42,17 @@ export default function ForumSearch() {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="キーワードで検索"
-          className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-indigo-200 focus:outline-none focus:bg-white/20 transition-all backdrop-blur-md"
+          className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-12 text-white placeholder:text-indigo-200 focus:outline-none focus:bg-white/20 transition-all backdrop-blur-md"
         />
+        {inputValue && (
+          <button
+            onClick={() => setInputValue('')}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-300 hover:text-white transition-colors p-1"
+            title="検索をクリア"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       <div className="flex items-center justify-between mt-12 px-2 -mx-2">
