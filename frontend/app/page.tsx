@@ -1,6 +1,5 @@
 
 import { createClient } from '@/lib/supabase/server'
-import { seedOfficerData } from './actions/dev_seed'
 import Link from 'next/link'
 import { getTargetFiscalYear } from '@/lib/fiscal-year'
 import FiscalYearSwitcher from '@/components/FiscalYearSwitcher'
@@ -154,15 +153,7 @@ export default async function DashboardPage() {
               </div>
             </div>
           ) : (
-            // Development Seed Button (Only visible if not officer)
-            <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-              <p className="text-sm text-yellow-800 mb-2">あなたは現在役員として登録されていません。</p>
-              <form action={seedOfficerData}>
-                <button className="bg-yellow-600 text-white px-3 py-1 rounded text-sm font-semibold hover:bg-yellow-500">
-                  [開発用] 役員データ(会長)を投入する
-                </button>
-              </form>
-            </div>
+            null
           )}
 
           {/* Notifications Section */}

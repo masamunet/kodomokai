@@ -4,13 +4,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { RegistrationData } from '../onboarding/RegistrationWizard'
-import { useEffect } from 'react'
+import { toHiragana } from '@/lib/utils'
 
 const schema = z.object({
   lastName: z.string().min(1, '苗字を入力してください'),
   firstName: z.string().min(1, '名前を入力してください'),
-  lastNameKana: z.string().min(1, '苗字（ふりがな）を入力してください').regex(/^[ぁ-んー]+$/, 'ひらがなで入力してください'),
-  firstNameKana: z.string().min(1, '名前（ふりがな）を入力してください').regex(/^[ぁ-んー]+$/, 'ひらがなで入力してください'),
+  lastNameKana: z.string().min(1, '苗字（ふりがな）を入力してください'),
+  firstNameKana: z.string().min(1, '名前（ふりがな）を入力してください'),
   phone: z.string().optional().or(z.literal('')),
   address: z.string().min(1, '住所を入力してください'),
 })
@@ -24,51 +24,21 @@ type Props = {
   onPrev: () => void
 }
 
-// Convert Katakana to Hiragana
-const toHiragana = (str: string) => {
-  return str.replace(/[\u30a1-\u30f6]/g, function (match) {
-    var chr = match.charCodeAt(0) - 0x60;
-    return String.fromCharCode(chr);
-  });
-}
-
 export default function RegisterParentStep({ data, updateData, onNext, onPrev }: Props) {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: data,
   })
 
-  const lastNameKana = watch('lastNameKana')
-  const firstNameKana = watch('firstNameKana')
-
-  // Auto-convert to Hiragana on change (or blur would be better but this works for "automatic")
-  useEffect(() => {
-    if (lastNameKana) {
-      const hira = toHiragana(lastNameKana)
-      if (hira !== lastNameKana) {
-        setValue('lastNameKana', hira)
-      }
-    }
-  }, [lastNameKana, setValue])
-
-  useEffect(() => {
-    if (firstNameKana) {
-      const hira = toHiragana(firstNameKana)
-      if (hira !== firstNameKana) {
-        setValue('firstNameKana', hira)
-      }
-    }
-  }, [firstNameKana, setValue])
-
   const onSubmit = (formData: FormData) => {
     updateData({
       ...formData,
+      lastNameKana: toHiragana(formData.lastNameKana),
+      firstNameKana: toHiragana(formData.firstNameKana),
       // Ensure fallbacks for optional fields
       phone: formData.phone || '',
       address: formData.address || '',
@@ -119,6 +89,7 @@ export default function RegisterParentStep({ data, updateData, onNext, onPrev }:
               id="lastNameKana"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
               placeholder="やまだ"
+              autoComplete="off"
               {...register('lastNameKana')}
             />
             {errors.lastNameKana && <p className="mt-1 text-xs text-red-600">{errors.lastNameKana.message}</p>}
@@ -130,12 +101,13 @@ export default function RegisterParentStep({ data, updateData, onNext, onPrev }:
               id="firstNameKana"
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
               placeholder="たろう"
+              autoComplete="off"
               {...register('firstNameKana')}
             />
             {errors.firstNameKana && <p className="mt-1 text-xs text-red-600">{errors.firstNameKana.message}</p>}
           </div>
         </div>
-        <p className="text-xs text-gray-500 -mt-2">※カタカナで入力した場合、自動的にひらがなに変換されます</p>
+        <p className="text-xs text-gray-500 -mt-2">※カタカナは登録時に自動的にひらがなに変換されます</p>
 
         <div>
           <label htmlFor="address" className="block text-sm font-medium text-gray-700">住所</label>
@@ -145,6 +117,7 @@ export default function RegisterParentStep({ data, updateData, onNext, onPrev }:
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 border"
             {...register('address')}
           />
+          {errors.address && <p className="mt-1 text-xs text-red-600">{errors.address.message}</p>}
         </div>
 
         <div>

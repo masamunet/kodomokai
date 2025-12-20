@@ -4,14 +4,13 @@ import { RegistrationData } from '../onboarding/RegistrationWizard'
 
 type Props = {
   data: RegistrationData
+  admissionFee: number
+  annualFeePerChild: number
   onNext: () => void
   onPrev: () => void
 }
 
-export default function RegisterConfirmStep({ data, onNext, onPrev }: Props) {
-  // Mock fees
-  const admissionFee = 1000 // 入会金 per family
-  const annualFeePerChild = 500 // 会費 per child
+export default function RegisterConfirmStep({ data, admissionFee, annualFeePerChild, onNext, onPrev }: Props) {
   const totalAnnualFee = data.children.length * annualFeePerChild
   const total = admissionFee + totalAnnualFee
 

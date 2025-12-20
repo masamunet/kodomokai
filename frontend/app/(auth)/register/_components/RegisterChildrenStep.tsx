@@ -1,18 +1,19 @@
 'use client'
 
-import { useState } from 'react' // Import useState
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { RegistrationData } from '../onboarding/RegistrationWizard'
 import { Trash2, Plus } from 'lucide-react'
+import { toHiragana } from '@/lib/utils'
 
 // Schema for a single child
 const childSchema = z.object({
   lastName: z.string().min(1, '苗字を入力してください'),
   firstName: z.string().min(1, '名前を入力してください'),
-  lastNameKana: z.string().min(1, '苗字（ふりがな）を入力してください').regex(/^[ぁ-んー]+$/, 'ひらがなで入力してください'),
-  firstNameKana: z.string().min(1, '名前（ふりがな）を入力してください').regex(/^[ぁ-んー]+$/, 'ひらがなで入力してください'),
+  lastNameKana: z.string().min(1, '苗字（ふりがな）を入力してください'),
+  firstNameKana: z.string().min(1, '名前（ふりがな）を入力してください'),
   birthday: z.string().min(1, '生年月日を入力してください'),
   gender: z.string().min(1, '性別を選択してください'),
   allergies: z.string().optional(),
@@ -37,7 +38,6 @@ export default function RegisterChildrenStep({ data, parentLastName, parentLastN
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<ChildFormData>({
     resolver: zodResolver(childSchema),
@@ -51,6 +51,8 @@ export default function RegisterChildrenStep({ data, parentLastName, parentLastN
   const onAddChild = (childData: ChildFormData) => {
     updateData([...data, {
       ...childData,
+      lastNameKana: toHiragana(childData.lastNameKana),
+      firstNameKana: toHiragana(childData.firstNameKana),
       allergies: childData.allergies || '',
       notes: childData.notes || '',
     }])
@@ -134,15 +136,16 @@ export default function RegisterChildrenStep({ data, parentLastName, parentLastN
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-gray-700">ふりがな(苗字)</label>
-                <input type="text" {...register('lastNameKana')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm border px-3 py-2" />
+                <input type="text" {...register('lastNameKana')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm border px-3 py-2" autoComplete="off" />
                 {errors.lastNameKana && <p className="text-xs text-red-600">{errors.lastNameKana.message}</p>}
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700">ふりがな(名前)</label>
-                <input type="text" {...register('firstNameKana')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm border px-3 py-2" placeholder="はなこ" />
+                <input type="text" {...register('firstNameKana')} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm border px-3 py-2" placeholder="はなこ" autoComplete="off" />
                 {errors.firstNameKana && <p className="text-xs text-red-600">{errors.firstNameKana.message}</p>}
               </div>
             </div>
+            <p className="text-[10px] text-gray-500 -mt-2">※カタカナは登録時に自動的にひらがなに変換されます</p>
 
             <div className="grid grid-cols-2 gap-4">
               <div>

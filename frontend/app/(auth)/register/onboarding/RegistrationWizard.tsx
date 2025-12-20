@@ -40,7 +40,12 @@ const initialData: RegistrationData = {
   children: []
 }
 
-export default function RegistrationWizard() {
+type Props = {
+  admissionFee: number
+  annualFee: number
+}
+
+export default function RegistrationWizard({ admissionFee, annualFee }: Props) {
   const [step, setStep] = useState(0) // 0 indicates initializing
   const [formData, setFormData] = useState<RegistrationData>(initialData)
   const [isOAuthUser, setIsOAuthUser] = useState(false)
@@ -169,6 +174,8 @@ export default function RegistrationWizard() {
           {step === 4 && (
             <RegisterConfirmStep
               data={formData}
+              admissionFee={admissionFee}
+              annualFeePerChild={annualFee}
               onNext={nextStep}
               onPrev={prevStep}
             />
