@@ -4,6 +4,7 @@ import FiscalYearSwitcher from '@/components/FiscalYearSwitcher'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import { getUnansweredCount } from '@/app/actions/forum'
 import { HelpCircle } from 'lucide-react'
+import AdminNavLinks from '@/components/admin/AdminNavLinks'
 
 export default async function AdminLayout({
   children,
@@ -41,7 +42,7 @@ export default async function AdminLayout({
             </Link>
             <div className="h-5 w-px bg-border mx-2 shrink-0" />
 
-            <NavLinks />
+            <AdminNavLinks />
 
             <div className="h-5 w-px bg-border mx-2 shrink-0" />
             <Link href="/" className="text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-md text-sm font-medium shadow-sm transition-colors whitespace-nowrap ml-2">
@@ -57,44 +58,5 @@ export default async function AdminLayout({
         {children}
       </main>
     </div>
-  )
-}
-
-function NavLinks() {
-  return (
-    <>
-      <Link href="/admin/templates" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        テンプレート
-      </Link>
-      <Link href="/admin/events" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        イベント
-      </Link>
-      <Link href="/admin/members" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        名簿
-      </Link>
-      <Link href="/admin/users/import" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        一括登録
-      </Link>
-      <div className="h-5 w-px bg-border mx-2 shrink-0" />
-      <Link href="/admin/roles" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        役職
-      </Link>
-      <Link href="/admin/officers" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        任命
-      </Link>
-      <Link href="/admin/accounting" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        会計
-      </Link>
-      <Link href="/admin/settings" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        設定
-      </Link>
-      <Link href="/admin/constitution" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        規約
-      </Link>
-      <div className="h-5 w-px bg-border mx-2 shrink-0" />
-      <Link href="/admin/notifications" className="text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-md text-sm font-medium hover:bg-muted transition-colors whitespace-nowrap">
-        配信
-      </Link>
-    </>
   )
 }
