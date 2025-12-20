@@ -114,17 +114,13 @@ export default function AdminNavLinks() {
       >
         会計
       </Link>
-      <Link
-        href="/admin/notifications"
+      <span
         className={cn(
-          "px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap",
-          isActive('/admin/notifications')
-            ? "text-foreground bg-muted"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+          "px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap text-muted-foreground/50 cursor-not-allowed"
         )}
       >
         配信
-      </Link>
+      </span>
 
       <div className="relative ml-2">
         <button
@@ -132,7 +128,7 @@ export default function AdminNavLinks() {
           onClick={handleToggle}
           className={cn(
             "flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap",
-            isOpen || isActive('/admin/settings') || isActive('/admin/constitution') || isActive('/admin/templates') || isActive('/admin/users/import')
+            isOpen || isActive('/admin/settings') || isActive('/admin/constitution') || isActive('/admin/users/import')
               ? "text-foreground bg-muted"
               : "text-muted-foreground hover:text-foreground hover:bg-muted"
           )}
@@ -166,14 +162,12 @@ export default function AdminNavLinks() {
               <FileText className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
               規約
             </Link>
-            <Link
-              href="/admin/templates"
-              className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              onClick={() => setIsOpen(false)}
+            <span
+              className="group flex items-center px-4 py-2 text-sm text-gray-400 cursor-not-allowed"
             >
-              <ScrollText className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+              <ScrollText className="mr-3 h-4 w-4 text-gray-300" />
               テンプレート
-            </Link>
+            </span>
             <Link
               href="/admin/users/import"
               className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
