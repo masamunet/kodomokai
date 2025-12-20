@@ -56,8 +56,9 @@ export default async function EventPage({
               <div className="sm:col-span-1">
                 <dt className="text-sm font-medium text-gray-500">日時</dt>
                 <dd className="mt-1 text-sm text-gray-900">
-                  {new Date(event.start_time).toLocaleDateString()} {new Date(event.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  {event.end_time && ` 〜 ${new Date(event.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                  {new Date(event.scheduled_date).toLocaleDateString()}
+                  {event.start_time && ` ${event.start_time.slice(0, 5)}`}
+                  {event.scheduled_end_date && ` 〜 ${new Date(event.scheduled_end_date).toLocaleDateString()}`}
                 </dd>
               </div>
               <div className="sm:col-span-1">

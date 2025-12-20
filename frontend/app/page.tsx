@@ -39,23 +39,53 @@ export default async function DashboardPage() {
 
   // Get target fiscal year
   const targetFiscalYear = await getTargetFiscalYear()
+  const today = new Date().toISOString().split('T')[0]
+  // Ideally, upcoming events should be filtered by the target fiscal year as well?
+  // But usually "Upcoming" means "Future from now".
+  // However, "Date Undecided" events (tentative) might have placeholder dates in the past (e.g. April 1st).
+  // We need to fetch these specifically if they belong to the current/target context.
 
-  // Get upcoming events
-  // Add logic to filter by fiscal year? 
-  // Events usually are just valid by date. "Fiscal Year" helps primarily for Officer roles, Budget, etc.
-  // But maybe we should show events for that year? 
-  // For now, "Upcoming events" on dashboard are probably always "Future from NOW", regardless of selected FY context.
-  // BUT the user requirements say "Principally process in current FY, but can go back".
-  // If I go back to 2024, maybe I want to see 2024 events?
-  // Let's assume Dashboard "Upcoming" is always "Real-time Upcoming", but we show the switcher for context sensitive pages.
-  // Wait, if I change FY, I expect the "Officer Menu" to show *that year's* role.
-
-  const { data: events } = await supabase
+  // 1. Fetch upcoming confirmed/tentative events (Standard)
+  const { data: upcomingEvents } = await supabase
     .from('events')
     .select('*')
-    .gte('scheduled_date', new Date().toISOString().split('T')[0])
+    .gte('scheduled_date', today)
     .order('scheduled_date', { ascending: true })
-    .limit(5)
+  // No limit as per user request
+
+  // 2. Fetch tentative events that might be hidden because of past placeholder dates
+  // We look for tentative events in the current fiscal year (or target fiscal year) that are BEFORE today.
+  // Assuming targetFiscalYear is the relevant context.
+  const startOfFiscalYear = `${targetFiscalYear}-04-01`
+
+  const { data: pastTentativeEvents } = await supabase
+    .from('events')
+    .select('*')
+    .eq('is_tentative', true)
+    .gte('scheduled_date', startOfFiscalYear)
+    .lt('scheduled_date', today)
+    .order('scheduled_date', { ascending: true })
+
+  // Combine and sort
+  let events = [...(pastTentativeEvents || []), ...(upcomingEvents || [])]
+
+  // Deduplicate just in case (though queries shouldn't overlap)
+  const seenIds = new Set()
+  events = events.filter(e => {
+    if (seenIds.has(e.id)) return false
+    seenIds.add(e.id)
+    return true
+  })
+
+  // Sort by date then time
+  events.sort((a, b) => {
+    if (a.scheduled_date === b.scheduled_date) {
+      return (a.start_time || '') > (b.start_time || '') ? 1 : -1
+    }
+    return a.scheduled_date > b.scheduled_date ? 1 : -1
+  })
+
+  // No slice/limit as per user request
 
   // Get officer roles FOR THE TARGET FISCAL YEAR
   const { data: officerRoles } = await supabase
@@ -67,7 +97,11 @@ export default async function DashboardPage() {
     .eq('profile_id', currentUser.id)
     .eq('fiscal_year', targetFiscalYear) // Use target year
 
-  // ... (rest of logic)
+  // Secure filter: Hide drafts from non-officers
+  // Although RLS should handle this, we add an explicit filter here for safety.
+  if (!officerRoles || officerRoles.length === 0) {
+    events = events.filter(e => e.public_status !== 'draft')
+  }
 
   // Get officer tasks if any role
   let officerTasks: any[] = []

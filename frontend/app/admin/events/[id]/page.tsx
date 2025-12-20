@@ -42,7 +42,7 @@ export default async function AdminEventDetailPage({
           <Link href="/admin/events" className="text-gray-500 hover:text-gray-700">← 戻る</Link>
           <h2 className="text-xl font-semibold">{event.title}</h2>
         </div>
-        {/* <Link href={`/admin/events/${id}/edit`} className="text-indigo-600">編集</Link> */}
+        <Link href={`/admin/events/${id}/edit`} className="text-indigo-600 hover:text-indigo-800">編集</Link>
       </div>
 
       <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-8">

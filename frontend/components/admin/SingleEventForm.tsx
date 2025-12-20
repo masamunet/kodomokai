@@ -1,20 +1,57 @@
-
 'use client'
 
 import { useState } from 'react'
-import { createEvent } from '../../actions/event'
+import { createEvent, updateEvent } from '@/app/admin/actions/event'
 import Link from 'next/link'
 
-export default function EventForm() {
+type Event = {
+  id: string
+  title: string
+  description: string | null
+  scheduled_date: string // YYYY-MM-DD
+  start_time: string | null // HH:mm:ss
+  scheduled_end_date: string | null // YYYY-MM-DD
+  location: string | null
+  type: string
+  rsvp_required: boolean
+  rsvp_deadline: string | null // ISO String or YYYY-MM-DDTHH:mm:ss
+  public_status: string
+  is_canceled: boolean
+}
+
+export default function SingleEventForm({ event }: { event?: Event }) {
   const [message, setMessage] = useState<string | null>(null)
 
   const handleSubmit = async (formData: FormData) => {
     setMessage(null)
-    const result = await createEvent(formData)
+    const action = event ? updateEvent : createEvent
+    const result = await action(formData)
 
     if (result && !result.success) {
       setMessage(result.message)
     }
+  }
+
+  // Initial values helper
+  const getInitialStartDateTime = () => {
+    if (!event) return ''
+    // scheduled_date (YYYY-MM-DD) + start_time (HH:mm:ss)
+    const date = event.scheduled_date
+    const time = event.start_time ? event.start_time.slice(0, 5) : '00:00'
+    return `${date}T${time}`
+  }
+
+  const getInitialEndDateTime = () => {
+    if (!event || !event.scheduled_end_date) return ''
+    // scheduled_end_date (YYYY-MM-DD) + assuming end of day or same time?
+    // DB only stores date for end. Form uses datetime-local.
+    // Let's just use 00:00 or current logic
+    return `${event.scheduled_end_date}T00:00`
+  }
+
+  const getInitialRsvpDeadline = () => {
+    if (!event || !event.rsvp_deadline) return ''
+    return new Date(event.rsvp_deadline).toISOString().slice(0, 16)
   }
 
   return (
@@ -24,6 +61,9 @@ export default function EventForm() {
           {message}
         </div>
       )}
+
+      {/* Hidden ID for update */}
+      {event && <input type="hidden" name="id" value={event.id} />}
 
       <div>
         <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">
@@ -35,6 +75,7 @@ export default function EventForm() {
             name="title"
             id="title"
             required
+            defaultValue={event?.title}
             className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
         </div>
@@ -49,6 +90,7 @@ export default function EventForm() {
             id="description"
             name="description"
             rows={3}
+            defaultValue={event?.description || ''}
             className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
         </div>
@@ -65,19 +107,21 @@ export default function EventForm() {
               name="start_time"
               id="start_time"
               required
+              defaultValue={getInitialStartDateTime()}
               className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
         </div>
         <div>
           <label htmlFor="end_time" className="block text-sm font-medium leading-6 text-gray-900">
-            終了日時
+            終了日時 (日付のみ保存されます)
           </label>
           <div className="mt-2">
             <input
               type="datetime-local"
               name="end_time"
               id="end_time"
+              defaultValue={getInitialEndDateTime()}
               className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
@@ -93,6 +137,7 @@ export default function EventForm() {
             type="text"
             name="location"
             id="location"
+            defaultValue={event?.location || ''}
             className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
         </div>
@@ -106,6 +151,7 @@ export default function EventForm() {
           <select
             id="type"
             name="type"
+            defaultValue={event?.type || 'recreation'}
             className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           >
             <option value="meeting">会議</option>
@@ -121,6 +167,7 @@ export default function EventForm() {
             id="rsvp_required"
             name="rsvp_required"
             type="checkbox"
+            defaultChecked={event?.rsvp_required || false}
             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
           />
         </div>
@@ -141,6 +188,7 @@ export default function EventForm() {
             type="datetime-local"
             name="rsvp_deadline"
             id="rsvp_deadline"
+            defaultValue={getInitialRsvpDeadline()}
             className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
         </div>
@@ -163,7 +211,7 @@ export default function EventForm() {
                 name="public_status"
                 type="radio"
                 value={status.value}
-                defaultChecked={status.value === 'finalized'}
+                defaultChecked={event ? event.public_status === status.value : status.value === 'finalized'}
                 className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
               />
               <label htmlFor={`status-${status.value}`} className="ml-3 block text-sm leading-6 text-gray-900 cursor-pointer">
@@ -185,7 +233,7 @@ export default function EventForm() {
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          作成する
+          {event ? '更新する' : '作成する'}
         </button>
       </div>
     </form>
