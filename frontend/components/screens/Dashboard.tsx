@@ -36,9 +36,31 @@ export function DashboardScreen(props: DashboardScreenProps) {
         unansweredCount={props.unansweredCount}
       />
 
+
       <Box className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column (Notifications) */}
-        <NotificationList unreadNotifications={props.unreadNotifications} />
+        {/* Left Column (Notifications & General Assembly) */}
+        <Box className="lg:col-span-1 space-y-10">
+          {props.hasDistributedMaterials && (
+            <Link href="/general-assembly" className="block group">
+              <Card className="h-full border-l-4 border-l-purple-500 hover:shadow-md transition-shadow">
+                <Box className="p-6 flex items-start justify-between">
+                  <Stack className="gap-1">
+                    <Heading size="h3" className="font-bold text-lg text-gray-900 group-hover:text-purple-600 transition-colors">
+                      総会資料
+                    </Heading>
+                    <Text className="text-sm text-gray-500">
+                      {props.targetFiscalYear}年度の総会資料を確認できます
+                    </Text>
+                  </Stack>
+                  <Box className="p-3 bg-purple-50 rounded-full text-purple-600">
+                    <FileText size={24} />
+                  </Box>
+                </Box>
+              </Card>
+            </Link>
+          )}
+          <NotificationList unreadNotifications={props.unreadNotifications} />
+        </Box>
 
         {/* Right Column (Events) */}
         <EventList
@@ -48,29 +70,6 @@ export function DashboardScreen(props: DashboardScreenProps) {
           eventAttendanceMap={props.eventAttendanceMap}
         />
       </Box>
-
-      {/* General Assembly Link Card */}
-      {props.hasDistributedMaterials && (
-        <Box className="mt-8">
-          <Link href="/general-assembly" className="block group max-w-sm">
-            <Card className="h-full border-l-4 border-l-purple-500 hover:shadow-md transition-shadow">
-              <Box className="p-6 flex items-start justify-between">
-                <Stack className="gap-1">
-                  <Heading size="h3" className="font-bold text-lg text-gray-900 group-hover:text-purple-600 transition-colors">
-                    総会資料
-                  </Heading>
-                  <Text className="text-sm text-gray-500">
-                    {props.targetFiscalYear}年度の総会資料を確認できます
-                  </Text>
-                </Stack>
-                <Box className="p-3 bg-purple-50 rounded-full text-purple-600">
-                  <FileText size={24} />
-                </Box>
-              </Box>
-            </Card>
-          </Link>
-        </Box>
-      )}
     </main>
   )
 }
@@ -166,7 +165,7 @@ function OfficerDashboard({ officerRoles, officerTasks, targetFiscalYear, unansw
 
 function NotificationList({ unreadNotifications }: { unreadNotifications: any[] }) {
   return (
-    <Box className="lg:col-span-1 space-y-6">
+    <Box className="space-y-6">
       <Heading size="h2" className="text-lg font-bold text-foreground flex items-center gap-2">
         <Bell size={20} className="text-primary" />
         お知らせ
