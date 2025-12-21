@@ -1,4 +1,4 @@
-import { RegistrationData } from '../onboarding/RegistrationWizard'
+import { RegistrationData } from '@/components/registration/onboarding/RegistrationWizard'
 import { Box } from '@/ui/layout/Box'
 import { Stack, HStack } from '@/ui/layout/Stack'
 import { Text } from '@/ui/primitives/Text'

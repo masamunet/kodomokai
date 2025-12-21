@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { RegistrationData } from '../onboarding/RegistrationWizard'
+import { RegistrationData } from '@/components/registration/onboarding/RegistrationWizard'
 import { completeRegistration } from '@/app/actions/auth'
 import Link from 'next/link'
 import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
