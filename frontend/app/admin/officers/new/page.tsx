@@ -1,5 +1,5 @@
 
-import AssignmentForm from './AssignmentForm'
+import AssignmentForm from '@/components/admin/officers/AssignmentForm'
 import { createClient } from '@/lib/supabase/server'
 import AdminFormLayout from '@/components/admin/AdminFormLayout'
 

@@ -47,7 +47,7 @@ export async function getAccountingInfo(fiscalYear: number) {
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
-    return { canAudit: false, accountantName: null }
+    return { canAudit: false, accountantName: null, currentAuditorName: null, auditorNames: [] }
   }
 
   // 1. Check if current user has audit role for the given year
@@ -85,7 +85,20 @@ export async function getAccountingInfo(fiscalYear: number) {
   const currentAuditorProfile: any = currentAuditorDocs?.[0]?.profiles
   const currentAuditorName = currentAuditorProfile?.full_name || null
 
-  return { canAudit, accountantName, currentAuditorName }
+  // 4. Get all auditor names for display
+  const { data: allAuditorAssignments } = await supabase
+    .from('officer_role_assignments')
+    .select('profiles!inner(full_name), officer_roles!inner(is_audit)')
+    .eq('fiscal_year', fiscalYear)
+    .eq('officer_roles.is_audit', true)
+
+  // @ts-ignore
+  const auditorNames: string[] = allAuditorAssignments?.flatMap((assignment: any) => {
+    const profiles = assignment.profiles
+    return Array.isArray(profiles) ? profiles.map(p => p.full_name) : [profiles?.full_name]
+  }).filter((name): name is string => !!name) || []
+
+  return { canAudit, accountantName, currentAuditorName, auditorNames }
 }
 
 export async function getFiscalReportWithItems(id: string) {

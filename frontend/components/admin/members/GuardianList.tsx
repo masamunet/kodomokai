@@ -4,7 +4,8 @@ import { useMemo, useState } from 'react';
 import { calculateAge, calculateGrade } from '@/lib/grade-utils';
 import Link from 'next/link';
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/ui/primitives/Input';
+import { ClickableTableRow } from '@/components/admin/patterns/ClickableTableRow';
 
 interface GuardianListProps {
   profiles: any[];
@@ -59,11 +60,8 @@ export default function GuardianList({ profiles, targetFiscalYear, canEdit }: Gu
     return list;
   }, [profiles, searchQuery, sortConfig]);
 
-  if (!profiles || profiles.length === 0) {
-    return <div className="p-4 text-center text-muted-foreground">登録されている保護者（会員）はいません。</div>;
-  }
-
   const stats = useMemo(() => {
+    if (!profiles) return { total: 0, householdCount: 0 }
     // Count 'households' - technically every profile in this list is a guardian/member
     // The user specifically asked: "Display count of guardians who have children registered as members"
     const householdCount = profiles.filter(p => p.children && p.children.length > 0).length;
@@ -72,6 +70,10 @@ export default function GuardianList({ profiles, targetFiscalYear, canEdit }: Gu
       householdCount
     };
   }, [profiles]);
+
+  if (!profiles || profiles.length === 0) {
+    return <div className="p-4 text-center text-muted-foreground">登録されている保護者（会員）はいません。</div>;
+  }
 
   const requestSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -153,7 +155,11 @@ export default function GuardianList({ profiles, targetFiscalYear, canEdit }: Gu
                   </thead>
                   <tbody className="divide-y divide-border bg-background">
                     {filteredProfiles?.map((person, index) => (
-                      <tr key={person.id} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                      <ClickableTableRow
+                        key={person.id}
+                        href={`/admin/users/${person.id}?view=guardian`}
+                        className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}
+                      >
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
                           <div>
                             {person.full_name || '未設定'}
@@ -188,15 +194,14 @@ export default function GuardianList({ profiles, targetFiscalYear, canEdit }: Gu
                         </td>
                         {canEdit && (
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
-                            <Link
-                              href={`/admin/users/${person.id}?view=guardian`}
-                              className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20"
+                            <span
+                              className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
                             >
-                              編集
-                            </Link>
+                              詳細
+                            </span>
                           </td>
                         )}
-                      </tr>
+                      </ClickableTableRow>
                     ))}
                   </tbody>
                 </table>

@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { RegistrationData } from '../(auth)/register/onboarding/RegistrationWizard'
+import { RegistrationData } from '@/components/registration/onboarding/RegistrationWizard'
 import { getBaseUrl } from '@/lib/utils'
 
 export async function sendMagicLink(email: string) {

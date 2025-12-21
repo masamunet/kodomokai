@@ -1,9 +1,11 @@
-
 'use client'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronRight, Home } from 'lucide-react'
+import { Box } from '@/ui/layout/Box'
+import { HStack } from '@/ui/layout/Stack'
+import { Text } from '@/ui/primitives/Text'
 
 const LABEL_MAP: Record<string, string> = {
   admin: 'ダッシュボード',
@@ -39,8 +41,7 @@ export default function Breadcrumbs() {
 
     // Special case for root 'admin'
     if (segment === 'admin' && segments.length === 1) {
-      return null // Don't show redundant 'Dashboard' if we are on dashboard root, or maybe we do? 
-      // Let's keep it consistent: Home > Dashboard > ...
+      return null
     }
 
     return { href, label, isLast: index === segments.length - 1 }
@@ -49,22 +50,24 @@ export default function Breadcrumbs() {
   if (pathname === '/admin') return null;
 
   return (
-    <nav className="flex items-center text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
-      <Link href="/admin" className="flex items-center hover:text-foreground transition-colors">
-        <Home className="h-4 w-4" />
-      </Link>
-      {crumbs.map((crumb: any, index) => (
-        <div key={crumb.href} className="flex items-center">
-          <ChevronRight className="h-4 w-4 mx-2 text-muted-foreground/50" />
-          {crumb.isLast ? (
-            <span className="font-medium text-foreground">{crumb.label}</span>
-          ) : (
-            <Link href={crumb.href} className="hover:text-foreground transition-colors">
-              {crumb.label}
-            </Link>
-          )}
-        </div>
-      ))}
+    <nav aria-label="Breadcrumb">
+      <HStack className="items-center text-xs text-muted-foreground">
+        <Link href="/admin" className="flex items-center hover:text-primary transition-colors">
+          <Home className="h-3 w-3" />
+        </Link>
+        {crumbs.map((crumb: any) => (
+          <HStack key={crumb.href} className="items-center">
+            <ChevronRight className="h-3 w-3 mx-1.5 text-muted-foreground/30" />
+            {crumb.isLast ? (
+              <Text weight="bold" className="text-foreground">{crumb.label}</Text>
+            ) : (
+              <Link href={crumb.href} className="hover:text-primary transition-colors">
+                {crumb.label}
+              </Link>
+            )}
+          </HStack>
+        ))}
+      </HStack>
     </nav>
   )
 }

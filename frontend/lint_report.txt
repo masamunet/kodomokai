@@ -1,0 +1,17 @@
+
+/Users/macuser/work_local/2025/12_kodomokai/frontend/app/(auth)/register/layout.tsx
+  10:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  10:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  11:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  11:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  12:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  12:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  15:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  15:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  20:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  20:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  21:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  21:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+
+✖ 12 problems (12 errors, 0 warnings)
+

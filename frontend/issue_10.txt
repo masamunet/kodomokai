@@ -1,0 +1,141 @@
+title:	GitHub Issue: CIガードレール構築（ルール改変禁止／eslint-disable禁止）
+state:	OPEN
+author:	masamunet
+labels:	
+comments:	0
+assignees:	
+projects:	
+milestone:	
+number:	10
+--
+# GitHub Issue: CIガードレール構築（ルール改変禁止／eslint-disable禁止）
+
+## 概要
+
+本Issueは、バイブコーディングおよびAI支援開発において
+**「AIがルールを無視・改変して通す」ことを技術的に不可能にする**ための
+最小かつ強力なCIガードレールを構築することを目的とする。
+
+警告・運用ルール・プロンプトによる制御は前提にしない。
+**CIで落ちる／通るのみ**を唯一の判断基準とする。
+
+---
+
+## 対象ブランチ
+
+* **作業ブランチ**: `chore/ci-guardrails`
+* 本Issue完了後、main（または develop）へPRでマージする
+
+※ UI統一・置換作業とは分離し、必ず先行して実施する
+
+---
+
+## 技術前提
+
+* React / Next.js
+* Tailwind CSS v4.1
+* TypeScript
+* ESLint
+* GitHub Actions
+
+---
+
+## 背景・問題意識
+
+* AIは警告（warn）を無視する
+* AIは eslint-disable を多用する
+* AIは ESLint / CI / config を書き換えてルールを回避する
+
+これらを前提とした上で、
+**「ルールを守らせる」のではなく「破れない構造」を先に作る**。
+
+---
+
+## 実施内容
+
+### 1. ルール定義ファイルの変更をCIで全面禁止
+
+以下のファイル／ディレクトリに差分が含まれる場合、CIを失敗させる。
+
+#### 対象（例）
+
+* `eslint.config.*`
+* `.eslintrc*`
+* `.github/workflows/**`
+* `package.json`
+* `pnpm-lock.yaml` / `package-lock.json` / `yarn.lock`
+* `tailwind.config.*`
+* `postcss.config.*`
+
+#### 目的
+
+* AIによる lint / CI / build ルールの緩和・無効化を物理的に封じる
+* ルール変更は人間が意図的に行う作業に限定する
+
+---
+
+### 2. eslint-disable 系コメントの全面禁止
+
+以下のコメントが1行でも存在した場合、CIを失敗させる。
+
+* `eslint-disable`
+* `eslint-disable-next-line`
+* `eslint-disable-line`
+
+#### 方針
+
+* 例外運用は行わない
+* どうしても必要な場合は、コード自体を修正する
+
+#### 目的
+
+* 「通すためのdisable」を完全に排除する
+* Lintルールを実質的な品質ゲートにする
+
+---
+
+### 3. Lintはすべて error 扱いとする
+
+* warn レベルのルールは使用しない
+* 違反した時点で必ずCIが停止する
+
+#### 目的
+
+* AI・人間ともに「後で直す」を不可能にする
+
+---
+
+## CI構成
+
+* GitHub Actions で以下を必須ステップとして実行
+
+  * 変更ファイル検査（ルール改変検出）
+  * eslint-disable 検出
+  * `pnpm lint` / `npm run lint`
+
+---
+
+## 完了条件（Definition of Done）
+
+* [ ] 上記のルール定義ファイルに変更が含まれるとCIが失敗する
+* [ ] eslint-disable 系コメントが1つでも存在するとCIが失敗する
+* [ ] Lint違反時にCIが確実に停止する
+* [ ] 本Issue完了後、AIがルールを変更して回避できない状態になっている
+
+---
+
+## 非目標（本Issueではやらないこと）
+
+* UIパーツの統一
+* デザイントークンの整備
+* 生HTML禁止などのUIルール追加
+
+※ これらは本Issue完了後、別Issueで実施する
+
+---
+
+## 次アクション
+
+* 本Issue完了後、UI統一・置換を行う Issue を起票する
+* 以降のIssueでは、本ガードレールを前提として作業を進める
+

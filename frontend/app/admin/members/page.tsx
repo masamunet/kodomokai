@@ -1,11 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
-import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import MemberTabs from '@/components/admin/members/MemberTabs'
-import ChildList from '@/components/admin/members/ChildList'
-import GuardianList from '@/components/admin/members/GuardianList'
-import OfficerList from '@/components/admin/members/OfficerList'
 import { getTargetFiscalYear } from '../actions/settings'
 import { toWarekiYear } from '@/lib/date-utils'
+import { MemberScreen } from '@/components/screens/admin/members/MemberScreen'
 
 export const dynamic = 'force-dynamic'
 
@@ -101,28 +97,14 @@ export default async function AdminMembersPage({
   }
 
   return (
-    <div>
-      <AdminPageHeader
-        title="会員名簿"
-        description="会員（保護者）、お子様、および役員の名簿を管理します。"
-      />
-
-      <div className="mt-8">
-        <MemberTabs />
-
-        {view === 'child' && (
-          <ChildList profiles={profiles} targetFiscalYear={currentFiscalYear} canEdit={canEdit} />
-        )}
-
-        {view === 'guardian' && (
-          <GuardianList profiles={profiles} targetFiscalYear={currentFiscalYear} canEdit={canEdit} />
-        )}
-
-        {view === 'officer' && (
-          <OfficerList assignments={assignments} titleYear={titleYear} />
-        )}
-      </div>
-    </div>
+    <MemberScreen
+      view={view}
+      profiles={profiles}
+      assignments={assignments}
+      titleYear={titleYear}
+      targetFiscalYear={currentFiscalYear}
+      canEdit={canEdit}
+    />
   )
 }
 

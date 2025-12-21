@@ -2,11 +2,20 @@
 
 import { useState, useTransition, Fragment } from 'react'
 import { upsertEvent, deleteEvent } from '@/app/actions/events'
-import { Calendar, Trash2, Edit2, CheckCircle2, HelpCircle, Save, X, Printer, Download, Calendar as CalendarIcon, AlertTriangle } from 'lucide-react'
+import { Calendar, Trash2, Edit2, Save, X, Printer, Download, Calendar as CalendarIcon, AlertTriangle, ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import MarkdownEditor from '@/components/ui/MarkdownEditor'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { toWarekiYear } from '@/lib/date-utils'
+import { Box } from '@/ui/layout/Box'
+import { Stack, HStack } from '@/ui/layout/Stack'
+import { Text } from '@/ui/primitives/Text'
+import { Heading } from '@/ui/primitives/Heading'
+import { Button } from '@/ui/primitives/Button'
+import { Badge } from '../../ui/primitives/Badge'
+import { Label } from '@/ui/primitives/Label'
+import { Input } from '@/ui/primitives/Input'
+import { cn } from '@/lib/utils'
 
 // Extended Event type to include is_tentative and is_canceled
 type Event = {
@@ -64,76 +73,79 @@ export default function AnnualScheduleEditor({ year, events, eraName, startYear 
   const printedDate = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()} 現在`
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
-        <div>
-          <h2 className="text-xl font-bold print:text-lg">{warekiYear}度 年間活動予定</h2>
-          <p className="text-sm text-gray-500 mt-1 print:text-xs">
+    <Stack className="gap-6 print:gap-4">
+      <Box className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
+        <Box>
+          <Heading size="h2" className="text-2xl font-bold">{warekiYear}度 年間活動予定</Heading>
+          <Text className="text-sm text-muted-foreground mt-1 block">
             最終発行: {printedDate}
-          </p>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          <button
+          </Text>
+        </Box>
+        <HStack className="gap-2 flex-wrap">
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleDownloadIcs}
-            className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded shadow-sm hover:bg-gray-50 text-sm font-medium"
+            className="gap-2 font-bold"
           >
             <Download size={16} /> ICSダウンロード
-          </button>
-          <button
+          </Button>
+          <Button
+            size="sm"
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded shadow-sm hover:bg-indigo-700 text-sm font-medium"
+            className="gap-2 font-bold shadow-sm"
           >
             <Printer size={16} /> 印刷 / PDF保存
-          </button>
-        </div>
-      </div>
+          </Button>
+        </HStack>
+      </Box>
 
-      <div className="hidden print:block mb-4 text-right text-sm text-gray-500">
-        <div>{warekiYear}度 年間活動予定表</div>
-        <div className="text-xs">発行日: {printedDate} (最新版をご確認ください)</div>
-      </div>
+      <Box className="hidden print:block mb-6 border-b-2 border-primary pb-2">
+        <HStack className="justify-between items-end">
+          <Heading size="h1" className="text-2xl font-bold text-primary">{warekiYear}度 年間活動予定表</Heading>
+          <Text className="text-xs text-muted-foreground">発行日: {printedDate}</Text>
+        </HStack>
+      </Box>
 
       {/* Table Structure for Print and Desktop */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden print:border-2 print:border-black print:text-xs">
-        <table className="min-w-full divide-y divide-gray-200 print:divide-black">
-          <thead className="bg-gray-50 print:bg-gray-100">
+      <Box className="bg-background border border-border rounded-xl overflow-hidden shadow-sm print:border-2 print:border-black">
+        <table className="min-w-full divide-y divide-border print:divide-black">
+          <thead className="bg-muted/50 print:bg-muted/10">
             <tr>
-              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-24 print:text-black border-r print:border-black print:py-1 print:w-16">月</th>
-              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-32 print:text-black border-r print:border-black print:py-1 print:w-20">日時</th>
-              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider print:text-black border-r print:border-black print:py-1">イベント名 / 詳細</th>
-              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-32 print:text-black border-r print:border-black print:py-1 print:w-20">場所</th>
-              <th scope="col" className="px-3 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-24 print:text-black border-r print:border-black print:py-1 print:w-16">主催</th>
-              <th scope="col" className="px-3 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-20 print:hidden">操作</th>
+              <th scope="col" className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider w-24 border-r border-border print:border-black print:py-2">月</th>
+              <th scope="col" className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider w-32 border-r border-border print:border-black print:py-2">日時</th>
+              <th scope="col" className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider border-r border-border print:border-black print:py-2">イベント名 / 詳細</th>
+              <th scope="col" className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider w-32 border-r border-border print:border-black print:py-2">場所</th>
+              <th scope="col" className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider w-24 border-r border-border print:border-black print:py-2">主催</th>
+              <th scope="col" className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider w-20 print:hidden">操作</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200 print:divide-black">
+          <tbody className="bg-background divide-y divide-border print:divide-black">
             {MONTHS.map(month => {
               const monthEvents = getEventsForMonth(month)
               const displayYear = month >= 4 ? year : year + 1
 
               if (monthEvents.length === 0 && isAddingMonth !== month) {
                 return (
-                  <tr key={month} className="group hover:bg-gray-50 print:break-inside-avoid print:h-4">
-                    <td className="px-3 py-4 text-sm text-gray-900 border-r border-gray-100 print:border-black font-bold align-top bg-gray-50/50 print:bg-transparent print:py-1 print:text-xs">
-                      <div className="flex items-center justify-between">
-                        <span>{month}月</span>
-                        <button
+                  <tr key={month} className="group hover:bg-muted/30 transition-colors print:break-inside-avoid">
+                    <td className="px-4 py-4 text-sm font-bold text-foreground border-r border-border print:border-black bg-muted/20 print:bg-transparent align-top print:py-2">
+                      <HStack className="items-center justify-between">
+                        <Text weight="bold" className="text-lg">{month}月</Text>
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => {
                             setIsAddingMonth(month)
                             setEditingEventId(null)
                           }}
-                          className="print:hidden text-xs text-indigo-600 hover:bg-indigo-50 rounded px-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="print:hidden h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          +
-                        </button>
-                      </div>
+                          <Plus size={14} />
+                        </Button>
+                      </HStack>
                     </td>
-                    <td colSpan={5} className="px-3 py-4 text-sm text-gray-400 italic text-center print:hidden">
-                      予定なし
-                    </td>
-                    {/* For print, maybe we skip empty months or show them empty? Requirements imply "Schedule", implying list of events. But empty months are placeholders. Let's show empty cell for print too but minimal */}
-                    <td colSpan={3} className="hidden print:table-cell px-3 py-4 text-sm text-gray-400 italic text-center text-xs print:py-1 print:text-[10px] print:h-4">
-                      -
+                    <td colSpan={5} className="px-4 py-8 text-center print:py-4">
+                      <Text className="text-muted-foreground italic text-sm">予定なし</Text>
                     </td>
                   </tr>
                 )
@@ -184,8 +196,8 @@ export default function AnnualScheduleEditor({ year, events, eraName, startYear 
             })}
           </tbody>
         </table>
-      </div>
-    </div>
+      </Box>
+    </Stack>
   )
 }
 
@@ -223,14 +235,17 @@ function EventRow({
 
   if (isEditing) {
     return (
-      <tr className="bg-indigo-50 print:hidden">
+      <tr className="bg-primary/5 print:hidden">
         {showMonthCell && (
-          <td rowSpan={rowSpan} className="px-3 py-4 text-sm font-bold text-gray-900 border-r border-gray-200 align-top bg-gray-50">
-            {month}月
+          <td rowSpan={rowSpan} className="px-4 py-4 text-sm font-bold text-foreground border-r border-border align-top bg-muted/20">
+            <Text weight="bold" className="text-lg">{month}月</Text>
           </td>
         )}
         <td colSpan={5} className="p-4">
-          <div className="bg-white p-4 rounded border border-indigo-200 shadow-sm">
+          <Box className="bg-background p-6 rounded-xl border border-primary/20 shadow-lg">
+            <Heading size="h4" className="text-primary mb-4 flex items-center gap-2">
+              <Edit2 size={18} /> イベントの編集
+            </Heading>
             <EventForm
               event={event}
               year={year}
@@ -238,7 +253,7 @@ function EventRow({
               onCancel={onCancel}
               onComplete={onCancel}
             />
-          </div>
+          </Box>
         </td>
       </tr>
     )
@@ -252,106 +267,126 @@ function EventRow({
   const publicStatus = event.public_status || (event.is_tentative ? 'date_undecided' : 'finalized')
 
   const rowClass = isCanceled
-    ? 'bg-gray-100 text-gray-500 print:bg-gray-200'
-    : (publicStatus === 'draft' ? 'bg-gray-100 border-l-4 border-gray-400' : 'bg-white')
+    ? 'bg-muted/50 text-muted-foreground print:bg-muted/10'
+    : (publicStatus === 'draft' ? 'bg-muted/30 border-l-4 border-muted-foreground/30' : 'bg-background')
   const textDecoration = isCanceled ? 'line-through' : ''
 
   const googleCalUrl = getGoogleCalendarUrl(event)
 
   return (
-    <tr className={`${rowClass} hover:bg-gray-50 group print:break-inside-avoid`}>
+    <tr className={`${rowClass} hover:bg-muted/30 group print:break-inside-avoid transition-colors`}>
       {showMonthCell && (
-        <td rowSpan={rowSpan} className="px-3 py-4 text-sm font-bold text-gray-900 border-r border-gray-200 print:border-black align-top bg-gray-50/50 print:bg-transparent min-w-[3rem] print:py-1 print:text-xs">
-          <div className="flex justify-between print:justify-center">
-            <span className="text-xl print:text-sm">{month}</span>
-            <span className="text-xs pt-1 print:hidden">月</span>
-            <button
+        <td rowSpan={rowSpan} className="px-4 py-4 text-sm font-bold text-foreground border-r border-border print:border-black align-top bg-muted/20 print:bg-transparent min-w-[3rem] print:py-2">
+          <Box className="flex justify-between print:justify-center">
+            <Text weight="bold" className="text-xl print:text-base">{month}</Text>
+            <Text className="text-xs pt-1.5 print:hidden text-muted-foreground">月</Text>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onAdd}
-              className="print:hidden text-xs text-indigo-600 hover:bg-indigo-50 rounded px-1 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+              className="print:hidden h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
               title="この月に追加"
             >
-              +
-            </button>
-          </div>
+              <Plus size={14} />
+            </Button>
+          </Box>
         </td>
       )}
-      <td className="px-3 py-3 text-sm text-gray-900 border-r border-gray-100 print:border-black align-top whitespace-nowrap print:py-1 print:text-xs">
+      <td className="px-4 py-4 text-sm text-foreground border-r border-border print:border-black align-top whitespace-nowrap print:py-2">
         {publicStatus === 'date_undecided' ? (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-300 print:border-0 print:p-0">
+          <Badge variant="outline" className="text-xs font-bold border-dashed">
             日時未定
-          </span>
+          </Badge>
         ) : (
-          <div className={isCanceled ? 'opacity-50' : ''}>
-            <div className="font-bold">
-              {eventDate.getDate()}日 <span className="text-xs font-normal text-gray-500 print:hidden">({dayName})</span><span className="hidden print:inline text-[10px]">({dayName})</span>
-            </div>
+          <Box className={isCanceled ? 'opacity-50' : ''}>
+            <Text weight="bold" className="text-base">
+              {eventDate.getDate()}日 <span className="text-xs font-normal text-muted-foreground">({dayName})</span>
+            </Text>
             {event.scheduled_end_date && (
-              <div className="text-xs text-gray-500 print:text-[10px]">
+              <Text className="text-xs text-muted-foreground block font-medium">
                 〜 {new Date(event.scheduled_end_date).getDate()}日
-              </div>
+              </Text>
             )}
             {timeString && (
-              <div className="text-xs text-gray-600 mt-1 print:text-[10px] print:mt-0">
-                {timeString} ~
-              </div>
+              <Box className="flex items-center gap-1 mt-1 text-xs text-muted-foreground font-medium">
+                <span className="opacity-60">🕒</span> {timeString} ~
+              </Box>
             )}
-          </div>
+          </Box>
         )}
       </td>
-      <td className="px-3 py-3 text-sm text-gray-900 border-r border-gray-100 print:border-black align-top print:py-1 print:text-xs">
-        <div className="flex items-center gap-2 flex-wrap">
-          {publicStatus === 'draft' && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-gray-500 text-white print:hidden">
-              下書き (非公開)
-            </span>
+      <td className="px-4 py-4 text-sm text-foreground border-r border-border print:border-black align-top print:py-2">
+        <Stack className="gap-2">
+          <HStack className="items-center gap-2 flex-wrap">
+            {publicStatus === 'draft' && (
+              <Badge variant="secondary" className="bg-muted text-muted-foreground print:hidden text-[10px] px-1.5 py-0">
+                下書き
+              </Badge>
+            )}
+            {isCanceled ? (
+              <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+                中止
+              </Badge>
+            ) : publicStatus === 'details_undecided' ? (
+              <Badge variant="warning" className="text-[10px] px-1.5 py-0">
+                詳細未定
+              </Badge>
+            ) : null}
+            <Text weight="bold" className={`${textDecoration} ${isCanceled ? 'text-muted-foreground' : 'text-foreground'} text-base leading-tight`}>
+              {event.title}
+            </Text>
+            {publicStatus === 'date_undecided' && !isCanceled && (
+              <Text className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border mt-0.5">(予定)</Text>
+            )}
+          </HStack>
+          {event.description && (
+            <Box className={`text-xs text-muted-foreground prose prose-sm max-w-none print:text-black leading-relaxed ${isCanceled ? 'line-through opacity-50' : ''}`}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{event.description}</ReactMarkdown>
+            </Box>
           )}
-          {isCanceled && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800 border border-red-200 print:bg-transparent print:text-gray-500 print:border-black print:text-[10px] print:p-0 print:px-1">
-              中止
-            </span>
-          )}
-          {!isCanceled && publicStatus === 'details_undecided' && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-200 print:border-black print:text-[10px] print:p-0 print:px-1">
-              詳細未定
-            </span>
-          )}
-          <span className={`font-bold ${textDecoration} ${isCanceled ? 'text-gray-400' : 'text-gray-900'}`}>
-            {event.title}
-          </span>
-          {publicStatus === 'date_undecided' && !isCanceled && (
-            <span className="text-xs text-gray-400 border border-gray-200 rounded px-1 print:border-0 print:text-gray-500">(予定)</span>
-          )}
-        </div>
-        {event.description && (
-          <div className={`mt-1 text-xs text-gray-600 prose prose-sm max-w-none print:text-black print:text-[10px] print:leading-tight print:mt-0 ${isCanceled ? 'line-through opacity-50' : ''}`}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{event.description}</ReactMarkdown>
-          </div>
-        )}
+        </Stack>
       </td>
-      <td className={`px-3 py-3 text-sm text-gray-600 border-r border-gray-100 print:border-black align-top ${textDecoration} print:py-1 print:text-xs`}>
-        {event.location || '-'}
+      <td className={`px-4 py-4 text-sm text-muted-foreground border-r border-border print:border-black align-top ${textDecoration} print:py-2`}>
+        <HStack className="items-center gap-1">
+          {event.location && <span className="opacity-60 text-xs">📍</span>}
+          <Text className="text-sm">{event.location || '-'}</Text>
+        </HStack>
       </td>
-      <td className="px-3 py-3 text-sm text-gray-600 border-r border-gray-100 print:border-black align-top print:py-1 print:text-xs print:w-16">
-        {event.organizer}
+      <td className="px-4 py-4 text-sm text-muted-foreground border-r border-border print:border-black align-top print:py-2">
+        <Text className="text-sm">{event.organizer}</Text>
       </td>
-      <td className="px-3 py-3 text-sm text-right print:hidden align-top">
-        <div className="flex justify-end gap-1 opacity-10 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-          <a
-            href={googleCalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded"
+      <td className="px-4 py-3 text-right print:hidden align-top">
+        <HStack className="justify-end gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="icon"
+            asChild
+            className="h-8 w-8 text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50"
             title="Googleカレンダーに追加"
           >
-            <CalendarIcon size={16} />
-          </a>
-          <button onClick={onEdit} className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded" title="編集">
+            <a href={googleCalUrl} target="_blank" rel="noopener noreferrer">
+              <CalendarIcon size={16} />
+            </a>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onEdit}
+            className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/5"
+            title="編集"
+          >
             <Edit2 size={16} />
-          </button>
-          <button onClick={handleDelete} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded" title="削除">
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleDelete}
+            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            title="削除"
+          >
             <Trash2 size={16} />
-          </button>
-        </div>
+          </Button>
+        </HStack>
       </td>
     </tr>
   )
@@ -382,148 +417,160 @@ function EventForm({ event, year, month, onCancel, onComplete }: { event?: Event
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
-        <div className="sm:col-span-8">
-          <label className="block text-xs font-bold text-gray-700 mb-1">イベント名 <span className="text-red-500">*</span></label>
-          <input
-            name="title"
-            defaultValue={event?.title}
-            placeholder="イベント名"
-            required
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-        </div>
-
-        <div className="sm:col-span-4 rounded bg-red-50 p-2 border border-red-100 flex items-center">
-          <label className="flex items-center gap-2 text-sm text-red-800 font-bold cursor-pointer w-full">
-            <input
-              type="checkbox"
-              name="is_canceled"
-              value="true"
-              checked={isCanceled}
-              onChange={e => setIsCanceled(e.target.checked)}
-              className="rounded border-red-300 text-red-600 focus:ring-red-500"
-            />
-            <AlertTriangle size={16} />
-            中止にする
-          </label>
-        </div>
-
-        <div className="sm:col-span-12">
-          <label className="block text-xs text-gray-500 mb-1">主催</label>
-          <div className="flex gap-4 flex-wrap">
-            {['単位子ども会', '町子供会育成連合会', 'その他'].map(org => (
-              <label key={org} className="flex items-center gap-1 text-sm text-gray-700 cursor-pointer">
-                <input type="radio" name="organizer" value={org} defaultChecked={(event?.organizer || '単位子ども会') === org} className="text-indigo-600 focus:ring-indigo-500" />
-                {org}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div className="sm:col-span-6">
-          <label className="block text-xs text-gray-500 mb-1">日付 <span className="text-red-500">*</span></label>
-          <div className="flex items-center gap-2">
-            <input
-              type="date"
-              name="scheduled_date"
-              defaultValue={initialDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+    <form action={handleSubmit}>
+      <Stack className="gap-6">
+        <Box className="grid grid-cols-1 sm:grid-cols-12 gap-6">
+          <Box className="sm:col-span-8 space-y-2">
+            <Label className="font-bold">イベント名 <Text className="text-destructive">*</Text></Label>
+            <Input
+              name="title"
+              defaultValue={event?.title}
+              placeholder="イベント名を入力してください"
               required
             />
-          </div>
-          <div className="mt-1">
-            {!showEndDateInput ? (
-              <button
-                type="button"
-                onClick={() => setShowEndDateInput(true)}
-                className="text-xs text-indigo-600 hover:text-indigo-800 underline flex items-center gap-1"
-              >
-                + 終了日(期間)を追加
-              </button>
-            ) : (
-              <div className="flex items-center gap-2 mt-1 bg-gray-50 p-1.5 rounded border border-dashed border-gray-300">
-                <span className="text-xs text-gray-500">終了日:</span>
-                <input
-                  type="date"
-                  name="scheduled_end_date"
-                  defaultValue={event?.scheduled_end_date || startDate}
-                  className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs py-1"
-                />
-                <button
+          </Box>
+
+          <Box className="sm:col-span-4 rounded-xl bg-destructive/5 p-4 border border-destructive/20 flex items-center">
+            <label className="flex items-center gap-3 text-sm text-destructive font-bold cursor-pointer w-full">
+              <input
+                type="checkbox"
+                name="is_canceled"
+                value="true"
+                checked={isCanceled}
+                onChange={e => setIsCanceled(e.target.checked)}
+                className="w-4 h-4 rounded border-destructive/30 text-destructive focus:ring-destructive"
+              />
+              <AlertTriangle size={18} />
+              中止にする
+            </label>
+          </Box>
+
+          <Box className="sm:col-span-12 space-y-2">
+            <Label className="font-bold">主催</Label>
+            <HStack className="gap-6 flex-wrap bg-muted/30 p-3 rounded-lg border border-border">
+              {['単位子ども会', '町子供会育成連合会', 'その他'].map(org => (
+                <label key={org} className="flex items-center gap-2 text-sm text-foreground cursor-pointer group hover:text-primary transition-colors">
+                  <input
+                    type="radio"
+                    name="organizer"
+                    value={org}
+                    defaultChecked={(event?.organizer || '単位子ども会') === org}
+                    className="w-4 h-4 text-primary focus:ring-primary border-border"
+                  />
+                  <Text weight="medium">{org}</Text>
+                </label>
+              ))}
+            </HStack>
+          </Box>
+
+          <Box className="sm:col-span-6 space-y-3">
+            <Box className="space-y-2">
+              <Label className="font-bold">日付 <Text className="text-destructive">*</Text></Label>
+              <Input
+                type="date"
+                name="scheduled_date"
+                defaultValue={initialDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                required
+              />
+            </Box>
+            <Box>
+              {!showEndDateInput ? (
+                <Button
                   type="button"
-                  onClick={() => setShowEndDateInput(false)}
-                  className="text-gray-400 hover:text-red-500"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowEndDateInput(true)}
+                  className="text-xs h-8 px-3 text-primary hover:text-primary hover:bg-primary/5 border border-dashed border-primary/30 flex items-center gap-2 rounded-lg"
                 >
-                  <X size={14} />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+                  <Plus size={14} /> 終了日(期間)を追加
+                </Button>
+              ) : (
+                <HStack className="items-center gap-3 bg-primary/5 p-3 rounded-xl border border-dashed border-primary/20">
+                  <Text className="text-xs font-bold text-primary shrink-0">終了日:</Text>
+                  <Input
+                    type="date"
+                    name="scheduled_end_date"
+                    defaultValue={event?.scheduled_end_date || startDate}
+                    className="flex-1 h-9 text-sm"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowEndDateInput(false)}
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                  >
+                    <X size={16} />
+                  </Button>
+                </HStack>
+              )}
+            </Box>
+          </Box>
 
-        <div className="sm:col-span-6">
-          <label className="block text-xs text-gray-500 mb-1">開始時間 (任意)</label>
-          <input
-            type="time"
-            name="start_time"
-            defaultValue={initialTime}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-          <label className="block text-xs font-bold text-gray-700 mb-1">公開ステータス</label>
-          <div className="flex flex-col gap-2">
-            {[
-              { value: 'draft', label: '告知前（下書き/役員のみ）' },
-              { value: 'date_undecided', label: '告知・日時未定' },
-              { value: 'details_undecided', label: '告知・日時決定・詳細未定' },
-              { value: 'finalized', label: '告知・詳細決定' },
-            ].map(status => (
-              <label key={status.value} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                <input
-                  type="radio"
-                  name="public_status"
-                  value={status.value}
-                  defaultChecked={event?.public_status ? event.public_status === status.value : (status.value === 'finalized')}
-                  className="text-indigo-600 focus:ring-indigo-500"
-                />
-                {status.label}
-              </label>
-            ))}
-          </div>
-        </div>
+          <Box className="sm:col-span-6 space-y-4">
+            <Box className="space-y-2">
+              <Label className="font-bold">開始時間 <Text className="text-muted-foreground font-normal">(任意)</Text></Label>
+              <Input
+                type="time"
+                name="start_time"
+                defaultValue={initialTime}
+              />
+            </Box>
+            <Box className="space-y-2">
+              <Label className="font-bold">公開ステータス</Label>
+              <Stack className="gap-2 bg-muted/30 p-3 rounded-lg border border-border">
+                {[
+                  { value: 'draft', label: '告知前（下書き/役員のみ）' },
+                  { value: 'date_undecided', label: '告知・日時未定' },
+                  { value: 'details_undecided', label: '告知・日時決定・詳細未定' },
+                  { value: 'finalized', label: '告知・詳細決定' },
+                ].map(status => (
+                  <label key={status.value} className="flex items-center gap-3 text-sm text-foreground cursor-pointer group hover:text-primary transition-colors">
+                    <input
+                      type="radio"
+                      name="public_status"
+                      value={status.value}
+                      defaultChecked={event?.public_status ? event.public_status === status.value : (status.value === 'finalized')}
+                      className="w-4 h-4 text-primary focus:ring-primary border-border"
+                    />
+                    <Text weight="medium">{status.label}</Text>
+                  </label>
+                ))}
+              </Stack>
+            </Box>
+          </Box>
 
-        <div className="sm:col-span-12">
-          <label className="block text-xs text-gray-500 mb-1">場所</label>
-          <input
-            name="location"
-            defaultValue={event?.location || ''}
-            placeholder="公民館、小学校など"
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          />
-        </div>
+          <Box className="sm:col-span-12 space-y-2">
+            <Label className="font-bold">場所</Label>
+            <Input
+              name="location"
+              defaultValue={event?.location || ''}
+              placeholder="公民館、小学校など"
+            />
+          </Box>
 
-        <div className="sm:col-span-12">
-          <label className="block text-xs text-gray-500 mb-1">詳細・備考 (Markdown)</label>
-          <MarkdownEditor
-            name="description"
-            defaultValue={event?.description || ''}
-            placeholder="持ち物、注意事項など"
-            rows={4}
-          />
-        </div>
-      </div>
+          <Box className="sm:col-span-12 space-y-2">
+            <Label className="font-bold">詳細・備考 <Text className="text-muted-foreground font-normal">(Markdown形式)</Text></Label>
+            <MarkdownEditor
+              name="description"
+              defaultValue={event?.description || ''}
+              placeholder="持ち物、注意事項など"
+              rows={5}
+            />
+          </Box>
+        </Box>
 
-      <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-        <button type="button" onClick={onCancel} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 bg-white border border-gray-300 rounded shadow-sm">
-          キャンセル
-        </button>
-        <button type="submit" disabled={isPending} className="px-4 py-2 text-sm text-white bg-indigo-600 hover:bg-indigo-700 rounded shadow-sm disabled:opacity-50 flex items-center gap-2 font-bold">
-          <Save size={16} />
-          {event ? '変更を保存' : '追加する'}
-        </button>
-      </div>
+        <HStack className="justify-end gap-3 pt-6 border-t border-border">
+          <Button type="button" variant="ghost" onClick={onCancel} className="font-bold">
+            キャンセル
+          </Button>
+          <Button type="submit" disabled={isPending} activeScale={true} className="gap-2 px-8 h-10 font-bold shadow-md">
+            <Save size={18} />
+            {event ? '変更を保存' : '追加する'}
+          </Button>
+        </HStack>
+      </Stack>
     </form>
   )
 }
