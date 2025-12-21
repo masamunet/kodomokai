@@ -69,7 +69,7 @@ function OfficerDashboard({ officerRoles, officerTasks, targetFiscalYear, unansw
               <Link href="/admin/notifications/new">お知らせ作成</Link>
             </Button>
             <Button variant="outline" size="sm" asChild activeScale={true} className="h-8 text-xs bg-background">
-              <Link href="/admin/events/new">イベント作成</Link>
+              <Link href="/admin/events">イベント管理</Link>
             </Button>
             <Button variant="outline" size="sm" asChild activeScale={true} className="h-8 text-xs bg-background">
               <Link href="/admin/members">会員名簿</Link>

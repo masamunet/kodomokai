@@ -15,24 +15,16 @@ type Props = {
 
 export function ForumScreen({ questions }: Props) {
   return (
-    <Box className="mb-10">
-      <Box className="mb-10">
-        <Box className="bg-gradient-to-br from-primary to-primary/80 rounded-[2rem] p-8 md:p-12 text-primary-foreground shadow-2xl shadow-primary/20 relative overflow-hidden">
-          <Box className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
-          <Box className="relative z-10 max-w-2xl">
-            <Heading size="h2" className="text-2xl md:text-4xl font-bold mb-4 leading-tight">
-              子ども会のことで<br />わからないことはありますか？
-            </Heading>
-            <Text className="text-primary-foreground/80 text-base md:text-lg max-w-md leading-relaxed mb-8">
-              役員への質問や、会員同士の相談など、気軽にお使いください。
-            </Text>
+    <Box className="space-y-6">
+      <Stack className="gap-4">
+        <Heading size="h2" className="text-lg font-bold text-foreground flex items-center gap-2">
+          <MessageCircleQuestion size={20} className="text-primary" />
+          質問掲示板
+        </Heading>
+        <ForumSearch />
+      </Stack>
 
-            <ForumSearch />
-          </Box>
-        </Box>
-      </Box>
-
-      <Stack className="gap-6">
+      <Stack className="gap-6 pt-6 border-t border-border">
         <Heading size="h3" className="text-lg font-bold flex items-center gap-2 px-1">
           <Box className="w-1 h-5 bg-primary rounded-full" />
           最近の投稿
