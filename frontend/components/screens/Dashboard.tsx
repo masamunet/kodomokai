@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import FiscalYearSwitcher from '@/components/FiscalYearSwitcher'
-import { MessageCircleQuestion, HelpCircle, ChevronRight, LogOut, User, LayoutDashboard, Bell, Calendar as CalendarIcon, MapPin, Clock } from 'lucide-react'
+import { MessageCircleQuestion, HelpCircle, ChevronRight, LogOut, User, LayoutDashboard, Bell, Calendar as CalendarIcon, MapPin, Clock, FileText } from 'lucide-react'
 import GoogleCalendarButton from '@/components/GoogleCalendarButton'
 import { Box } from '@/ui/layout/Box'
 import { Stack, HStack } from '@/ui/layout/Stack'
@@ -22,6 +22,7 @@ interface DashboardScreenProps {
   unansweredCount: number
   childrenData: any[]
   eventAttendanceMap: Map<string, Set<string>>
+  hasDistributedMaterials: boolean
 }
 
 export function DashboardScreen(props: DashboardScreenProps) {
@@ -47,6 +48,29 @@ export function DashboardScreen(props: DashboardScreenProps) {
           eventAttendanceMap={props.eventAttendanceMap}
         />
       </Box>
+
+      {/* General Assembly Link Card */}
+      {props.hasDistributedMaterials && (
+        <Box className="mt-8">
+          <Link href="/general-assembly" className="block group max-w-sm">
+            <Card className="h-full border-l-4 border-l-purple-500 hover:shadow-md transition-shadow">
+              <Box className="p-6 flex items-start justify-between">
+                <Stack className="gap-1">
+                  <Heading size="h3" className="font-bold text-lg text-gray-900 group-hover:text-purple-600 transition-colors">
+                    総会資料
+                  </Heading>
+                  <Text className="text-sm text-gray-500">
+                    {props.targetFiscalYear}年度の総会資料を確認できます
+                  </Text>
+                </Stack>
+                <Box className="p-3 bg-purple-50 rounded-full text-purple-600">
+                  <FileText size={24} />
+                </Box>
+              </Box>
+            </Card>
+          </Link>
+        </Box>
+      )}
     </main>
   )
 }

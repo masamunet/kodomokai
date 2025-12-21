@@ -38,11 +38,12 @@ type Props = {
   eraName: string
   startYear: number
   title?: string
+  readOnly?: boolean
 }
 
 const MONTHS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
 
-export default function AnnualScheduleEditor({ year, events, eraName, startYear, title }: Props) {
+export default function AnnualScheduleEditor({ year, events, eraName, startYear, title, readOnly = false }: Props) {
   const [isPending, startTransition] = useTransition()
   const [editingEventId, setEditingEventId] = useState<string | null>(null)
   const [isAddingMonth, setIsAddingMonth] = useState<number | null>(null)
@@ -118,7 +119,7 @@ export default function AnnualScheduleEditor({ year, events, eraName, startYear,
               <th scope="col" className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider border-r border-border print:border-black print:py-2">イベント名 / 詳細</th>
               <th scope="col" className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider w-32 border-r border-border print:border-black print:py-2">場所</th>
               <th scope="col" className="px-4 py-4 text-left text-xs font-bold text-muted-foreground uppercase tracking-wider w-24 border-r border-border print:border-black print:py-2">主催</th>
-              <th scope="col" className="px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider w-20 print:hidden">操作</th>
+              <th scope="col" className={`px-4 py-4 text-right text-xs font-bold text-muted-foreground uppercase tracking-wider w-20 ${readOnly ? 'hidden' : 'print:hidden'}`}>操作</th>
             </tr>
           </thead>
           <tbody className="bg-background divide-y divide-border print:divide-black">
@@ -132,17 +133,19 @@ export default function AnnualScheduleEditor({ year, events, eraName, startYear,
                     <td className="px-4 py-4 text-sm font-bold text-foreground border-r border-border print:border-black bg-muted/20 print:bg-transparent align-top print:py-2">
                       <HStack className="items-center justify-between">
                         <Text weight="bold" className="text-lg">{month}月</Text>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setIsAddingMonth(month)
-                            setEditingEventId(null)
-                          }}
-                          className="print:hidden h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Plus size={14} />
-                        </Button>
+                        {!readOnly && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setIsAddingMonth(month)
+                              setEditingEventId(null)
+                            }}
+                            className="print:hidden h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Plus size={14} />
+                          </Button>
+                        )}
                       </HStack>
                     </td>
                     <td colSpan={5} className="px-4 py-8 text-center print:py-4">
@@ -161,7 +164,7 @@ export default function AnnualScheduleEditor({ year, events, eraName, startYear,
                       event={event}
                       year={displayYear}
                       month={month}
-
+                      readOnly={readOnly}
                       rowSpan={monthEvents.length + (isAddingMonth === month ? 1 : 0)}
                       isEditing={editingEventId === event.id}
                       onEdit={() => setEditingEventId(event.id)}
@@ -170,7 +173,7 @@ export default function AnnualScheduleEditor({ year, events, eraName, startYear,
                       showMonthCell={index === 0}
                     />
                   ))}
-                  {isAddingMonth === month && (
+                  {isAddingMonth === month && !readOnly && (
                     <tr className="bg-indigo-50 border-t-2 border-indigo-200 print:hidden">
                       {monthEvents.length === 0 && (
                         <td className="px-3 py-4 text-sm font-bold text-gray-900 border-r border-gray-200 bg-gray-50 align-top">
@@ -211,7 +214,8 @@ function EventRow({
   onCancel,
   showMonthCell,
   rowSpan,
-  onAdd
+  onAdd,
+  readOnly
 }: {
   event: Event,
   year: number,
@@ -222,6 +226,7 @@ function EventRow({
   showMonthCell: boolean
   rowSpan: number
   onAdd: () => void
+  readOnly: boolean
 }) {
   const [isPending, startTransition] = useTransition()
 
@@ -281,15 +286,17 @@ function EventRow({
           <Box className="flex justify-between print:justify-center">
             <Text weight="bold" className="text-xl print:text-base">{month}</Text>
             <Text className="text-xs pt-1.5 print:hidden text-muted-foreground">月</Text>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onAdd}
-              className="print:hidden h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
-              title="この月に追加"
-            >
-              <Plus size={14} />
-            </Button>
+            {(!readOnly) && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onAdd}
+                className="print:hidden h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                title="この月に追加"
+              >
+                <Plus size={14} />
+              </Button>
+            )}
           </Box>
         </td>
       )}
@@ -356,7 +363,7 @@ function EventRow({
       <td className="px-4 py-4 text-sm text-muted-foreground border-r border-border print:border-black align-top print:py-2">
         <Text className="text-sm">{event.organizer}</Text>
       </td>
-      <td className="px-4 py-3 text-right print:hidden align-top">
+      <td className={`px-4 py-3 text-right ${readOnly ? 'hidden' : 'print:hidden'} align-top`}>
         <HStack className="justify-end gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
           <Button
             variant="ghost"

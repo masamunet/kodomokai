@@ -77,6 +77,17 @@ export default async function GeneralAssemblyPage() {
   // 5. Constitution
   const constitution = await getConstitution()
 
+  // 6. Distribution Status
+  const { data: distributionData } = await supabase
+    .from('general_assembly_materials')
+    .select('material_type, is_distributed')
+    .eq('fiscal_year', targetFiscalYear)
+
+  const distributionMap = (distributionData || []).reduce((acc: any, item: any) => {
+    acc[item.material_type] = item.is_distributed
+    return acc
+  }, {})
+
   return (
     <GeneralAssemblyHub
       targetFiscalYear={targetFiscalYear}
@@ -97,6 +108,7 @@ export default async function GeneralAssemblyPage() {
         profiles: profiles || []
       }}
       constitution={constitution}
+      distributionMap={distributionMap}
     />
   )
 }

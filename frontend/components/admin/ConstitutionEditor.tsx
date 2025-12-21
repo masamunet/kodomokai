@@ -18,9 +18,10 @@ type Constitution = {
 
 type Props = {
   initialData: Constitution | null
+  readOnly?: boolean
 }
 
-export default function ConstitutionEditor({ initialData }: Props) {
+export default function ConstitutionEditor({ initialData, readOnly = false }: Props) {
   const [isPending, startTransition] = useTransition()
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [content, setContent] = useState(initialData?.content || '')
@@ -52,81 +53,83 @@ export default function ConstitutionEditor({ initialData }: Props) {
       )}
 
       {/* Editor Controls - Hidden on Print */}
-      <div className="bg-white p-6 shadow sm:rounded-md border border-gray-200 print:hidden">
-        <form action={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                <FileText size={16} className="text-gray-400" />
-                規約タイトル
-              </label>
-              <input
-                type="text"
-                name="title"
-                defaultValue={initialData?.title || '規約'}
-                required
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+      {!readOnly && (
+        <div className="bg-white p-6 shadow sm:rounded-md border border-gray-200 print:hidden">
+          <form action={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                  <FileText size={16} className="text-gray-400" />
+                  規約タイトル
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  defaultValue={initialData?.title || '規約'}
+                  required
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                  <Calendar size={16} className="text-gray-400" />
+                  施行日 / 改定日
+                </label>
+                <input
+                  type="date"
+                  name="version_date"
+                  defaultValue={initialData?.version_date || new Date().toISOString().split('T')[0]}
+                  required
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+                  <History size={16} className="text-gray-400" />
+                  版数 (任意)
+                </label>
+                <input
+                  type="text"
+                  name="version_name"
+                  defaultValue={initialData?.version_name || ''}
+                  placeholder="例: 第1版、2025年度改訂版"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                <Calendar size={16} className="text-gray-400" />
-                施行日 / 改定日
-              </label>
-              <input
-                type="date"
-                name="version_date"
-                defaultValue={initialData?.version_date || new Date().toISOString().split('T')[0]}
-                required
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                <History size={16} className="text-gray-400" />
-                版数 (任意)
-              </label>
-              <input
-                type="text"
-                name="version_name"
-                defaultValue={initialData?.version_name || ''}
-                placeholder="例: 第1版、2025年度改訂版"
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
-            </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              規約内容 (Markdown)
-            </label>
-            <MarkdownEditor
-              name="content"
-              defaultValue={content}
-              rows={20}
-            />
-          </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                規約内容 (Markdown)
+              </label>
+              <MarkdownEditor
+                name="content"
+                defaultValue={content}
+                rows={20}
+              />
+            </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md shadow-sm hover:bg-gray-50 font-medium text-sm transition-colors"
-            >
-              <Printer size={18} />
-              印刷 / PDFプレビュー
-            </button>
-            <button
-              type="submit"
-              disabled={isPending}
-              className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 font-bold text-sm disabled:opacity-50 transition-colors"
-            >
-              <Save size={18} />
-              {isPending ? '保存中...' : '規約を保存'}
-            </button>
-          </div>
-        </form>
-      </div>
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md shadow-sm hover:bg-gray-50 font-medium text-sm transition-colors"
+              >
+                <Printer size={18} />
+                印刷 / PDFプレビュー
+              </button>
+              <button
+                type="submit"
+                disabled={isPending}
+                className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 font-bold text-sm disabled:opacity-50 transition-colors"
+              >
+                <Save size={18} />
+                {isPending ? '保存中...' : '規約を保存'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Print View / Preview - Inspired by AnnualSchedule (optimized for printing) */}
       <div className="bg-white p-8 shadow sm:rounded-md border border-gray-200 print:shadow-none print:border-none print:p-0">

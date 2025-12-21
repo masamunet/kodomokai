@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getTargetFiscalYear } from '@/lib/fiscal-year'
 import { getUnansweredCount } from '@/app/actions/forum'
 import { DashboardScreen } from '@/components/screens/Dashboard'
+import { getDistributedMaterials } from '@/app/admin/actions/general-assembly'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -124,6 +125,10 @@ export default async function DashboardPage() {
     unansweredCount = await getUnansweredCount()
   }
 
+  // Fetch distributed materials status
+  const distributedMaterialsList = await getDistributedMaterials(targetFiscalYear)
+  const hasDistributedMaterials = distributedMaterialsList.some((m: any) => m.is_distributed)
+
   return (
     <DashboardScreen
       currentUser={currentUser}
@@ -136,6 +141,7 @@ export default async function DashboardPage() {
       unansweredCount={unansweredCount}
       childrenData={children || []}
       eventAttendanceMap={eventAttendanceMap}
+      hasDistributedMaterials={hasDistributedMaterials}
     />
   )
 }

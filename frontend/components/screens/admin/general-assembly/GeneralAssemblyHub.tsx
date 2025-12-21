@@ -6,7 +6,7 @@ import { Stack, HStack } from '@/ui/layout/Stack'
 import { Heading } from '@/ui/primitives/Heading'
 import { Text } from '@/ui/primitives/Text'
 import { Badge } from '@/ui/primitives/Badge'
-import { Printer, FileText, Calendar, Users, Briefcase, Book } from 'lucide-react'
+import { Printer, FileText, Calendar, Users, Briefcase, Book, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 // Standard UI Patterns
@@ -24,6 +24,10 @@ import AccountingEditor from '@/components/admin/accounting/AccountingEditor'
 import { NextYearOfficerScreen } from '@/components/screens/admin/officers/NextYearOfficerScreen'
 import ConstitutionEditor from '@/components/admin/ConstitutionEditor'
 
+import { toggleMaterialDistribution } from '@/app/admin/actions/general-assembly'
+import { Switch } from '@/ui/primitives/Switch'
+import { Label } from '@/ui/primitives/Label'
+
 type Props = {
   targetFiscalYear: number
   nextFiscalYear: number
@@ -36,6 +40,7 @@ type Props = {
   accountingInfoNext: any
   officerData: any
   constitution: any
+  distributionMap: Record<string, boolean>
 }
 
 type PrintTarget =
@@ -59,11 +64,14 @@ export function GeneralAssemblyHub({
   accountingInfoCurrent,
   accountingInfoNext,
   officerData,
-  constitution
+  constitution,
+  distributionMap
 }: Props) {
   const router = useRouter()
   const [printTarget, setPrintTarget] = useState<PrintTarget>('none')
   const printingRef = useRef(false)
+  const [localDistribution, setLocalDistribution] = useState(distributionMap)
+  const [updatingItems, setUpdatingItems] = useState<Record<string, boolean>>({})
 
   const handlePrint = (target: PrintTarget) => {
     setPrintTarget(target)
@@ -73,6 +81,24 @@ export function GeneralAssemblyHub({
       window.print()
       printingRef.current = false
     }, 100)
+  }
+
+  const handleToggle = async (materialType: string, currentStatus: boolean) => {
+    // Show loading state
+    setUpdatingItems(prev => ({ ...prev, [materialType]: true }))
+    // Optimistic update
+    setLocalDistribution(prev => ({ ...prev, [materialType]: !currentStatus }))
+
+    try {
+      await toggleMaterialDistribution(targetFiscalYear, materialType, currentStatus)
+    } catch (e) {
+      // Revert on error
+      setLocalDistribution(prev => ({ ...prev, [materialType]: currentStatus }))
+      console.error('Failed to toggle distribution', e)
+    } finally {
+      // Hide loading state
+      setUpdatingItems(prev => ({ ...prev, [materialType]: false }))
+    }
   }
 
   const getPrintClass = (target: PrintTarget) => {
@@ -86,7 +112,7 @@ export function GeneralAssemblyHub({
       <Box className="print:hidden">
         <AdminPage.Header
           title="総会資料作成"
-          description="総会に必要な資料を一括で作成・印刷できます。各項目の「印刷」ボタンをクリックしてください。"
+          description="総会に必要な資料を一括で作成・印刷できます。また、「会員に配布」をオンにすると会員ダッシュボードで閲覧可能になります。"
         />
 
         <AdminPage.Content>
@@ -97,6 +123,9 @@ export function GeneralAssemblyHub({
               icon={<FileText className="w-5 h-5" />}
               description={`${settings?.name || ''} 総会資料`}
               onClick={() => handlePrint('cover')}
+              isDistributed={localDistribution['cover']}
+              isUpdating={updatingItems['cover']}
+              onToggleDistribution={() => handleToggle('cover', localDistribution['cover'])}
             />
             <PrintListItem
               number={2}
@@ -104,6 +133,9 @@ export function GeneralAssemblyHub({
               icon={<Calendar className="w-5 h-5" />}
               description={`${targetFiscalYear}年度`}
               onClick={() => handlePrint('activity_report')}
+              isDistributed={localDistribution['activity_report']}
+              isUpdating={updatingItems['activity_report']}
+              onToggleDistribution={() => handleToggle('activity_report', localDistribution['activity_report'])}
             />
             <PrintListItem
               number={3}
@@ -112,6 +144,9 @@ export function GeneralAssemblyHub({
               description={`${targetFiscalYear}年度 決算・監査`}
               onClick={() => handlePrint('settlement_report')}
               status={!settlementReport ? 'missing' : 'ready'}
+              isDistributed={localDistribution['settlement_report']}
+              isUpdating={updatingItems['settlement_report']}
+              onToggleDistribution={() => handleToggle('settlement_report', localDistribution['settlement_report'])}
             />
             <PrintListItem
               number={4}
@@ -119,6 +154,9 @@ export function GeneralAssemblyHub({
               icon={<Users className="w-5 h-5" />}
               description={`${nextFiscalYear}年度 新役員`}
               onClick={() => handlePrint('officer_list')}
+              isDistributed={localDistribution['officer_list']}
+              isUpdating={updatingItems['officer_list']}
+              onToggleDistribution={() => handleToggle('officer_list', localDistribution['officer_list'])}
             />
             <PrintListItem
               number={5}
@@ -126,6 +164,9 @@ export function GeneralAssemblyHub({
               icon={<Calendar className="w-5 h-5" />}
               description={`${nextFiscalYear}年度 予定案`}
               onClick={() => handlePrint('next_activity_plan')}
+              isDistributed={localDistribution['next_activity_plan']}
+              isUpdating={updatingItems['next_activity_plan']}
+              onToggleDistribution={() => handleToggle('next_activity_plan', localDistribution['next_activity_plan'])}
             />
             <PrintListItem
               number={6}
@@ -134,6 +175,9 @@ export function GeneralAssemblyHub({
               description={`${nextFiscalYear}年度 予算案`}
               onClick={() => handlePrint('next_budget_plan')}
               status={!budgetReport ? 'missing' : 'ready'}
+              isDistributed={localDistribution['next_budget_plan']}
+              isUpdating={updatingItems['next_budget_plan']}
+              onToggleDistribution={() => handleToggle('next_budget_plan', localDistribution['next_budget_plan'])}
             />
             <PrintListItem
               number={7}
@@ -141,6 +185,9 @@ export function GeneralAssemblyHub({
               icon={<Book className="w-5 h-5" />}
               description="最新版"
               onClick={() => handlePrint('constitution')}
+              isDistributed={localDistribution['constitution']}
+              isUpdating={updatingItems['constitution']}
+              onToggleDistribution={() => handleToggle('constitution', localDistribution['constitution'])}
             />
           </Stack>
         </AdminPage.Content>
@@ -223,18 +270,17 @@ export function GeneralAssemblyHub({
   )
 }
 
-function PrintListItem({ number, title, icon, description, onClick, status = 'ready' }: any) {
+function PrintListItem({ number, title, icon, description, onClick, status = 'ready', isDistributed, isUpdating, onToggleDistribution }: any) {
   const isDisabled = status === 'missing'
 
   return (
     <div
-      onClick={!isDisabled ? onClick : undefined}
       className={`
         group flex items-center justify-between p-4 border rounded-lg transition-all duration-200
         bg-card border-border
         ${isDisabled
           ? 'opacity-60 cursor-not-allowed bg-muted'
-          : 'cursor-pointer hover:bg-muted/50 hover:border-muted-foreground/20 hover:shadow-sm'
+          : 'hover:bg-muted/50 hover:border-muted-foreground/20 hover:shadow-sm'
         }
       `}
     >
@@ -264,15 +310,32 @@ function PrintListItem({ number, title, icon, description, onClick, status = 're
         )}
       </HStack>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        disabled={isDisabled}
-        className="text-muted-foreground group-hover:text-primary"
-      >
-        <Printer className="w-4 h-4 mr-2" />
-        印刷
-      </Button>
+      <HStack className="gap-4">
+        {onToggleDistribution && (
+          <div className="flex items-center gap-2 mr-4 border-r pr-4 border-border/60">
+            {isUpdating && <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" />}
+            <Switch
+              id={`distribute-${number}`}
+              checked={isDistributed || false}
+              onCheckedChange={onToggleDistribution}
+              disabled={isDisabled || isUpdating}
+            />
+            <Label htmlFor={`distribute-${number}`} className={isDisabled ? 'text-muted-foreground' : 'cursor-pointer'}>
+              会員に配布
+            </Label>
+          </div>
+        )}
+        <Button
+          onClick={!isDisabled ? onClick : undefined}
+          variant="ghost"
+          size="sm"
+          disabled={isDisabled}
+          className="text-muted-foreground group-hover:text-primary"
+        >
+          <Printer className="w-4 h-4 mr-2" />
+          印刷
+        </Button>
+      </HStack>
     </div>
   )
 }

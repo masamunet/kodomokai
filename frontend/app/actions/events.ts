@@ -19,7 +19,7 @@ export async function getAnnualEvents(year: number) {
     .order('start_time', { ascending: true }) // Secondary sort by time if exists
 
   if (error) {
-    console.error('Error fetching annual events:', error)
+    console.error('Error fetching annual events:', JSON.stringify(error, null, 2))
     return []
   }
 
