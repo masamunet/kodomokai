@@ -1,4 +1,5 @@
 import * as React from "react"
+import NextTopLoader from 'nextjs-toploader';
 
 interface AppRootLayoutProps {
   children: React.ReactNode
@@ -12,6 +13,11 @@ export function AppRootLayout({ children, fonts }: AppRootLayoutProps) {
         className={`${fonts} antialiased`}
         suppressHydrationWarning
       >
+        <NextTopLoader
+          showSpinner={false}
+          template='<div class="bar" role="bar"><div class="peg"></div></div>'
+          zIndex={1600}
+        />
         {children}
       </body>
     </html>
