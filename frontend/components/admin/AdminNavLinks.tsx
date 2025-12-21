@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Settings, FileText, ScrollText, Upload, ChevronDown } from 'lucide-react'
+import { Settings, FileText, ScrollText, Upload, ChevronDown, Book } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -114,6 +114,18 @@ export default function AdminNavLinks() {
       >
         会計
       </Link>
+      <Link
+        href="/admin/general-assembly"
+        className={cn(
+          "flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap",
+          isActive('/admin/general-assembly')
+            ? "text-foreground bg-muted"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+        )}
+      >
+        <FileText className="h-4 w-4" />
+        総会資料
+      </Link>
       <span
         className={cn(
           "px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap text-muted-foreground/50 cursor-not-allowed"
@@ -159,7 +171,7 @@ export default function AdminNavLinks() {
               className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               onClick={() => setIsOpen(false)}
             >
-              <FileText className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+              <Book className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
               規約
             </Link>
             <span

@@ -37,11 +37,12 @@ type Props = {
   events: Event[]
   eraName: string
   startYear: number
+  title?: string
 }
 
 const MONTHS = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
 
-export default function AnnualScheduleEditor({ year, events, eraName, startYear }: Props) {
+export default function AnnualScheduleEditor({ year, events, eraName, startYear, title }: Props) {
   const [isPending, startTransition] = useTransition()
   const [editingEventId, setEditingEventId] = useState<string | null>(null)
   const [isAddingMonth, setIsAddingMonth] = useState<number | null>(null)
@@ -76,7 +77,7 @@ export default function AnnualScheduleEditor({ year, events, eraName, startYear 
     <Stack className="gap-6 print:gap-4">
       <Box className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
         <Box>
-          <Heading size="h2" className="text-2xl font-bold">{warekiYear}度 年間活動予定</Heading>
+          <Heading size="h2" className="text-2xl font-bold">{warekiYear}度 {title || '年間活動予定'}</Heading>
           <Text className="text-sm text-muted-foreground mt-1 block">
             最終発行: {printedDate}
           </Text>
@@ -102,7 +103,7 @@ export default function AnnualScheduleEditor({ year, events, eraName, startYear 
 
       <Box className="hidden print:block mb-6 border-b-2 border-primary pb-2">
         <HStack className="justify-between items-end">
-          <Heading size="h1" className="text-2xl font-bold text-primary">{warekiYear}度 年間活動予定表</Heading>
+          <Heading size="h1" className="text-2xl font-bold text-primary">{warekiYear}度 {title || '年間活動予定表'}</Heading>
           <Text className="text-xs text-muted-foreground">発行日: {printedDate}</Text>
         </HStack>
       </Box>
