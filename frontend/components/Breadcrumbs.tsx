@@ -16,6 +16,8 @@ const LABEL_MAP: Record<string, string> = {
   templates: 'テンプレート',
   notifications: 'お知らせ配信',
   settings: '設定',
+  'general-assembly': '総会',
+  execution: '執行',
   new: '新規作成',
 }
 

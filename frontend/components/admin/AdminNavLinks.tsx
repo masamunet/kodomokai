@@ -10,8 +10,11 @@ import { cn } from '@/lib/utils'
 export default function AdminNavLinks() {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const [isGAOpen, setIsGAOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const gaButtonRef = useRef<HTMLButtonElement>(null)
   const [position, setPosition] = useState({ top: 0, left: 0 })
+  const [gaPosition, setGAPosition] = useState({ top: 0, left: 0 })
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -22,11 +25,24 @@ export default function AdminNavLinks() {
       ) {
         setIsOpen(false)
       }
+      if (
+        gaButtonRef.current &&
+        !gaButtonRef.current.contains(event.target as Node) &&
+        !(event.target as Element).closest('.ga-nav-dropdown')
+      ) {
+        setIsGAOpen(false)
+      }
     }
 
     document.addEventListener("mousedown", handleClickOutside)
-    window.addEventListener("resize", () => setIsOpen(false))
-    window.addEventListener("scroll", () => setIsOpen(false), true)
+    window.addEventListener("resize", () => {
+      setIsOpen(false)
+      setIsGAOpen(false)
+    })
+    window.addEventListener("scroll", () => {
+      setIsOpen(false)
+      setIsGAOpen(false)
+    }, true)
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
@@ -38,18 +54,27 @@ export default function AdminNavLinks() {
   const handleToggle = () => {
     if (!isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect()
-      // Position dropdown 
-      // Right aligned to the button
-      const width = 192 // w-48 is 12rem = 192px
-
-      // Check if it fits on the right, otherwise align right edge
-
+      const width = 192
       setPosition({
         top: rect.bottom + 8,
         left: rect.right - width
       })
+      setIsGAOpen(false) // Close other
     }
     setIsOpen(!isOpen)
+  }
+
+  const handleGAToggle = () => {
+    if (!isGAOpen && gaButtonRef.current) {
+      const rect = gaButtonRef.current.getBoundingClientRect()
+      const width = 192
+      setGAPosition({
+        top: rect.bottom + 8,
+        left: rect.right - width
+      })
+      setIsOpen(false) // Close other
+    }
+    setIsGAOpen(!isGAOpen)
   }
 
   const isActive = (path: string) => pathname?.startsWith(path)
@@ -114,18 +139,56 @@ export default function AdminNavLinks() {
       >
         会計
       </Link>
-      <Link
-        href="/admin/general-assembly"
-        className={cn(
-          "flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap",
-          isActive('/admin/general-assembly')
-            ? "text-foreground bg-muted"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted"
+      <div className="relative">
+        <button
+          ref={gaButtonRef}
+          onClick={handleGAToggle}
+          className={cn(
+            "flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap",
+            isGAOpen || isActive('/admin/general-assembly')
+              ? "text-foreground bg-muted"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+          )}
+        >
+          <FileText className="h-4 w-4" />
+          <span>総会</span>
+          <ChevronDown className="h-3 w-3 opacity-50" />
+        </button>
+
+        {isGAOpen && typeof document !== 'undefined' && createPortal(
+          <div
+            className="ga-nav-dropdown fixed w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[100]"
+            style={{
+              top: gaPosition.top,
+              left: gaPosition.left
+            }}
+          >
+            <Link
+              href="/admin/general-assembly"
+              className={cn(
+                "group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+                pathname === '/admin/general-assembly' && "bg-gray-50"
+              )}
+              onClick={() => setIsGAOpen(false)}
+            >
+              <FileText className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+              総会資料
+            </Link>
+            <Link
+              href="/admin/general-assembly/execution"
+              className={cn(
+                "group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+                pathname === '/admin/general-assembly/execution' && "bg-gray-50"
+              )}
+              onClick={() => setIsGAOpen(false)}
+            >
+              <ScrollText className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+              総会執行
+            </Link>
+          </div>,
+          document.body
         )}
-      >
-        <FileText className="h-4 w-4" />
-        総会資料
-      </Link>
+      </div>
       <span
         className={cn(
           "px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap text-muted-foreground/50 cursor-not-allowed"
