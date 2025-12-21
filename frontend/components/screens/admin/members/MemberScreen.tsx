@@ -1,10 +1,15 @@
+'use client';
+
+import { useState } from 'react'
 import MemberTabs from '@/components/admin/members/MemberTabs'
 import ChildList from '@/components/admin/members/ChildList'
 import GuardianList from '@/components/admin/members/GuardianList'
 import OfficerList from '@/components/admin/members/OfficerList'
 import { Box } from '@/ui/layout/Box'
 import { AdminPage } from '@/components/admin/patterns/AdminPage'
-import { Stack } from '@/ui/layout/Stack'
+import { Button } from '@/ui/primitives/Button'
+import { BarChart3 } from 'lucide-react'
+import { MemberStatisticsModal } from '@/components/admin/members/MemberStatisticsModal'
 
 type ViewType = 'child' | 'guardian' | 'officer'
 
@@ -25,6 +30,8 @@ export function MemberScreen({
   targetFiscalYear,
   canEdit
 }: MemberScreenProps) {
+  const [isStatsOpen, setIsStatsOpen] = useState(false)
+
   return (
     <AdminPage.Root>
       <AdminPage.Header
@@ -33,7 +40,17 @@ export function MemberScreen({
       />
 
       <AdminPage.Content>
-        <MemberTabs />
+        <MemberTabs>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsStatsOpen(true)}
+            className="gap-2"
+          >
+            <BarChart3 className="w-4 h-4" />
+            統計情報を表示
+          </Button>
+        </MemberTabs>
 
         <Box className="mt-4">
           {view === 'child' && (
@@ -48,6 +65,13 @@ export function MemberScreen({
             <OfficerList assignments={assignments} titleYear={titleYear} />
           )}
         </Box>
+
+        <MemberStatisticsModal
+          isOpen={isStatsOpen}
+          onOpenChange={setIsStatsOpen}
+          profiles={profiles}
+          targetFiscalYear={targetFiscalYear}
+        />
       </AdminPage.Content>
     </AdminPage.Root>
   )
