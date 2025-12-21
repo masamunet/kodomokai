@@ -16,7 +16,7 @@ interface MeetingListScreenProps {
 
 export function MeetingListScreen({ year, meetings, months }: MeetingListScreenProps) {
   return (
-    <AdminPage.Root maxWidth="5xl">
+    <AdminPage.Root>
       <AdminPage.Header
         title="役員定例会"
         description="年度ごとの定例会スケジュールと議題を管理します。"

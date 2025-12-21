@@ -25,7 +25,7 @@ export function UserEditScreen({
   backView
 }: UserEditScreenProps) {
   return (
-    <AdminPage.Root maxWidth="5xl">
+    <AdminPage.Root>
       <AdminPage.Header
         title="会員情報の編集"
         description="保護者および登録されているお子様の情報を管理します。"

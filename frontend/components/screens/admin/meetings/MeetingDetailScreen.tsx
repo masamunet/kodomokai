@@ -7,7 +7,7 @@ interface MeetingDetailScreenProps {
 
 export function MeetingDetailScreen({ meeting }: MeetingDetailScreenProps) {
   return (
-    <AdminPage.Root maxWidth="5xl">
+    <AdminPage.Root>
       <AdminPage.Header
         title={`${meeting.target_month}月 定例会`}
         description={`${meeting.target_year}年度 ${meeting.target_month}月の定例会詳細・議題編集`}

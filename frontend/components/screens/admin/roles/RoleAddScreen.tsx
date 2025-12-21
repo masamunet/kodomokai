@@ -8,7 +8,7 @@ interface RoleAddScreenProps {
 
 export function RoleAddScreen({ initialDisplayOrder }: RoleAddScreenProps) {
   return (
-    <AdminPage.Root maxWidth="5xl">
+    <AdminPage.Root>
       <AdminPage.Header
         title="役職の追加"
         description="新しい役職を作成し、権限や表示設定を構成します。"

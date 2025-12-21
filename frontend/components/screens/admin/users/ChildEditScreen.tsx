@@ -11,7 +11,7 @@ interface ChildEditScreenProps {
 
 export function ChildEditScreen({ parentId, profile, child }: ChildEditScreenProps) {
   return (
-    <AdminPage.Root maxWidth="5xl">
+    <AdminPage.Root>
       <AdminPage.Header
         title="お子様情報の編集"
         description="お子様の基本情報を管理します。"

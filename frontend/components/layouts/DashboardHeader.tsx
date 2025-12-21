@@ -38,7 +38,7 @@ export function DashboardHeader({ profile, targetFiscalYear }: DashboardHeaderPr
 
             {profile?.is_admin && (
               <Button variant="ghost" size="sm" asChild activeScale={true} className="gap-2 h-9 text-xs">
-                <Link href="/admin/templates">
+                <Link href="/admin/meetings">
                   管理者
                 </Link>
               </Button>

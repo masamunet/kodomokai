@@ -53,8 +53,8 @@ export function AdminLayoutView({
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-[1920px] flex-1 p-4 sm:p-6 lg:p-8 print:p-0 print:w-auto print:max-w-none">
-        <div className="print:hidden">
+      <main className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8 print:p-0 print:w-auto print:max-w-none">
+        <div className="print:hidden mb-4">
           <Breadcrumbs />
         </div>
         {children}

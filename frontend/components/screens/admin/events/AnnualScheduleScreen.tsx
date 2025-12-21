@@ -16,7 +16,7 @@ export function AnnualScheduleScreen({
   startYear
 }: AnnualScheduleScreenProps) {
   return (
-    <AdminPage.Root maxWidth="5xl" className="print:p-0 print:max-w-3xl">
+    <AdminPage.Root className="print:p-0 print:max-w-3xl">
       <AdminPage.Header
         title="年間活動予定 編集"
         description={`${toWarekiYear(year, eraName, startYear)}度のイベントスケジュールを管理します。`}

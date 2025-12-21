@@ -1,7 +1,6 @@
 import { ReactNode } from 'react'
 import { Box } from '@/ui/layout/Box'
 import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import Breadcrumbs from '@/components/Breadcrumbs'
 import { cn } from '@/lib/utils'
 
 interface AdminPageRootProps {
@@ -18,7 +17,7 @@ function AdminPageRoot({ children, className, maxWidth = '7xl' }: AdminPageRootP
   }[maxWidth]
 
   return (
-    <Box className={cn(maxWidthClass, "mx-auto p-6 transition-all duration-300", className)}>
+    <Box className={cn(maxWidthClass, "mx-auto transition-all duration-300", className)}>
       {children}
     </Box>
   )
@@ -31,7 +30,6 @@ interface AdminPageHeaderWrapperProps {
     label: string
     href: string
   }
-  showBreadcrumbs?: boolean
   className?: string
 }
 
@@ -39,16 +37,10 @@ function AdminPageHeaderWrapper({
   title,
   description,
   action,
-  showBreadcrumbs = true,
   className
 }: AdminPageHeaderWrapperProps) {
   return (
     <Box className={className}>
-      {showBreadcrumbs && (
-        <Box className="mb-4">
-          <Breadcrumbs />
-        </Box>
-      )}
       <AdminPageHeader title={title} description={description} action={action} />
     </Box>
   )

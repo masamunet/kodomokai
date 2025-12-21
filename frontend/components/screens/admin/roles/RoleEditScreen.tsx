@@ -10,7 +10,7 @@ interface RoleEditScreenProps {
 
 export function RoleEditScreen({ role, tasks }: RoleEditScreenProps) {
   return (
-    <AdminPage.Root maxWidth="5xl">
+    <AdminPage.Root>
       <AdminPage.Header
         title="役職の編集"
         description="役職の基本情報および年間スケジュールを管理します。"
