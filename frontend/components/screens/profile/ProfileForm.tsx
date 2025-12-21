@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { updateProfile } from '../actions/profile'
+import { updateProfile } from '@/app/actions/profile'
 import { Box } from '@/ui/layout/Box'
 import { Stack, HStack } from '@/ui/layout/Stack'
 import { Text } from '@/ui/primitives/Text'

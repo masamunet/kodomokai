@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { addChild } from '../../../actions/profile'
+import { addChild } from '@/app/actions/profile'
 import Link from 'next/link'
 import { Box } from '@/ui/layout/Box'
 import { Stack, HStack } from '@/ui/layout/Stack'

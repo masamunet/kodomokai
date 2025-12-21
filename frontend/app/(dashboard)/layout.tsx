@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getTargetFiscalYear } from '@/lib/fiscal-year'
-import { DashboardHeader } from '@/components/layouts/DashboardHeader'
-import { Box } from '@/ui/layout/Box'
+import { DashboardLayoutScreen } from '@/components/layouts/DashboardLayout'
 import { redirect } from 'next/navigation'
 
 export default async function DashboardLayout({
@@ -25,11 +24,8 @@ export default async function DashboardLayout({
   const targetFiscalYear = await getTargetFiscalYear()
 
   return (
-    <Box className="min-h-screen bg-muted/30">
-      <DashboardHeader profile={profile} targetFiscalYear={targetFiscalYear} />
-      <Box className="mx-auto max-w-7xl py-8 px-4 sm:px-6 lg:px-8">
-        {children}
-      </Box>
-    </Box>
+    <DashboardLayoutScreen profile={profile} targetFiscalYear={targetFiscalYear}>
+      {children}
+    </DashboardLayoutScreen>
   )
 }

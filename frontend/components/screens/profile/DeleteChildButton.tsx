@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteChild } from '../actions/profile'
+import { deleteChild } from '@/app/actions/profile'
 import { useState } from 'react'
 import { Button } from '@/ui/primitives/Button'
 import { Text } from '@/ui/primitives/Text'
