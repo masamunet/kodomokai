@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import SingleEventForm from '@/components/admin/SingleEventForm'
-import AdminFormLayout from '@/components/admin/AdminFormLayout'
 import { notFound } from 'next/navigation'
+import { EventEditScreen } from '@/components/screens/admin/events/EventEditScreen'
 
 export default async function EditEventPage({
   params,
@@ -21,12 +20,5 @@ export default async function EditEventPage({
     notFound()
   }
 
-  return (
-    <AdminFormLayout
-      title="イベント編集"
-      backLink={{ href: '/admin/events', label: 'イベント一覧に戻る' }}
-    >
-      <SingleEventForm event={event} />
-    </AdminFormLayout>
-  )
+  return <EventEditScreen event={event} />
 }

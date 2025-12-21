@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createTemplate } from '../../actions/template'
+import { createTemplate } from '@/app/admin/actions/template'
 import Link from 'next/link'
 
 export default function TemplateForm() {

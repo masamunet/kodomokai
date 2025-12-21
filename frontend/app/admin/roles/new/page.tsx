@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import AdminFormLayout from '@/components/admin/AdminFormLayout'
-import RoleForm from './RoleForm'
+import { RoleAddScreen } from '@/components/screens/admin/roles/RoleAddScreen'
 
 export default async function NewRolePage() {
   const supabase = await createClient()
@@ -14,12 +13,5 @@ export default async function NewRolePage() {
 
   const nextDisplayOrder = roles && roles.length > 0 ? (roles[0].display_order || 0) + 1 : 1
 
-  return (
-    <AdminFormLayout
-      title="役職の追加"
-      backLink={{ href: '/admin/roles', label: '役職一覧に戻る' }}
-    >
-      <RoleForm initialDisplayOrder={nextDisplayOrder} />
-    </AdminFormLayout>
-  )
+  return <RoleAddScreen initialDisplayOrder={nextDisplayOrder} />
 }

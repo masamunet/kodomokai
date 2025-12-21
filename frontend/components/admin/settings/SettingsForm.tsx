@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { updateSettings } from '../actions/settings'
+import { updateSettings } from '@/app/admin/actions/settings'
 
 type Props = {
   initialName: string

@@ -1,7 +1,5 @@
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import AdminPageHeader from '@/components/admin/AdminPageHeader'
-import { RoleList } from './RoleList'
+import { RoleListScreen } from '@/components/screens/admin/roles/RoleListScreen'
 
 export default async function AdminRolesPage() {
   const supabase = await createClient()
@@ -11,16 +9,5 @@ export default async function AdminRolesPage() {
     .order('display_order', { ascending: true })
     .order('name')
 
-  return (
-    <div>
-      <AdminPageHeader
-        title="役職管理"
-        description="役員の役職を管理します。"
-        action={{ label: '役職を追加', href: '/admin/roles/new' }}
-      />
-      <div className="mt-8 flow-root">
-        <RoleList initialRoles={roles || []} />
-      </div>
-    </div>
-  )
+  return <RoleListScreen roles={roles || []} />
 }

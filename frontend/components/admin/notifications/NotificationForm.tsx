@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { sendNotification } from '../../actions/notification'
+import { sendNotification } from '@/app/admin/actions/notification'
 import Link from 'next/link'
 
 type Props = {

@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createRole, updateRole } from '../../actions/officer'
+import { createRole, updateRole } from '@/app/admin/actions/officer'
 import Link from 'next/link'
 
 type Props = {
