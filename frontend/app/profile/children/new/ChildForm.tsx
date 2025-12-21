@@ -1,7 +1,7 @@
 
 'use client'
 
-import { Input } from '@/components/ui/input'
+import { Input } from '@/ui/primitives/Input'
 import { useState } from 'react'
 import { addChild } from '../../../actions/profile'
 import Link from 'next/link'

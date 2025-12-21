@@ -5,7 +5,7 @@ import { calculateGrade, calculateAge, getGradeOrder } from '@/lib/grade-utils';
 import CopyToClipboard from '@/components/ui/CopyToClipboard';
 import Link from 'next/link';
 import { Baby, ArrowUpDown, ChevronUp, ChevronDown, Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/ui/primitives/Input';
 
 interface ChildListProps {
   profiles: any[]; // Ideally typed properly

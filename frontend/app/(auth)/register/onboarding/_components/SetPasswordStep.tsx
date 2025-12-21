@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/ui/primitives/Input'
 
 const schema = z.object({
   password: z.string().min(8, 'パスワードは8文字以上で入力してください'),

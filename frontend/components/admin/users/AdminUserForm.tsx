@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@/components/ui/input'
+import { Input } from '@/ui/primitives/Input'
 import { useState } from 'react'
 import { adminUpdateProfile, adminDeleteProfile } from '@/app/admin/actions/user'
 import { useRouter } from 'next/navigation'

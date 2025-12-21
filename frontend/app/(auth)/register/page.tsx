@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/ui/primitives/Input'
 import { sendMagicLink } from '@/app/actions/auth'
 import { signInWithGoogle } from '@/app/login/actions'
 import Link from 'next/link'

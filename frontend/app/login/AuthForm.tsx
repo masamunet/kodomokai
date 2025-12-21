@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@/components/ui/input'
+import { Input } from '@/ui/primitives/Input'
 import Link from 'next/link'
 import { useState } from 'react'
 import { login, signup, signInWithGoogle } from './actions'

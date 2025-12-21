@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { calculateAge, calculateGrade } from '@/lib/grade-utils';
 import Link from 'next/link';
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/ui/primitives/Input';
 
 interface GuardianListProps {
   profiles: any[];

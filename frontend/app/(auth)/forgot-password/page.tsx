@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { sendPasswordResetEmail } from '@/app/actions/auth'
 import Link from 'next/link'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/ui/primitives/Input'
 import { Loader2, ArrowLeft } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
