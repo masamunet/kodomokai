@@ -1,5 +1,6 @@
 import RoleForm from '@/components/admin/roles/RoleForm'
-import AdminFormLayout from '@/components/admin/AdminFormLayout'
+import { AdminPage } from '@/components/admin/patterns/AdminPage'
+import { Box } from '@/ui/layout/Box'
 
 interface RoleAddScreenProps {
   initialDisplayOrder: number
@@ -7,11 +8,19 @@ interface RoleAddScreenProps {
 
 export function RoleAddScreen({ initialDisplayOrder }: RoleAddScreenProps) {
   return (
-    <AdminFormLayout
-      title="役職の追加"
-      backLink={{ href: '/admin/roles', label: '役職一覧に戻る' }}
-    >
-      <RoleForm initialDisplayOrder={initialDisplayOrder} />
-    </AdminFormLayout>
+    <AdminPage.Root maxWidth="5xl">
+      <AdminPage.Header
+        title="役職の追加"
+        description="新しい役職を作成し、権限や表示設定を構成します。"
+      />
+
+      <AdminPage.Content>
+        <Box className="bg-background shadow-sm border border-border sm:rounded-lg overflow-hidden">
+          <Box className="px-4 py-5 sm:p-6">
+            <RoleForm initialDisplayOrder={initialDisplayOrder} />
+          </Box>
+        </Box>
+      </AdminPage.Content>
+    </AdminPage.Root>
   )
 }

@@ -1,5 +1,7 @@
 'use client'
 
+'use client'
+
 import { useState, useTransition, useEffect } from 'react'
 import { upsertRegularMeeting, upsertMeetingAgenda, deleteMeetingAgenda, copyAgendasFromPreviousYear } from '@/app/actions/meetings'
 import { generateGoogleCalendarUrl } from '@/lib/calendar'
@@ -7,8 +9,16 @@ import MarkdownEditor from '@/components/ui/MarkdownEditor'
 import CopyLinkButton from '@/components/ui/CopyLinkButton'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Calendar, ChevronDown, ChevronUp } from 'lucide-react'
+import { Calendar as CalendarIcon, ChevronDown, ChevronUp, Edit2, X, Plus, Save, Trash2, ExternalLink, Copy } from 'lucide-react'
 import Link from 'next/link'
+import { Box } from '@/ui/layout/Box'
+import { Stack, HStack } from '@/ui/layout/Stack'
+import { Heading } from '@/ui/primitives/Heading'
+import { Text } from '@/ui/primitives/Text'
+import { Button } from '@/ui/primitives/Button'
+import { Input } from '@/ui/primitives/Input'
+import { Label } from '@/ui/primitives/Label'
+import { cn } from '@/lib/utils'
 
 type Meeting = {
   id: string
@@ -38,22 +48,15 @@ type Props = {
 export default function MeetingEditor({ year, month, meeting, agendas, defaultItemsExpanded = false }: Props) {
   const [isEditingSchedule, setIsEditingSchedule] = useState(false)
   const [isAddingAgenda, setIsAddingAgenda] = useState(false)
-  const [isAgendasExpanded, setIsAgendasExpanded] = useState(true) // Default Section to OPEN
+  const [isAgendasExpanded, setIsAgendasExpanded] = useState(true)
   const [editingAgendaId, setEditingAgendaId] = useState<string | null>(null)
 
-  // Lifted state for expanded agenda items
-  // Initialize with all IDs if defaultItemsExpanded is true, otherwise empty
   const [expandedAgendaIds, setExpandedAgendaIds] = useState<string[]>(() =>
     defaultItemsExpanded ? agendas.map(a => a.id) : []
   )
 
   const [isPending, startTransition] = useTransition()
 
-  // Sync expandedAgendaIds if agendas change (e.g. newly added item) IF we are in "Always Expand" mode? 
-  // Or just rely on user interaction. 
-  // Let's ensure that if we navigate from List to Detail, the state re-initializes correctly (key change or mount).
-  // Next.js navigation preserves state if component tree is identical. 
-  // We might want to use a useEffect to enforce defaultItemsExpanded behavior on prop change.
   useEffect(() => {
     const targetIds = defaultItemsExpanded ? agendas.map(a => a.id) : []
     const timer = setTimeout(() => setExpandedAgendaIds(targetIds), 0)
@@ -66,7 +69,6 @@ export default function MeetingEditor({ year, month, meeting, agendas, defaultIt
     )
   }
 
-  // Schedule Form State
   const [scheduleForm, setScheduleForm] = useState({
     scheduled_date: meeting?.scheduled_date || '',
     start_time: meeting?.start_time || '',
@@ -111,145 +113,193 @@ export default function MeetingEditor({ year, month, meeting, agendas, defaultIt
   }
 
   return (
-    <div className="bg-card shadow-sm rounded-lg p-6 mb-6 border border-border">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-              <span className="bg-muted text-muted-foreground text-sm font-medium px-2.5 py-0.5 rounded">{month}月</span>
-              {meeting?.id ? (
-                <Link href={`/admin/meetings/${meeting.id}`} className="hover:underline hover:text-primary transition-colors">
+    <Box className="bg-card shadow-sm rounded-xl p-6 mb-8 border border-border transition-all hover:shadow-md">
+      <Box className="flex justify-between items-start mb-6 gap-4">
+        <Box className="flex-1">
+          {meeting?.id ? (
+            <Link
+              href={`/admin/meetings/${meeting.id}`}
+              className="group block"
+            >
+              <HStack className="items-center gap-3 mb-2">
+                <Box className="bg-primary/10 text-primary text-sm font-bold px-3 py-1 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                  {month}月
+                </Box>
+                <Heading size="h3" className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
                   {meeting?.scheduled_date ? new Date(meeting.scheduled_date).toLocaleDateString('ja-JP', { weekday: 'short', month: 'short', day: 'numeric' }) : '日程未定'}
-                </Link>
-              ) : (
-                <span>
-                  {meeting?.scheduled_date ? new Date(meeting.scheduled_date).toLocaleDateString('ja-JP', { weekday: 'short', month: 'short', day: 'numeric' }) : '日程未定'}
-                </span>
-              )}
-            </h3>
-          </div>
-          <div className="text-sm text-muted-foreground mt-1">
-            {meeting?.start_time?.slice(0, 5) || '--:--'} @ {meeting?.location || '場所未定'}
-          </div>
-          {meeting?.description && <div className="text-sm text-muted-foreground mt-1">{meeting.description}</div>}
+                </Heading>
+              </HStack>
+              <Box className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors flex items-center gap-2">
+                <Box className="flex items-center gap-1">
+                  <span className="opacity-60">🕒</span> {meeting?.start_time?.slice(0, 5) || '--:--'}
+                </Box>
+                <span className="opacity-30">|</span>
+                <Box className="flex items-center gap-1">
+                  <span className="opacity-60">📍</span> {meeting?.location || '場所未定'}
+                </Box>
+              </Box>
+            </Link>
+          ) : (
+            <Box>
+              <HStack className="items-center gap-3 mb-2">
+                <Box className="bg-muted text-muted-foreground text-sm font-bold px-3 py-1 rounded-full">
+                  {month}月
+                </Box>
+                <Heading size="h3" className="text-xl font-bold text-foreground opacity-60">
+                  日程未定
+                </Heading>
+              </HStack>
+            </Box>
+          )}
+
+          {meeting?.description && (
+            <Box className="mt-3 p-3 bg-muted/30 rounded-lg border-l-4 border-muted">
+              <Text className="text-sm text-muted-foreground leading-relaxed">{meeting.description}</Text>
+            </Box>
+          )}
 
           {meeting?.id && (
-            <div className="mt-2">
+            <Box className="mt-4">
               <CopyLinkButton meetingId={meeting.id} />
-            </div>
+            </Box>
           )}
-        </div>
-        <button
+        </Box>
+
+        <Button
+          variant={isEditingSchedule ? "outline" : "secondary"}
+          size="sm"
           onClick={() => setIsEditingSchedule(!isEditingSchedule)}
-          className="text-sm bg-muted hover:bg-muted/80 text-muted-foreground px-3 py-1 rounded transition-colors"
+          className="shrink-0 gap-2 h-9 font-bold transition-all activeScale"
         >
+          {isEditingSchedule ? <X size={14} /> : <Edit2 size={14} />}
           {isEditingSchedule ? 'キャンセル' : '日程編集'}
-        </button>
-      </div>
+        </Button>
+      </Box>
 
       {meeting?.scheduled_date && (
-        <div className="mb-4">
-          <a
-            href={generateGoogleCalendarUrl(meeting)}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
-          >
-            <Calendar size={14} />
-            Googleカレンダーに登録
-          </a>
-        </div>
+        <Box className="mb-6">
+          <Button variant="link" size="sm" asChild className="h-auto p-0 text-primary hover:text-primary/80">
+            <a
+              href={generateGoogleCalendarUrl(meeting)}
+              target="_blank"
+              rel="noreferrer"
+              className="gap-1.5"
+            >
+              <CalendarIcon size={14} />
+              Googleカレンダーに登録
+            </a>
+          </Button>
+        </Box>
       )}
 
       {isEditingSchedule && (
-        <form action={handleScheduleSubmit} className="mb-6 bg-muted/50 p-4 rounded-lg border border-border">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground">開催日</label>
-              <input type="date" name="scheduled_date" defaultValue={scheduleForm.scheduled_date} className="mt-1 block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring text-foreground" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground">開始時間</label>
-              <input type="time" name="start_time" defaultValue={scheduleForm.start_time || ''} className="mt-1 block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring text-foreground" />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-foreground">場所</label>
-              <input type="text" name="location" defaultValue={scheduleForm.location} placeholder="例: 公民館 第1会議室" className="mt-1 block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring text-foreground" />
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-foreground">備考</label>
-              <textarea name="description" defaultValue={scheduleForm.description} className="mt-1 block w-full rounded-md border-input bg-background shadow-sm focus:border-ring focus:ring-ring text-foreground" rows={2}></textarea>
-            </div>
-          </div>
-          <div className="mt-4 text-right">
-            <button type="submit" disabled={isPending} className="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-500 disabled:opacity-50">
-              保存
-            </button>
-          </div>
+        <form action={handleScheduleSubmit}>
+          <Box className="mb-8 bg-muted/50 p-5 rounded-xl border border-border/60 shadow-inner">
+            <Stack className="gap-5">
+              <Box className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <Box>
+                  <Label className="mb-1.5 block">開催日</Label>
+                  <Input type="date" name="scheduled_date" defaultValue={scheduleForm.scheduled_date} />
+                </Box>
+                <Box>
+                  <Label className="mb-1.5 block">開始時間</Label>
+                  <Input type="time" name="start_time" defaultValue={scheduleForm.start_time || ''} />
+                </Box>
+                <Box className="md:col-span-2">
+                  <Label className="mb-1.5 block">場所</Label>
+                  <Input type="text" name="location" defaultValue={scheduleForm.location} placeholder="例: 公民館 第1会議室" />
+                </Box>
+                <Box className="md:col-span-2">
+                  <Label className="mb-1.5 block">備考（開催場所の詳細や持ち物など）</Label>
+                  <textarea
+                    name="description"
+                    defaultValue={scheduleForm.description}
+                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    rows={2}
+                  />
+                </Box>
+              </Box>
+              <Box className="text-right">
+                <Button type="submit" disabled={isPending} activeScale={true} className="gap-2 px-8 h-10 font-bold shadow-md">
+                  <Save size={16} />
+                  保存する
+                </Button>
+              </Box>
+            </Stack>
+          </Box>
         </form>
       )}
 
       {/* Agendas Section */}
-      <div className="border-t border-border pt-4 mt-4">
-        <div className="flex justify-between items-center mb-4">
-          <div
-            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+      <Box className="border-t border-border pt-6 mt-2">
+        <HStack className="justify-between items-center mb-6 gap-4">
+          <HStack
+            className="items-center gap-2 cursor-pointer hover:opacity-70 transition-opacity"
             onClick={() => setIsAgendasExpanded(!isAgendasExpanded)}
           >
-            <h4 className="font-bold text-foreground flex items-center gap-2">
+            <Heading size="h4" className="text-lg font-bold text-foreground flex items-center gap-2">
               議題
-              {isAgendasExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </h4>
+              {isAgendasExpanded ? <ChevronUp size={20} className="text-muted-foreground" /> : <ChevronDown size={20} className="text-muted-foreground" />}
+            </Heading>
             {!isAgendasExpanded && agendas.length > 0 && (
-              <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                {agendas.length}件
-              </span>
+              <Box className="bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+                {agendas.length}
+              </Box>
             )}
-          </div>
-          <div className="flex gap-2">
+          </HStack>
+          <HStack className="gap-2">
             {agendas.length === 0 && meeting?.id && (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleCopyAgendas}
                 disabled={isPending}
-                className="text-sm text-indigo-600 hover:text-indigo-500 disabled:opacity-50"
+                className="text-primary hover:text-primary hover:bg-primary/5 font-bold"
               >
-                昨年度からコピー
-              </button>
+                <Copy size={14} className="mr-1.5" />
+                前年度からコピー
+              </Button>
             )}
-            <button
+            <Button
+              size="sm"
+              variant="outline"
               onClick={() => {
                 setIsAgendasExpanded(true)
                 setIsAddingAgenda(!isAddingAgenda)
               }}
-              className="text-sm bg-muted text-indigo-600 px-3 py-1 rounded hover:bg-muted/80"
+              className="gap-1.5 font-bold border-primary/20 hover:border-primary/50 text-primary"
             >
-              + 議題追加
-            </button>
-          </div>
-        </div>
+              {isAddingAgenda ? <X size={14} /> : <Plus size={14} />}
+              {isAddingAgenda ? 'キャンセル' : '議題追加'}
+            </Button>
+          </HStack>
+        </HStack>
 
         {isAgendasExpanded && (
-          <>
+          <Stack className="gap-4">
             {isAddingAgenda && (
-              <AgendaForm
-                meetingId={meeting?.id}
-                defaultDisplayOrder={agendas.length > 0 ? Math.max(...agendas.map(a => a.display_order)) + 1 : 1}
-                onCancel={() => setIsAddingAgenda(false)}
-                onComplete={() => setIsAddingAgenda(false)}
-              />
+              <Box className="bg-muted/30 p-4 rounded-xl border border-dashed border-border">
+                <AgendaForm
+                  meetingId={meeting?.id}
+                  defaultDisplayOrder={agendas.length > 0 ? Math.max(...agendas.map(a => a.display_order)) + 1 : 1}
+                  onCancel={() => setIsAddingAgenda(false)}
+                  onComplete={() => setIsAddingAgenda(false)}
+                />
+              </Box>
             )}
 
-            <div className="space-y-3">
+            <Stack className="gap-4">
               {agendas.map(agenda => (
-                <div key={agenda.id} className="bg-card p-3 border border-border rounded shadow-sm hover:shadow-md transition-shadow">
+                <Box key={agenda.id} className="bg-background border border-border rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden">
                   {editingAgendaId === agenda.id ? (
-                    <AgendaForm
-                      meetingId={meeting?.id}
-                      agenda={agenda}
-                      onCancel={() => setEditingAgendaId(null)}
-                      onComplete={() => setEditingAgendaId(null)}
-                    />
+                    <Box className="p-4 bg-muted/20">
+                      <AgendaForm
+                        meetingId={meeting?.id}
+                        agenda={agenda}
+                        onCancel={() => setEditingAgendaId(null)}
+                        onComplete={() => setEditingAgendaId(null)}
+                      />
+                    </Box>
                   ) : (
                     <AgendaItemView
                       agenda={agenda}
@@ -259,53 +309,59 @@ export default function MeetingEditor({ year, month, meeting, agendas, defaultIt
                       onDelete={() => handleDeleteAgenda(agenda.id)}
                     />
                   )}
-                </div>
+                </Box>
               ))}
               {agendas.length === 0 && !isAddingAgenda && (
-                <div className="text-center text-muted-foreground py-4 text-sm">
-                  議題は登録されていません
-                </div>
+                <Box className="text-center bg-muted/10 rounded-xl py-12 border border-dashed border-border">
+                  <Text className="text-muted-foreground italic">議題はまだ登録されていません</Text>
+                </Box>
               )}
-            </div>
-          </>
+            </Stack>
+          </Stack>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 
 function AgendaItemView({ agenda, isExpanded, onToggle, onEdit, onDelete }: { agenda: Agenda, isExpanded: boolean, onToggle: () => void, onEdit: () => void, onDelete: () => void }) {
   return (
-    <div className="flex justify-between items-start">
-      <div className="flex-1">
-        <div
-          className="font-medium text-foreground flex items-center gap-2 cursor-pointer hover:text-primary transition-colors"
-          onClick={onToggle}
-        >
-          {agenda.title}
-          <span className="text-muted-foreground">
-            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </span>
-        </div>
-        {isExpanded && (
-          <div className="text-sm text-muted-foreground mt-2 prose prose-sm dark:prose-invert max-w-none">
+    <Box className="flex flex-col">
+      <HStack className="justify-between items-center p-4 gap-4 cursor-pointer hover:bg-muted/30 transition-colors" onClick={onToggle}>
+        <HStack className="flex-1 gap-3">
+          <Box className="bg-muted text-muted-foreground w-6 h-6 rounded flex items-center justify-center text-xs font-bold">
+            {agenda.display_order}
+          </Box>
+          <Text weight="bold" className="text-base text-foreground flex-1">
+            {agenda.title}
+          </Text>
+          <Box className="text-muted-foreground">
+            {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </Box>
+        </HStack>
+
+        <HStack className="gap-1 ml-4 shrink-0" onClick={(e) => e.stopPropagation()}>
+          <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8 text-muted-foreground hover:text-primary">
+            <Edit2 size={14} />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+            <Trash2 size={14} />
+          </Button>
+        </HStack>
+      </HStack>
+
+      {isExpanded && (
+        <Box className="px-11 pb-5 pt-1 border-t border-border/40 bg-muted/5">
+          <Box className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none leading-relaxed">
             {agenda.description ? (
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{agenda.description}</ReactMarkdown>
             ) : (
-              <span className="text-muted-foreground/50 italic">(詳細なし)</span>
+              <span className="text-muted-foreground/40 italic">（詳細な説明はありません）</span>
             )}
-          </div>
-        )}
-      </div>
-      <div className="flex gap-2 ml-4">
-        <button onClick={onEdit} className="text-muted-foreground hover:text-primary">
-          ✎
-        </button>
-        <button onClick={onDelete} className="text-muted-foreground hover:text-destructive">
-          🗑
-        </button>
-      </div>
-    </div>
+          </Box>
+        </Box>
+      )}
+    </Box>
   )
 }
 
@@ -313,7 +369,14 @@ function AgendaForm({ meetingId, agenda, defaultDisplayOrder = 1, onCancel, onCo
   const [isPending, startTransition] = useTransition()
 
   if (!meetingId) {
-    return <div className="text-destructive text-sm p-2">先に定例会の日程を保存してください（スケジュール未登録の場合は議題を追加できません）</div>
+    return (
+      <HStack className="bg-destructive/10 border border-destructive/20 text-destructive p-4 rounded-lg gap-3">
+        <X size={18} />
+        <Text weight="bold" className="text-sm">
+          先に定例会の日程を保存してください（スケジュール未登録の場合は議題を追加できません）
+        </Text>
+      </HStack>
+    )
   }
 
   const handleSubmit = async (formData: FormData) => {
@@ -327,43 +390,49 @@ function AgendaForm({ meetingId, agenda, defaultDisplayOrder = 1, onCancel, onCo
   }
 
   return (
-    <form action={handleSubmit} className="bg-muted/30 p-3 rounded mb-3 border border-border">
-      <div className="grid gap-3">
-        <div>
-          <input
-            name="title"
-            defaultValue={agenda?.title}
-            placeholder="議題タイトル"
-            required
-            className="w-full rounded border-input bg-background focus:border-ring focus:ring-ring text-foreground"
+    <form action={handleSubmit}>
+      <Stack className="gap-5">
+        <Box className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Box className="md:col-span-3">
+            <Label className="mb-1.5 block">議題タイトル <Text className="text-destructive">*</Text></Label>
+            <Input
+              name="title"
+              defaultValue={agenda?.title}
+              placeholder="何について話し合うかを入力してください"
+              required
+            />
+          </Box>
+          <Box>
+            <Label className="mb-1.5 block">表示順</Label>
+            <Input
+              type="number"
+              name="display_order"
+              defaultValue={agenda?.display_order || defaultDisplayOrder}
+              className="w-full"
+            />
+          </Box>
+        </Box>
+
+        <Box>
+          <Label className="mb-1.5 block">詳細内容</Label>
+          <MarkdownEditor
+            name="description"
+            defaultValue={agenda?.description || ''}
+            placeholder="話し合いの背景や決定事項など（Markdown対応）"
+            rows={8}
           />
-        </div>
-      </div>
-      <div>
-        <MarkdownEditor
-          name="description"
-          defaultValue={agenda?.description || ''}
-          placeholder="詳細（Markdown対応）"
-          rows={6}
-        />
-      </div>
-      <div>
-        <div>
-          <input
-            type="number"
-            name="display_order"
-            defaultValue={agenda?.display_order || defaultDisplayOrder}
-            placeholder="表示順 (0, 1, 2...)"
-            className="w-24 rounded border-input bg-background focus:border-ring focus:ring-ring text-sm text-foreground"
-          />
-        </div>
-      </div>
-      <div className="flex justify-end gap-2 mt-3">
-        <button type="button" onClick={onCancel} className="text-sm text-muted-foreground hover:text-foreground">キャンセル</button>
-        <button type="submit" disabled={isPending} className="text-sm bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-500 disabled:opacity-50">
-          保存
-        </button>
-      </div>
+        </Box>
+
+        <HStack className="justify-end gap-3 pt-2">
+          <Button variant="ghost" type="button" onClick={onCancel}>
+            キャンセル
+          </Button>
+          <Button type="submit" disabled={isPending} activeScale={true} className="gap-2 px-6 h-10 font-bold shadow-md">
+            <Save size={16} />
+            議題を保存
+          </Button>
+        </HStack>
+      </Stack>
     </form>
   )
 }

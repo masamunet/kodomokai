@@ -1,6 +1,6 @@
-import ChildForm from './ChildForm'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { NewChildScreen } from '@/components/screens/NewChild'
 
 export default async function NewChildPage() {
   const supabase = await createClient()
@@ -17,14 +17,9 @@ export default async function NewChildPage() {
     .single()
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
-      <div className="mx-auto max-w-2xl bg-white shadow sm:rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-6">お子様の追加</h2>
-        <ChildForm
-          initialLastName={profile?.last_name || ''}
-          initialLastNameKana={profile?.last_name_kana || ''}
-        />
-      </div >
-    </div >
+    <NewChildScreen
+      initialLastName={profile?.last_name || ''}
+      initialLastNameKana={profile?.last_name_kana || ''}
+    />
   )
 }

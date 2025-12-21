@@ -6,6 +6,7 @@ import CopyToClipboard from '@/components/ui/CopyToClipboard';
 import Link from 'next/link';
 import { Baby, ArrowUpDown, ChevronUp, ChevronDown, Search } from 'lucide-react';
 import { Input } from '@/ui/primitives/Input';
+import { ClickableTableRow } from '@/components/admin/patterns/ClickableTableRow';
 
 interface ChildListProps {
   profiles: any[]; // Ideally typed properly
@@ -239,7 +240,11 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
             </thead>
             <tbody className="divide-y divide-border bg-background">
               {allChildren.map((child, index) => (
-                <tr key={child.id} className={`hover:bg-muted/50 ${getGradeOrder(child.grade) % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}>
+                <ClickableTableRow
+                  key={child.id}
+                  href={`/admin/users/${child.parent_id}?view=child`}
+                  className={`${getGradeOrder(child.grade) % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}
+                >
                   <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
                     {child.grade}
                   </td>
@@ -288,22 +293,19 @@ export default function ChildList({ profiles, targetFiscalYear, canEdit }: Child
                   <td className=" px-3 py-4 text-sm text-muted-foreground min-w-[150px]">
                     {child.notes}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-primary hover:text-primary">
-                    <Link href={`/admin/users/${child.parent_id}?view=child`}>
-                      {child.parent_name}
-                    </Link>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-primary">
+                    {child.parent_name}
                   </td>
                   {canEdit && (
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
-                      <Link
-                        href={`/admin/users/${child.parent_id}?view=child`}
-                        className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20"
+                      <span
+                        className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
                       >
-                        編集
-                      </Link>
+                        詳細
+                      </span>
                     </td>
                   )}
-                </tr>
+                </ClickableTableRow>
               ))}
             </tbody>
           </table>

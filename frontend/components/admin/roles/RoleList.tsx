@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
 import {
   DndContext,
   closestCenter,
@@ -20,6 +19,13 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { updateRoleOrder, toggleRoleVisibility } from '@/app/admin/actions/officer'
+import { Box } from '@/ui/layout/Box'
+import { Stack, HStack } from '@/ui/layout/Stack'
+import { Text } from '@/ui/primitives/Text'
+import { Button } from '@/ui/primitives/Button'
+import { ClickableListItem } from '@/components/admin/patterns/ClickableListItem'
+import { GripVertical, Eye, EyeOff, ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type Role = {
   id: string
@@ -36,7 +42,6 @@ type Props = {
 
 export function RoleList({ initialRoles }: Props) {
   const [roles, setRoles] = useState(initialRoles)
-  const [isUpdating, setIsUpdating] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -49,34 +54,26 @@ export function RoleList({ initialRoles }: Props) {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      // Calculate new order based on current 'roles' state
       const oldIndex = roles.findIndex((item) => item.id === active.id)
       const newIndex = roles.findIndex((item) => item.id === over.id)
       const newRoles = arrayMove(roles, oldIndex, newIndex)
 
-      // Optimistically update UI
       setRoles(newRoles)
 
-      // Calculate and update display_order for all affected items
-      // We re-assign display_order based on index
       const updates = newRoles.map((role, index) => ({
         id: role.id,
         display_order: index + 1,
       }))
 
-      // Call server action to update order
       try {
         await updateRoleOrder(updates)
       } catch (err) {
         console.error('Failed to update order', err)
-        // If failed, we should probably revert the state, but for now just log it.
-        // To revert, we would need to setRoles(roles) (the old state).
       }
     }
   }
 
   const handleToggleVisibility = async (id: string, current: boolean) => {
-    // Optimistic update
     setRoles((prev) =>
       prev.map((role) =>
         role.id === id ? { ...role, is_visible_in_docs: !current } : role
@@ -85,7 +82,6 @@ export function RoleList({ initialRoles }: Props) {
 
     const result = await toggleRoleVisibility(id, !current)
     if (!result.success) {
-      // Revert
       setRoles((prev) =>
         prev.map((role) =>
           role.id === id ? { ...role, is_visible_in_docs: current } : role
@@ -102,12 +98,12 @@ export function RoleList({ initialRoles }: Props) {
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={roles.map(r => r.id)} strategy={verticalListSortingStrategy}>
-        <div className="overflow-hidden bg-white shadow sm:rounded-md">
-          <ul role="list" className="divide-y divide-gray-200">
+        <Box className="bg-background shadow-sm border border-border sm:rounded-lg overflow-hidden">
+          <ul role="list" className="divide-y divide-border">
             {roles.length === 0 ? (
-              <li className="px-4 py-4 sm:px-6 text-gray-500 text-center">
-                登録された役職はありません
-              </li>
+              <Box className="p-12 text-center bg-muted/10">
+                <Text className="text-muted-foreground">登録された役職はありません</Text>
+              </Box>
             ) : (
               roles.map((role) => (
                 <SortableRoleItem
@@ -118,7 +114,7 @@ export function RoleList({ initialRoles }: Props) {
               ))
             )}
           </ul>
-        </div>
+        </Box>
       </SortableContext>
     </DndContext>
   )
@@ -143,72 +139,76 @@ function SortableRoleItem({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: isDragging ? 10 : 'auto',
+    zIndex: isDragging ? 20 : 'auto',
     position: isDragging ? 'relative' : 'static',
   } as React.CSSProperties
 
+  const isVisible = role.is_visible_in_docs ?? true
+
   return (
-    <li ref={setNodeRef} style={style} className="bg-white">
-      <div className="flex items-center justify-between px-4 py-4 sm:px-6 hover:bg-gray-50">
-        <div className="flex items-center gap-4 flex-1">
-          {/* Drag Handle */}
-          <button
-            type="button"
-            className="cursor-move text-gray-400 hover:text-gray-600 p-2 touch-none"
-            {...attributes}
-            {...listeners}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+    <li ref={setNodeRef} style={style} className={cn("list-none", isDragging && "shadow-xl ring-2 ring-primary/20 rounded-md z-50")}>
+      <ClickableListItem
+        href={`/admin/roles/${role.id}`}
+        className={cn(
+          "relative border-none",
+          isDragging ? "bg-accent" : "bg-card"
+        )}
+      >
+        <HStack className="items-center justify-between w-full">
+          <HStack className="items-center gap-4 flex-1">
+            {/* Drag Handle */}
+            <Box
+              className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-2 touch-none animate-in fade-in zoom-in-50"
+              {...attributes}
+              {...listeners}
             >
-              <line x1="8" y1="6" x2="21" y2="6"></line>
-              <line x1="8" y1="12" x2="21" y2="12"></line>
-              <line x1="8" y1="18" x2="21" y2="18"></line>
-              <line x1="3" y1="6" x2="3.01" y2="6"></line>
-              <line x1="3" y1="12" x2="3.01" y2="12"></line>
-              <line x1="3" y1="18" x2="3.01" y2="18"></line>
-            </svg>
-          </button>
+              <GripVertical size={20} />
+            </Box>
 
-          <Link href={`/admin/roles/${role.id}`} className="flex-1 block">
-            <div className="flex items-center gap-2">
-              <p className="truncate text-sm font-medium text-indigo-600">
-                {role.name}
-              </p>
-            </div>
-            {role.description && (
-              <p className="mt-1 text-sm text-gray-500">{role.description}</p>
-            )}
-          </Link>
-        </div>
+            <Stack className="gap-0.5 flex-1">
+              <HStack className="items-center gap-2">
+                <Text weight="bold" className="text-primary group-hover:underline">
+                  {role.name}
+                </Text>
+                {!isVisible && (
+                  <Box className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-bold text-muted-foreground uppercase">
+                    非表示
+                  </Box>
+                )}
+              </HStack>
+              {role.description && (
+                <Text className="text-xs text-muted-foreground line-clamp-1">{role.description}</Text>
+              )}
+            </Stack>
+          </HStack>
 
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <label htmlFor={`visible-${role.id}`} className="text-sm text-gray-500 cursor-pointer select-none">
-              資料表示
-            </label>
-            <input
-              id={`visible-${role.id}`}
-              type="checkbox"
-              checked={role.is_visible_in_docs ?? true}
-              onChange={() => onToggleVisibility(role.id, role.is_visible_in_docs ?? true)}
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-            />
-          </div>
+          <HStack className="items-center gap-4">
+            <Box className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onToggleVisibility(role.id, isVisible)
+                }}
+                className={cn(
+                  "h-8 gap-1.5 text-xs font-bold transition-all",
+                  isVisible ? "text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50" : "text-muted-foreground hover:bg-muted"
+                )}
+              >
+                {isVisible ? <Eye size={14} /> : <EyeOff size={14} />}
+                <span className="hidden sm:inline">{isVisible ? "資料表示中" : "資料非表示"}</span>
+              </Button>
+            </Box>
 
-          <Link href={`/admin/roles/${role.id}`} className="text-gray-400 hover:text-gray-600">
-            &rarr;
-          </Link>
-        </div>
-      </div>
+            <Box className="text-muted-foreground group-hover:text-foreground transition-all group-hover:translate-x-0.5">
+              <ChevronRight size={18} />
+            </Box>
+          </HStack>
+        </HStack>
+      </ClickableListItem>
     </li>
   )
 }

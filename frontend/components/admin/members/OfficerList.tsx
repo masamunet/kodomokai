@@ -1,62 +1,89 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo } from 'react'
+import { Box } from '@/ui/layout/Box'
+import { Stack, HStack } from '@/ui/layout/Stack'
+import { Text } from '@/ui/primitives/Text'
+import { Heading } from '@/ui/primitives/Heading'
+import { ClickableListItem } from '@/components/admin/patterns/ClickableListItem'
 
 interface OfficerListProps {
-  assignments: any[];
-  titleYear: string;
+  assignments: any[]
+  titleYear: string
 }
 
 export default function OfficerList({ assignments, titleYear }: OfficerListProps) {
-
   const officerCount = useMemo(() => {
-    return new Set((assignments || []).map((a: any) => a.profile_id)).size;
-  }, [assignments]);
+    return new Set((assignments || []).map((a: any) => a.profile_id)).size
+  }, [assignments])
 
   return (
-    <div>
+    <Stack className="gap-6">
       {/* Stats */}
-      <div className="bg-white p-4 rounded-lg shadow mb-6 border border-gray-200">
-        <h3 className="text-lg font-bold text-gray-900 mb-2">概要</h3>
-        <p className="text-gray-700">対象年度: <span className="font-bold">{titleYear}度</span></p>
-        <p className="text-gray-700">役員総数: <span className="font-bold text-xl">{officerCount}名</span></p>
-      </div>
+      <Box className="bg-muted/30 p-6 rounded-lg border border-border">
+        <Heading size="h3" className="text-lg font-bold text-foreground mb-4">概要</Heading>
+        <HStack className="gap-8">
+          <Box>
+            <Text className="text-sm text-muted-foreground block mb-1">対象年度</Text>
+            <Text weight="bold" className="text-lg text-foreground">{titleYear}度</Text>
+          </Box>
+          <Box>
+            <Text className="text-sm text-muted-foreground block mb-1">役員総数</Text>
+            <Text weight="bold" className="text-lg text-foreground">{officerCount}名</Text>
+          </Box>
+        </HStack>
+      </Box>
 
-      <div className="flow-root mt-6">
-        <div className="overflow-hidden bg-white shadow sm:rounded-md">
-          <ul role="list" className="divide-y divide-gray-200 border-t border-gray-200">
-            {(assignments || []).length === 0 ? (
-              <li className="px-4 py-4 sm:px-6 text-gray-500 text-center">任命された役員はいません</li>
-            ) : (
-              (assignments || []).map((assignment: any) => (
-                <li key={assignment.id} className="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                    {/* Role & Year - Fixed width on desktop for alignment */}
-                    <div className="flex items-center gap-2 sm:w-48 shrink-0">
-                      <span className="font-bold text-gray-900 text-lg">{assignment.role?.name}</span>
-                    </div>
+      <Box>
+        <Stack className="gap-3">
+          {(assignments || []).length === 0 ? (
+            <Box className="p-12 text-center text-muted-foreground bg-muted/10 border border-dashed border-border rounded-lg">
+              任命された役員はいません
+            </Box>
+          ) : (
+            (assignments || []).map((assignment: any) => (
+              <ClickableListItem
+                key={assignment.id}
+                href={`/admin/users/${assignment.profile_id}?view=officer`}
+              >
+                <Box className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <Box className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                    {/* Role */}
+                    <Box className="sm:w-40 shrink-0">
+                      <Text weight="bold" className="text-lg text-foreground block">
+                        {assignment.role?.name}
+                      </Text>
+                    </Box>
 
-                    {/* Name & Meta Info - Flex grow */}
-                    <div className="flex-1 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 min-w-0">
-                      <div className="flex flex-col">
-                        <div className="flex items-baseline gap-2 shrink-0">
-                          <p className="text-sm font-medium text-indigo-600">{assignment.profile.full_name}</p>
-                          <p className="text-xs text-gray-400 whitespace-nowrap">({assignment.profile.last_name_kana} {assignment.profile.first_name_kana})</p>
-                        </div>
-                      </div>
+                    {/* Profile Information */}
+                    <Box>
+                      <HStack className="items-baseline gap-2 mb-1">
+                        <Text weight="semibold" className="text-primary">
+                          {assignment.profile.full_name}
+                        </Text>
+                        <Text className="text-xs text-muted-foreground">
+                          ({assignment.profile.last_name_kana} {assignment.profile.first_name_kana})
+                        </Text>
+                      </HStack>
+                      <HStack className="text-xs text-muted-foreground gap-4 flex-wrap">
+                        <Text>{assignment.profile.email}</Text>
+                        <Text>任期: {assignment.start_date} 〜 {assignment.end_date}</Text>
+                      </HStack>
+                    </Box>
+                  </Box>
 
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 min-w-0">
-                        <span className="truncate">{assignment.profile.email}</span>
-                        <span className="whitespace-nowrap text-gray-400">任期: {assignment.start_date} 〜 {assignment.end_date}</span>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
+                  {/* Visual Indicator */}
+                  <Box className="hidden sm:block">
+                    <Text className="text-primary opacity-0 group-hover:opacity-100 transition-opacity font-medium text-sm">
+                      詳細を見る →
+                    </Text>
+                  </Box>
+                </Box>
+              </ClickableListItem>
+            ))
+          )}
+        </Stack>
+      </Box>
+    </Stack>
+  )
 }

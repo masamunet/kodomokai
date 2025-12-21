@@ -1,40 +1,39 @@
-
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
+import { Heading } from '@/ui/primitives/Heading'
+import { Text } from '@/ui/primitives/Text'
+import { Box } from '@/ui/layout/Box'
+import { HStack } from '@/ui/layout/Stack'
+import { Button } from '@/ui/primitives/Button'
 
 interface AdminPageHeaderProps {
-  title: string;
-  description?: string;
+  title: string
+  description?: string
   action?: {
-    label: string;
-    href: string;
-  };
+    label: string
+    href: string
+  }
 }
 
 export default function AdminPageHeader({ title, description, action }: AdminPageHeaderProps) {
   return (
-    <div className="sm:flex sm:items-center sm:justify-between mb-8">
-      <div>
-        <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
+    <Box className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <Box>
+        <Heading size="h1" className="text-2xl font-bold text-foreground">{title}</Heading>
         {description && (
-          <p className="mt-2 text-sm text-gray-600">
+          <Text className="mt-2 text-sm text-muted-foreground block">
             {description}
-          </p>
+          </Text>
         )}
-      </div>
+      </Box>
       {action && (
-        <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-          <Link
-            href={action.href}
-            className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            <span className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              {action.label}
-            </span>
+        <Button asChild activeScale={true} className="gap-2">
+          <Link href={action.href}>
+            <Plus className="h-4 w-4" />
+            {action.label}
           </Link>
-        </div>
+        </Button>
       )}
-    </div>
+    </Box>
   )
 }

@@ -1,9 +1,16 @@
 'use client'
 
-import { Input } from '@/ui/primitives/Input'
 import { useState } from 'react'
-import { adminUpdateProfile, adminDeleteProfile } from '@/app/admin/actions/user'
 import { useRouter } from 'next/navigation'
+import { adminUpdateProfile, adminDeleteProfile } from '@/app/admin/actions/user'
+import { Input } from '@/ui/primitives/Input'
+import { Box } from '@/ui/layout/Box'
+import { Stack, HStack } from '@/ui/layout/Stack'
+import { Text } from '@/ui/primitives/Text'
+import { Button } from '@/ui/primitives/Button'
+import { Label } from '@/ui/primitives/Label'
+import { Save, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type Props = {
   profile: any
@@ -13,6 +20,8 @@ export default function AdminUserForm({ profile }: Props) {
   const [message, setMessage] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const router = useRouter()
+
+  const isError = message?.includes('失敗') || message?.includes('エラー')
 
   const handleSubmit = async (formData: FormData) => {
     setMessage(null)
@@ -27,67 +36,68 @@ export default function AdminUserForm({ profile }: Props) {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={handleSubmit}>
       <input type="hidden" name="id" value={profile.id} />
 
-      {message && (
-        <div className={`border px-4 py-3 rounded ${message.includes('失敗') || message.includes('エラー') ? 'bg-red-50 border-red-200 text-red-700' : 'bg-green-50 border-green-200 text-green-700'}`}>
-          {message}
-        </div>
-      )}
+      <Stack className="gap-6">
+        {message && (
+          <Box className={cn(
+            "flex items-center gap-3 px-4 py-3 rounded-lg border shadow-sm transition-all animate-in fade-in slide-in-from-top-2",
+            isError ? 'bg-destructive/10 border-destructive/20 text-destructive' : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+          )}>
+            {isError ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
+            <Text weight="bold" className="text-sm">{message}</Text>
+          </Box>
+        )}
 
-      <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-        <div className="sm:col-span-3">
-          <label className="block text-sm font-medium text-gray-700">お名前 <span className="text-red-500">*</span></label>
-          <div className="mt-1 flex gap-2">
-            <div className="w-1/2">
-              <Input type="text" name="last_name" placeholder="苗字" defaultValue={profile?.last_name || ''} required />
-            </div>
-            <div className="w-1/2">
-              <Input type="text" name="first_name" placeholder="名前" defaultValue={profile?.first_name || ''} required />
-            </div>
-          </div>
-        </div>
+        <Box className="grid grid-cols-1 gap-6 sm:grid-cols-6">
+          <Box className="sm:col-span-3">
+            <Label className="mb-1.5 block">お名前 <Text className="text-destructive">*</Text></Label>
+            <HStack className="gap-2">
+              <Box className="flex-1">
+                <Input type="text" name="last_name" placeholder="苗字" defaultValue={profile?.last_name || ''} required />
+              </Box>
+              <Box className="flex-1">
+                <Input type="text" name="first_name" placeholder="名前" defaultValue={profile?.first_name || ''} required />
+              </Box>
+            </HStack>
+          </Box>
 
-        <div className="sm:col-span-3">
-          <label className="block text-sm font-medium text-gray-700">ふりがな</label>
-          <div className="mt-1 flex gap-2">
-            <div className="w-1/2">
-              <Input type="text" name="last_name_kana" placeholder="みょうじ" defaultValue={profile?.last_name_kana || ''} />
-            </div>
-            <div className="w-1/2">
-              <Input type="text" name="first_name_kana" placeholder="なまえ" defaultValue={profile?.first_name_kana || ''} />
-            </div>
-          </div>
-        </div>
+          <Box className="sm:col-span-3">
+            <Label className="mb-1.5 block">ふりがな</Label>
+            <HStack className="gap-2">
+              <Box className="flex-1">
+                <Input type="text" name="last_name_kana" placeholder="みょうじ" defaultValue={profile?.last_name_kana || ''} />
+              </Box>
+              <Box className="flex-1">
+                <Input type="text" name="first_name_kana" placeholder="なまえ" defaultValue={profile?.first_name_kana || ''} />
+              </Box>
+            </HStack>
+          </Box>
 
-        <div className="sm:col-span-3">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">メールアドレス</label>
-          <div className="mt-1">
-            <Input type="email" name="email" id="email" defaultValue={profile?.email || ''} readOnly className="bg-gray-50" />
-            <p className="text-xs text-gray-500 mt-1">メールアドレスの変更はできません。</p>
-          </div>
-        </div>
+          <Box className="sm:col-span-3">
+            <Label htmlFor="email" className="mb-1.5 block">メールアドレス</Label>
+            <Box>
+              <Input type="email" name="email" id="email" defaultValue={profile?.email || ''} readOnly className="bg-muted text-muted-foreground cursor-not-allowed" />
+              <Text className="text-xs text-muted-foreground mt-1.5 block">メールアドレスの変更はできません。</Text>
+            </Box>
+          </Box>
 
-        <div className="sm:col-span-3">
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">電話番号</label>
-          <div className="mt-1">
+          <Box className="sm:col-span-3">
+            <Label htmlFor="phone" className="mb-1.5 block">電話番号</Label>
             <Input type="tel" name="phone" id="phone" defaultValue={profile?.phone || ''} />
-          </div>
-        </div>
+          </Box>
 
-        <div className="sm:col-span-6">
-          <label htmlFor="address" className="block text-sm font-medium text-gray-700">住所</label>
-          <div className="mt-1">
+          <Box className="sm:col-span-6">
+            <Label htmlFor="address" className="mb-1.5 block">住所</Label>
             <Input type="text" name="address" id="address" defaultValue={profile?.address || ''} />
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
 
-      <div className="flex justify-between items-center pt-4 border-t border-border mt-8">
-        <div>
-          <button
+        <Box className="flex flex-col sm:flex-row justify-between items-center pt-6 border-t border-border mt-4 gap-4">
+          <Button
             type="button"
+            variant="outline"
             disabled={isDeleting}
             onClick={async () => {
               if (!confirm('この会員を本当に削除しますか？\n（同時にお子様の情報もすべて論理削除されます。現年度以降の役員として登録されている場合は削除できません）')) return
@@ -104,17 +114,18 @@ export default function AdminUserForm({ profile }: Props) {
                 setIsDeleting(false)
               }
             }}
-            className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50 disabled:opacity-50"
+            className="w-full sm:w-auto text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive gap-2 h-10 px-4"
           >
+            <Trash2 size={16} />
             {isDeleting ? '削除中...' : '会員を削除'}
-          </button>
-        </div>
-        <div className="flex gap-3">
-          <button type="submit" className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          </Button>
+
+          <Button type="submit" activeScale={true} className="w-full sm:w-auto gap-2 px-8 h-10 font-bold shadow-md">
+            <Save size={16} />
             保護者情報を更新
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Box>
+      </Stack>
     </form>
   )
 }

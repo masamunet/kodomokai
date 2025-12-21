@@ -1,9 +1,15 @@
 'use client'
 
-import { Input } from '@/ui/primitives/Input'
 import { useState } from 'react'
 import { adminAddChild, adminUpdateChild } from '@/app/admin/actions/user'
 import Link from 'next/link'
+import { Input } from '@/ui/primitives/Input'
+import { Box } from '@/ui/layout/Box'
+import { Stack, HStack } from '@/ui/layout/Stack'
+import { Text } from '@/ui/primitives/Text'
+import { Button } from '@/ui/primitives/Button'
+import { Label } from '@/ui/primitives/Label'
+import { Save, AlertCircle } from 'lucide-react'
 
 type Props = {
   parentId: string
@@ -29,93 +35,92 @@ export default function AdminChildForm({ parentId, child }: Props) {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6 bg-white p-6 shadow sm:rounded-md mt-6">
+    <form action={handleSubmit}>
       <input type="hidden" name="parent_id" value={parentId} />
       {child && <input type="hidden" name="child_id" value={child.id} />}
 
-      {message && (
-        <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded border">
-          {message}
-        </div>
-      )}
+      <Stack className="gap-6">
+        {message && (
+          <Box className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg flex items-center gap-2">
+            <AlertCircle size={18} />
+            <Text weight="bold" className="text-sm">{message}</Text>
+          </Box>
+        )}
 
-      <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-        <div className="sm:col-span-3">
-          <label className="block text-sm font-medium text-gray-700">お名前 <span className="text-red-500">*</span></label>
-          <div className="mt-1 flex gap-2">
-            <div className="w-1/2">
-              <Input type="text" name="last_name" placeholder="苗字" defaultValue={child?.last_name || ''} required />
-            </div>
-            <div className="w-1/2">
-              <Input type="text" name="first_name" placeholder="名前" defaultValue={child?.first_name || ''} required />
-            </div>
-          </div>
-        </div>
+        <Box className="grid grid-cols-1 gap-6 sm:grid-cols-6">
+          <Box className="sm:col-span-3">
+            <Label className="mb-1.5 block">お名前 <Text className="text-destructive">*</Text></Label>
+            <HStack className="gap-2">
+              <Box className="flex-1">
+                <Input type="text" name="last_name" placeholder="苗字" defaultValue={child?.last_name || ''} required />
+              </Box>
+              <Box className="flex-1">
+                <Input type="text" name="first_name" placeholder="名前" defaultValue={child?.first_name || ''} required />
+              </Box>
+            </HStack>
+          </Box>
 
-        <div className="sm:col-span-3">
-          <label className="block text-sm font-medium text-gray-700">ふりがな</label>
-          <div className="mt-1 flex gap-2">
-            <div className="w-1/2">
-              <Input type="text" name="last_name_kana" placeholder="みょうじ" defaultValue={child?.last_name_kana || ''} />
-            </div>
-            <div className="w-1/2">
-              <Input type="text" name="first_name_kana" placeholder="なまえ" defaultValue={child?.first_name_kana || ''} />
-            </div>
-          </div>
-        </div>
+          <Box className="sm:col-span-3">
+            <Label className="mb-1.5 block">ふりがな</Label>
+            <HStack className="gap-2">
+              <Box className="flex-1">
+                <Input type="text" name="last_name_kana" placeholder="みょうじ" defaultValue={child?.last_name_kana || ''} />
+              </Box>
+              <Box className="flex-1">
+                <Input type="text" name="first_name_kana" placeholder="なまえ" defaultValue={child?.first_name_kana || ''} />
+              </Box>
+            </HStack>
+          </Box>
 
-        <div className="sm:col-span-3">
-          <label htmlFor="gender" className="block text-sm font-medium text-gray-700">性別</label>
-          <div className="mt-1">
+          <Box className="sm:col-span-3">
+            <Label htmlFor="gender" className="mb-1.5 block">性別</Label>
             <select
               id="gender"
               name="gender"
               defaultValue={child?.gender || 'male'}
-              className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <option value="male">男の子</option>
               <option value="female">女の子</option>
               <option value="other">その他</option>
             </select>
-          </div>
-        </div>
+          </Box>
 
-        <div className="sm:col-span-3">
-          <label htmlFor="birthday" className="block text-sm font-medium text-gray-700">生年月日</label>
-          <div className="mt-1">
+          <Box className="sm:col-span-3">
+            <Label htmlFor="birthday" className="mb-1.5 block">生年月日</Label>
             <Input type="date" name="birthday" id="birthday" defaultValue={child?.birthday || ''} />
-          </div>
-        </div>
+          </Box>
 
-        <div className="sm:col-span-6">
-          <label htmlFor="allergies" className="block text-sm font-medium text-gray-700">アレルギー</label>
-          <div className="mt-1">
+          <Box className="sm:col-span-6">
+            <Label htmlFor="allergies" className="mb-1.5 block">アレルギー</Label>
             <Input type="text" name="allergies" id="allergies" defaultValue={child?.allergies || ''} placeholder="なし" />
-          </div>
-        </div>
+          </Box>
 
-        <div className="sm:col-span-6">
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700">特記事項</label>
-          <div className="mt-1">
+          <Box className="sm:col-span-6">
+            <Label htmlFor="notes" className="mb-1.5 block">特記事項</Label>
             <textarea
               id="notes"
               name="notes"
               rows={3}
               defaultValue={child?.notes || ''}
-              className="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="例：喘息あり、離乳食開始済みなど"
             />
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
 
-      <div className="flex justify-end gap-3">
-        <Link href={`/admin/users/${parentId}`} className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-          キャンセル
-        </Link>
-        <button type="submit" className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-          {child ? '更新する' : '追加する'}
-        </button>
-      </div>
+        <HStack className="justify-end gap-3 pt-6 border-t border-border mt-4">
+          <Button variant="outline" asChild>
+            <Link href={`/admin/users/${parentId}`}>
+              キャンセル
+            </Link>
+          </Button>
+          <Button type="submit" activeScale={true} className="gap-2 px-8 h-10 font-bold shadow-md">
+            <Save size={16} />
+            {child ? '更新する' : '追加する'}
+          </Button>
+        </HStack>
+      </Stack>
     </form>
   )
 }

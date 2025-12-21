@@ -2,10 +2,11 @@ import MeetingEditor from '@/components/admin/MeetingEditor'
 import BulkExportButton from '@/components/admin/BulkExportButton'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-import { Box } from '@/ui/layout/Box'
-import { Stack } from '@/ui/layout/Stack'
-import { Heading } from '@/ui/primitives/Heading'
 import { Text } from '@/ui/primitives/Text'
+import { AdminPage } from '@/components/admin/patterns/AdminPage'
+import { Box } from '@/ui/layout/Box'
+import { HStack } from '@/ui/layout/Stack'
+import { Button } from '@/ui/primitives/Button'
 
 interface MeetingListScreenProps {
   year: number
@@ -15,31 +16,49 @@ interface MeetingListScreenProps {
 
 export function MeetingListScreen({ year, meetings, months }: MeetingListScreenProps) {
   return (
-    <Box className="max-w-5xl mx-auto p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <Heading size="h1" className="text-2xl font-bold text-foreground">役員定例会</Heading>
-        <div className="flex items-center gap-4">
-          <BulkExportButton meetings={meetings} />
+    <AdminPage.Root maxWidth="5xl">
+      <AdminPage.Header
+        title="役員定例会"
+        description="年度ごとの定例会スケジュールと議題を管理します。"
+      />
 
-          <div className="flex items-center gap-2">
+      <HStack className="justify-end items-center mb-6 gap-4">
+        <BulkExportButton meetings={meetings} />
+
+        <HStack className="items-center gap-2 bg-muted/30 p-1 rounded-lg border border-border">
+          <Button
+            variant="ghost"
+            size="icon"
+            activeScale={true}
+            asChild
+            className="h-8 w-8 hover:bg-background hover:shadow-sm rounded-md"
+          >
             <Link
               href={`/admin/meetings?year=${year - 1}`}
-              className="p-2 hover:bg-muted rounded-full transition-colors"
+              title="前年度"
             >
-              <ChevronLeft size={20} className="text-muted-foreground hover:text-foreground" />
+              <ChevronLeft size={18} className="text-muted-foreground" />
             </Link>
-            <Text weight="bold" className="text-lg text-foreground">{year}年度</Text>
+          </Button>
+          <Text weight="bold" className="px-2 text-sm text-foreground">{year}年度</Text>
+          <Button
+            variant="ghost"
+            size="icon"
+            activeScale={true}
+            asChild
+            className="h-8 w-8 hover:bg-background hover:shadow-sm rounded-md"
+          >
             <Link
               href={`/admin/meetings?year=${year + 1}`}
-              className="p-2 hover:bg-muted rounded-full transition-colors"
+              title="次年度"
             >
-              <ChevronRight size={20} className="text-muted-foreground hover:text-foreground" />
+              <ChevronRight size={18} className="text-muted-foreground" />
             </Link>
-          </div>
-        </div>
-      </div>
+          </Button>
+        </HStack>
+      </HStack>
 
-      <Stack className="gap-6">
+      <AdminPage.Content>
         {months.map(month => {
           const meeting = meetings.find((m: any) => m.target_month === month)
           return (
@@ -52,7 +71,7 @@ export function MeetingListScreen({ year, meetings, months }: MeetingListScreenP
             />
           )
         })}
-      </Stack>
-    </Box>
+      </AdminPage.Content>
+    </AdminPage.Root>
   )
 }

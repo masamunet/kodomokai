@@ -5,6 +5,7 @@ import { calculateAge, calculateGrade } from '@/lib/grade-utils';
 import Link from 'next/link';
 import { Search, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
 import { Input } from '@/ui/primitives/Input';
+import { ClickableTableRow } from '@/components/admin/patterns/ClickableTableRow';
 
 interface GuardianListProps {
   profiles: any[];
@@ -154,7 +155,11 @@ export default function GuardianList({ profiles, targetFiscalYear, canEdit }: Gu
                   </thead>
                   <tbody className="divide-y divide-border bg-background">
                     {filteredProfiles?.map((person, index) => (
-                      <tr key={person.id} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                      <ClickableTableRow
+                        key={person.id}
+                        href={`/admin/users/${person.id}?view=guardian`}
+                        className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}
+                      >
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-foreground sm:pl-6">
                           <div>
                             {person.full_name || '未設定'}
@@ -189,15 +194,14 @@ export default function GuardianList({ profiles, targetFiscalYear, canEdit }: Gu
                         </td>
                         {canEdit && (
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-right">
-                            <Link
-                              href={`/admin/users/${person.id}?view=guardian`}
-                              className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20"
+                            <span
+                              className="text-primary hover:text-primary bg-primary/10 px-3 py-1 rounded-md text-xs font-medium border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-all"
                             >
-                              編集
-                            </Link>
+                              詳細
+                            </span>
                           </td>
                         )}
-                      </tr>
+                      </ClickableTableRow>
                     ))}
                   </tbody>
                 </table>

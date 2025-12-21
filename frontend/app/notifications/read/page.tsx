@@ -1,6 +1,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { Box } from '@/ui/layout/Box'
+import { Text } from '@/ui/primitives/Text'
 
 export default async function ReadPage({
   searchParams,
@@ -11,7 +13,11 @@ export default async function ReadPage({
   const token = params.token as string
 
   if (!token) {
-    return <div>Invalid Link</div>
+    return (
+      <Box className="p-8 text-center">
+        <Text>Invalid Link</Text>
+      </Box>
+    )
   }
 
   const supabase = await createClient()
@@ -23,7 +29,11 @@ export default async function ReadPage({
 
   if (error || !success) {
     console.error('Error marking as read:', error)
-    return <div>Error or Invalid Token</div>
+    return (
+      <Box className="p-8 text-center">
+        <Text>Error or Invalid Token</Text>
+      </Box>
+    )
   }
 
   // Redirect to dashboard or a "Thank you" page
