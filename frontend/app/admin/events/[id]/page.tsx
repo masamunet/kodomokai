@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { notFound } from 'next/navigation'
 import { calculateGrade, getGradeOrder } from '@/lib/grade-utils'
 import { getTargetFiscalYear } from '@/lib/fiscal-year'
 import { EventDetailScreen } from '@/components/screens/admin/events/EventDetailScreen'
@@ -19,7 +20,7 @@ export default async function AdminEventDetailPage({
     .single()
 
   if (!event) {
-    return <div>イベントが見つかりません</div>
+    notFound()
   }
 
   const { data: participantsRaw } = await supabase

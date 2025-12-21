@@ -12,7 +12,7 @@ import { Plus } from 'lucide-react'
 interface UserEditScreenProps {
   id: string
   profile: any
-  children: any[]
+  childList: any[]
   targetFiscalYear: number
   backView: string
 }
@@ -20,7 +20,7 @@ interface UserEditScreenProps {
 export function UserEditScreen({
   id,
   profile,
-  children,
+  childList,
   targetFiscalYear,
   backView
 }: UserEditScreenProps) {
@@ -60,7 +60,7 @@ export function UserEditScreen({
             </Box>
             <Box className="px-4 py-5 sm:p-6">
               <AdminChildList
-                childrenData={children}
+                childrenData={childList}
                 parentId={id}
                 targetFiscalYear={targetFiscalYear}
               />

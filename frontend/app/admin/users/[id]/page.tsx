@@ -43,7 +43,7 @@ export default async function AdminUserEditPage({
     <UserEditScreen
       id={id}
       profile={profile}
-      children={children || []}
+      childList={children || []}
       targetFiscalYear={targetFiscalYear}
       backView={backView}
     />

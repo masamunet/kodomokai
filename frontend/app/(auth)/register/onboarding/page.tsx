@@ -1,4 +1,4 @@
-import RegistrationWizard from './RegistrationWizard'
+import RegistrationWizard from '@/components/registration/onboarding/RegistrationWizard'
 import { getOrganizationSettings } from '@/app/admin/actions/settings'
 
 export default async function RegisterPage() {

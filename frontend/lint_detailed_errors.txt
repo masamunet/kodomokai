@@ -1,0 +1,781 @@
+   43:9   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   45:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   45:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   46:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   46:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   50:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   50:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   53:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   66:7   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   68:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   68:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   69:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   69:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   70:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   70:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   76:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   77:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   78:34  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   81:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   81:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   90:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   97:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   97:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  102:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  103:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  106:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  109:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  116:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  116:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  119:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  121:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  37:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  37:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  38:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  38:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  39:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  39:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  40:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  40:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  42:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  46:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  46:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  47:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  47:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  54:47  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  55:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  56:34  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  59:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  59:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  60:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  65:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  69:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  69:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  74:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  75:34  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  78:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  78:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  79:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  83:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  86:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  86:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  88:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  88:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  93:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  93:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  94:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  96:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   77:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   77:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   78:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   78:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   79:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   79:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   80:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   80:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   87:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   87:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   89:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   89:30  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   90:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   92:17  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   94:25  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   96:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   96:20  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   98:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   98:23  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  100:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  100:20  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  107:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  110:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  112:21  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  121:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  121:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  122:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  122:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  123:69  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  124:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  124:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  125:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  126:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  127:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  127:62  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  128:38  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  128:40  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  130:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  131:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  132:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  132:63  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  133:39  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  133:41  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  136:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  136:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  137:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  138:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  139:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  139:66  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  140:42  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  140:44  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  142:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  143:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  144:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  144:67  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  145:43  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  145:45  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  148:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  148:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  150:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  150:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  151:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  152:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  153:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  153:62  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  154:38  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  154:40  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  156:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  157:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  158:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  158:49  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  159:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  160:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  161:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  166:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  167:22  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  168:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  168:61  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  171:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  172:22  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  173:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  173:48  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  176:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  176:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  178:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  178:74  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  180:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  180:37  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  188:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  188:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  189:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  192:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  196:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  200:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  41:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  41:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  42:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  43:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  43:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  44:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  44:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  51:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  51:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  52:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  52:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  53:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  55:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  55:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  56:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  56:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  57:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  59:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  68:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  68:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  69:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  69:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  70:22  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  72:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  72:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  73:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  73:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  78:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  78:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  81:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  18:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  18:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  19:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  19:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  20:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  20:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  21:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  21:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  26:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  26:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  28:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  28:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  29:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  29:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  30:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  30:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  31:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  31:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  32:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  32:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  37:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  37:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  38:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  38:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  39:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  39:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  40:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  40:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  41:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  41:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  43:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  43:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  44:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  44:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  45:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  45:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  47:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  47:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  48:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  48:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  49:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  49:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  51:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  51:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  52:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  52:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  53:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  53:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  58:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  58:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  59:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  59:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  61:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  61:26  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  62:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  62:20  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  63:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  63:20  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  66:36  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  66:40  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  72:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  72:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  73:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  73:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  74:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  74:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  75:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  75:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  77:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  77:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  78:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  78:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  79:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  79:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  81:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  81:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  82:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  83:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  88:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  88:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  89:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  92:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  96:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  99:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   50:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   50:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   51:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   51:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   52:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   52:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   53:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   53:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   58:47  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   59:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   59:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   60:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   61:39  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   62:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   65:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   69:34  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   69:36  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   71:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   72:40  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   73:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   76:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   80:35  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   80:37  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   84:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   84:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   85:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   86:43  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   87:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   90:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   95:38  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   95:40  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   97:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   98:44  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   99:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  102:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  107:39  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  107:41  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  110:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  110:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  112:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  113:36  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  114:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  117:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  120:31  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  120:33  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  123:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  124:34  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  125:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  128:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  132:29  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  132:31  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  135:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  135:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  136:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  139:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  143:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  145:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  10:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  10:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  11:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  11:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  12:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  12:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  15:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  15:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  20:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  20:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  21:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  21:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  128:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  128:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  129:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  129:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  135:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  135:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  136:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  136:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  137:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  137:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  138:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  139:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  143:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  143:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  154:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  156:17  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  39:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  39:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  40:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  40:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  41:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  41:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  42:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  42:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  47:47  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  48:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  49:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  52:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  52:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  56:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  60:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  60:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  65:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  66:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  69:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  69:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  73:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  77:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  77:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  82:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  82:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  83:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  85:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  90:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  93:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   46:9   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   48:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   48:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   49:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   49:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   53:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   53:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   64:7   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   66:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   66:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   67:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   67:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   68:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   68:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   74:37  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   75:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   78:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   80:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  101:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  101:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  102:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  102:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  103:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  103:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  105:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  105:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  106:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  106:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  110:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  111:34  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  114:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  114:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  125:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  131:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  131:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  132:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  132:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  136:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  136:20  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  139:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  145:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  154:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  155:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  158:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   48:9   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   50:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   50:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   51:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   51:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   63:7   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   65:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   65:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   66:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   66:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   67:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   67:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   72:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   73:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   74:37  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   77:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   77:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   86:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   93:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   93:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   98:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   99:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  102:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  105:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  112:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  112:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  115:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  117:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  22:13  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead  no-restricted-syntax
+  38:31  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  39:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  40:35  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  43:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  43:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  44:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  47:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  51:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  53:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  61:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  62:34  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  65:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  65:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  66:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  71:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  78:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  79:31  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  82:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  82:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  83:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  88:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  95:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  95:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  96:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  98:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   26:33  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   28:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   28:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   33:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   34:38  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   37:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   37:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   38:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   44:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   49:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   50:34  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   53:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   53:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   54:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   58:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   60:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   62:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   68:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   69:37  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   72:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   72:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   73:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   77:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   79:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   81:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   87:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   87:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   88:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   89:39  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   92:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   92:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   93:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   98:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  102:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  103:37  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  106:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  106:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  107:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  112:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  118:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  118:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  119:38  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  122:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  124:11  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  46:7  error  Do not pass children as props. Instead, nest children between the opening and closing tags  react/no-children-prop
+/Users/macuser/work_local/2025/12_kodomokai/frontend/app/auth/auth-code-error/page.tsx
+   7:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   7:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   8:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   8:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   9:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   9:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  10:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  10:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  11:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  11:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  15:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  15:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  18:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  24:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   23:13   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   65:6    error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   65:10   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   66:8    error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   66:12   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   67:10   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   67:14   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   68:26   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   73:10   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   73:14   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   74:12   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   74:16   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   75:14   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   75:17   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   76:14   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   76:16   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   78:12   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   78:16   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   79:17   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   80:16   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   80:20   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   81:21   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   82:21   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   88:16   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   88:20   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   89:21   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   90:21   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   92:16   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   92:20   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   93:21   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   94:21   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  100:14   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  100:18   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  101:16   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  101:19   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  104:18   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  104:22   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  105:20   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  106:41   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  111:22   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  111:24   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  114:45   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  115:22   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  117:22   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  117:26   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  123:28   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  123:47   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  124:67   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  125:32   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  131:33   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  133:32   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  133:36   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  134:34   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  134:39   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  134:102  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  134:107  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  135:34   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  135:39   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  145:22   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  145:26   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  146:24   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  148:25   error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   30:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   30:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   31:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   32:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   32:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   35:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   39:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   39:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   43:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   45:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   46:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   46:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   47:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   47:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   48:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   48:20  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   51:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   52:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   52:22  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   55:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   55:22  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   62:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   62:21  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   69:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   69:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   73:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   73:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   77:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   77:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   88:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   89:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   89:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   90:38  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   94:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   94:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   96:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   96:20  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  101:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  101:38  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  102:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  102:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  103:22  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  103:26  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  104:24  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  104:28  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  107:24  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  108:26  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  108:30  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  111:26  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  111:30  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  118:24  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  118:29  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  125:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  125:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  129:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  129:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  144:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  145:45  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  146:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  147:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  147:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  148:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  153:17  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  156:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  158:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  19:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  19:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  20:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  21:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  21:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  22:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  22:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  23:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  23:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  26:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  27:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  27:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  28:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  28:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  31:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  31:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  32:28  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  39:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  40:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  41:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  41:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  42:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  42:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  43:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  43:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  44:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  44:19  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  47:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  47:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  56:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  58:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  58:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  59:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  59:20  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  62:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  62:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  65:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  65:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   12:6   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   12:10  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   13:8   error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   13:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   14:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   14:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   15:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   15:12  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   20:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   21:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   21:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   22:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   25:13  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   27:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   48:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   48:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   49:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   49:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   50:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   50:21  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   52:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   52:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   53:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   53:21  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   58:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   58:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   61:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   62:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   62:81  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   62:86  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   63:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   63:22  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   64:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   64:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   67:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   67:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   72:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   73:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   74:18  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   74:22  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   75:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   75:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   78:20  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   78:24  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   86:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   87:36  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+   90:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+   90:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  102:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  103:39  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  106:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  106:18  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  119:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  119:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  120:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  120:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  122:45  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  129:10  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  129:14  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  131:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  133:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  138:14  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  140:15  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  146:12  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  146:16  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  150:17  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+  155:16  error  Raw HTML elements are not allowed in feature code. Use UI primitives from @/ui/** instead      no-restricted-syntax
+  158:17  error  className is not allowed outside of UI components. Use predefined UI components with variants  no-restricted-syntax
+✖ 779 problems (779 errors, 0 warnings)
