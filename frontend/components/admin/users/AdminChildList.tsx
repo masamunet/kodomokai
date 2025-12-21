@@ -13,6 +13,7 @@ type Props = {
 }
 
 export default function AdminChildList({ childrenData, parentId, targetFiscalYear }: Props) {
+  const router = useRouter()
 
   // Internal delete button component to handle state per child
   const DeleteButton = ({ childId }: { childId: string }) => {
@@ -42,7 +43,7 @@ export default function AdminChildList({ childrenData, parentId, targetFiscalYea
     return <div className="p-4 text-center text-gray-500 bg-white rounded-md border border-gray-200">登録されているお子様はいません。</div>
   }
 
-  const router = useRouter()
+
   const handleDeleteAll = async () => {
     if (!confirm('この保護者に登録されているすべてのお子様を削除しますか？\nこの操作は取り消せません。')) return
 

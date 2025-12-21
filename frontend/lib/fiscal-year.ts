@@ -21,6 +21,8 @@ export async function getTargetFiscalYear() {
   return month >= 4 ? year : year - 1
 }
 
-export async function setTargetFiscalYear(year: number) {
+// Fixed unused variable "year" by simply removing the parameter or using it.
+// Since this function is a stub, we can just comment out the parameter or use _year.
+export async function setTargetFiscalYear() {
   // This needs to be a Server Action or called from one
 }

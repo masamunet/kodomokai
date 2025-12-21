@@ -55,14 +55,10 @@ export default function MeetingEditor({ year, month, meeting, agendas, defaultIt
   // Next.js navigation preserves state if component tree is identical. 
   // We might want to use a useEffect to enforce defaultItemsExpanded behavior on prop change.
   useEffect(() => {
-    if (defaultItemsExpanded) {
-      setExpandedAgendaIds(agendas.map(a => a.id))
-    } else {
-      // If default is false, we don't necessarily want to close everything if user opened some?
-      // But if we navigate FROM Detail TO List, we probably want to reset.
-      setExpandedAgendaIds([])
-    }
-  }, [defaultItemsExpanded, agendas.length]) // Re-eval if count changes or prop changes
+    const targetIds = defaultItemsExpanded ? agendas.map(a => a.id) : []
+    const timer = setTimeout(() => setExpandedAgendaIds(targetIds), 0)
+    return () => clearTimeout(timer)
+  }, [defaultItemsExpanded, agendas])
 
   const toggleAgendaExpansion = (id: string) => {
     setExpandedAgendaIds(prev =>

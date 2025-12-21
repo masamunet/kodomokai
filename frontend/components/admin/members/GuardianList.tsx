@@ -59,11 +59,8 @@ export default function GuardianList({ profiles, targetFiscalYear, canEdit }: Gu
     return list;
   }, [profiles, searchQuery, sortConfig]);
 
-  if (!profiles || profiles.length === 0) {
-    return <div className="p-4 text-center text-muted-foreground">登録されている保護者（会員）はいません。</div>;
-  }
-
   const stats = useMemo(() => {
+    if (!profiles) return { total: 0, householdCount: 0 }
     // Count 'households' - technically every profile in this list is a guardian/member
     // The user specifically asked: "Display count of guardians who have children registered as members"
     const householdCount = profiles.filter(p => p.children && p.children.length > 0).length;
@@ -72,6 +69,10 @@ export default function GuardianList({ profiles, targetFiscalYear, canEdit }: Gu
       householdCount
     };
   }, [profiles]);
+
+  if (!profiles || profiles.length === 0) {
+    return <div className="p-4 text-center text-muted-foreground">登録されている保護者（会員）はいません。</div>;
+  }
 
   const requestSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';

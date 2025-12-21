@@ -28,10 +28,11 @@ export default function AccountingEditor({ initialData, currentYear, accountingI
 
   useEffect(() => {
     // If an accountant is assigned via role, force it.
-    if (accountingInfo.accountantName) {
-      setAccountant(accountingInfo.accountantName)
+    if (accountingInfo.accountantName && accountant !== accountingInfo.accountantName) {
+      const timer = setTimeout(() => setAccountant(accountingInfo.accountantName!), 0)
+      return () => clearTimeout(timer)
     }
-  }, [accountingInfo])
+  }, [accountingInfo, accountant])
 
   const toggleMySignature = (checked: boolean) => {
     if (!accountingInfo.currentAuditorName) return
@@ -65,13 +66,16 @@ export default function AccountingEditor({ initialData, currentYear, accountingI
     ]
   )
 
-  // Title auto-update if year/type changes and title is default
   useEffect(() => {
     if (!initialData) {
       const typeLabel = reportType === 'settlement' ? '決算報告書' : '予算案'
-      setTitle(`${fiscalYear}年度 会計${typeLabel}`)
+      const newTitle = `${fiscalYear}年度 会計${typeLabel}`
+      if (title !== newTitle) {
+        const timer = setTimeout(() => setTitle(newTitle), 0)
+        return () => clearTimeout(timer)
+      }
     }
-  }, [fiscalYear, reportType, initialData])
+  }, [fiscalYear, reportType, initialData, title])
 
   const addItem = (category: 'income' | 'expense') => {
     const newItem: AccountingItem = {

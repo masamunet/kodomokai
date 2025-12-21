@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition, useEffect } from 'react'
+import { useState, useTransition, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Search, X } from 'lucide-react'
 import { useDebounce } from '@/lib/hooks/use-debounce'
@@ -14,13 +14,7 @@ export default function ForumSearch() {
   const [inputValue, setInputValue] = useState(currentQuery)
   const debouncedValue = useDebounce(inputValue, 500)
 
-  useEffect(() => {
-    if (debouncedValue !== currentQuery) {
-      updateParams('q', debouncedValue)
-    }
-  }, [debouncedValue])
-
-  const updateParams = (key: string, value: string) => {
+  const updateParams = useCallback((key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (value) {
       params.set(key, value)
@@ -31,7 +25,13 @@ export default function ForumSearch() {
     startTransition(() => {
       router.push(`/forum?${params.toString()}`)
     })
-  }
+  }, [searchParams, router])
+
+  useEffect(() => {
+    if (debouncedValue !== currentQuery) {
+      updateParams('q', debouncedValue)
+    }
+  }, [debouncedValue, currentQuery, updateParams])
 
   return (
     <div className="space-y-12">

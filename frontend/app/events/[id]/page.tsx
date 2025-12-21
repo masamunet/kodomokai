@@ -27,7 +27,7 @@ export default async function EventPage({
   const { data: { user } } = await supabase.auth.getUser()
 
   let children: any[] = []
-  let participantMap: Record<string, any> = {}
+  const participantMap: Record<string, any> = {}
 
   if (user) {
     // 1. Get children

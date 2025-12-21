@@ -101,7 +101,7 @@ id,
   // Get attendance status for these events
   const eventIds = events.map(e => e.id)
   // Map<EventId, Set<ChildId>>
-  let eventAttendanceMap = new Map<string, Set<string>>()
+  const eventAttendanceMap = new Map<string, Set<string>>()
 
   if (currentUser && eventIds.length > 0 && children && children.length > 0) {
     const { data: participations } = await supabase
