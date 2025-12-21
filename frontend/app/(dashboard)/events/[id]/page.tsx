@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { submitRsvp } from '../../actions/rsvp'
+import { submitRsvp } from '@/app/actions/rsvp'
 import { EventDetailScreen } from '@/components/screens/events/EventDetail'
 
 export default async function EventPage({

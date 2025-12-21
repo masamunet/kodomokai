@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils'
 
 interface DashboardScreenProps {
   currentUser: any
-  profile: any
   associationName: string
   unreadNotifications: any[]
   targetFiscalYear: number
@@ -27,85 +26,28 @@ interface DashboardScreenProps {
 
 export function DashboardScreen(props: DashboardScreenProps) {
   return (
-    <Box className="min-h-screen bg-muted/30">
-      <DashboardHeader profile={props.profile} targetFiscalYear={props.targetFiscalYear} />
+    <main>
+      {/* Officer Dashboard Section */}
+      <OfficerDashboard
+        officerRoles={props.officerRoles}
+        officerTasks={props.officerTasks}
+        targetFiscalYear={props.targetFiscalYear}
+        unansweredCount={props.unansweredCount}
+      />
 
-      <Box asChild className="mx-auto max-w-7xl py-8 px-4 sm:px-6 lg:px-8">
-        <main>
-          {/* Officer Dashboard Section */}
-          <OfficerDashboard
-            officerRoles={props.officerRoles}
-            officerTasks={props.officerTasks}
-            targetFiscalYear={props.targetFiscalYear}
-            unansweredCount={props.unansweredCount}
-          />
+      <Box className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column (Notifications) */}
+        <NotificationList unreadNotifications={props.unreadNotifications} />
 
-          <Box className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column (Notifications) */}
-            <NotificationList unreadNotifications={props.unreadNotifications} />
-
-            {/* Right Column (Events) */}
-            <EventList
-              events={props.events}
-              associationName={props.associationName}
-              childrenData={props.childrenData}
-              eventAttendanceMap={props.eventAttendanceMap}
-            />
-          </Box>
-        </main>
+        {/* Right Column (Events) */}
+        <EventList
+          events={props.events}
+          associationName={props.associationName}
+          childrenData={props.childrenData}
+          eventAttendanceMap={props.eventAttendanceMap}
+        />
       </Box>
-    </Box>
-  )
-}
-
-function DashboardHeader({ profile, targetFiscalYear }: { profile: any, targetFiscalYear: number }) {
-  return (
-    <Box asChild className="bg-background shadow-sm border-b border-border sticky top-0 z-50">
-      <header>
-        <Box className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <HStack className="gap-4 items-center">
-            <HStack className="gap-2 items-center">
-              <Box className="bg-primary/10 p-2 rounded-lg text-primary">
-                <LayoutDashboard size={24} />
-              </Box>
-              <Heading size="h1" className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">ダッシュボード</Heading>
-            </HStack>
-            <FiscalYearSwitcher currentYear={targetFiscalYear} />
-          </HStack>
-
-          <HStack className="gap-2 sm:gap-3 items-center flex-wrap justify-center">
-            <Button variant="outline" size="sm" asChild activeScale={true} className="gap-2 h-9 border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary">
-              <Link href="/forum">
-                <MessageCircleQuestion size={16} />
-                質問掲示板
-              </Link>
-            </Button>
-
-            {profile?.is_admin && (
-              <Button variant="ghost" size="sm" asChild activeScale={true} className="gap-2 h-9 text-xs">
-                <Link href="/admin/templates">
-                  管理者
-                </Link>
-              </Button>
-            )}
-
-            <Button variant="ghost" size="sm" asChild activeScale={true} className="gap-2 h-9 text-xs">
-              <Link href="/profile">
-                <User size={14} />
-                マイページ
-              </Link>
-            </Button>
-
-            <form action="/auth/signout" method="post">
-              <Button type="submit" variant="ghost" size="sm" activeScale={true} className="gap-2 h-9 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors">
-                <LogOut size={14} />
-                ログアウト
-              </Button>
-            </form>
-          </HStack>
-        </Box>
-      </header>
-    </Box>
+    </main>
   )
 }
 

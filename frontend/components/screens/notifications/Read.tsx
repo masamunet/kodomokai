@@ -13,7 +13,7 @@ interface ReadScreenProps {
 
 export function ReadScreen({ error }: ReadScreenProps) {
   return (
-    <Box className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
+    <Box className="h-full py-20 flex items-center justify-center p-4">
       <Stack className="items-center gap-6 text-center bg-background p-12 rounded-2xl border border-border shadow-xl max-w-md w-full">
         <Box className="bg-muted/10 p-4 rounded-full">
           <Text className="text-4xl">{error ? '⚠️' : '✅'}</Text>

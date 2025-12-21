@@ -127,7 +127,6 @@ export default async function DashboardPage() {
   return (
     <DashboardScreen
       currentUser={currentUser}
-      profile={profile}
       associationName={associationName}
       unreadNotifications={unreadNotifications || []}
       targetFiscalYear={targetFiscalYear}
