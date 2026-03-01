@@ -7,8 +7,11 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getBaseUrl() {
   let url =
+    process.env?.NEXT_PUBLIC_SITE_URL ??
+    process.env?.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ??
     process.env?.NEXT_PUBLIC_BASE_URL ??
-    process.env?.VERCEL_URL ?? // Automatically set by Vercel.
+    process.env?.NEXT_PUBLIC_VERCEL_URL ??
+    process.env?.VERCEL_URL ??
     'http://localhost:3000'
 
   // If it's a localhost or 127.0.0.1, ensure it's http unless specified
