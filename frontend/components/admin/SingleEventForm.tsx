@@ -19,7 +19,7 @@ type Event = {
   is_canceled: boolean
 }
 
-export default function SingleEventForm({ event }: { event?: Event }) {
+export default function SingleEventForm({ event, targetFiscalYear }: { event?: Event, targetFiscalYear?: number }) {
   const [message, setMessage] = useState<string | null>(null)
 
   const handleSubmit = async (formData: FormData) => {
@@ -34,11 +34,31 @@ export default function SingleEventForm({ event }: { event?: Event }) {
 
   // Initial values helper
   const getInitialStartDateTime = () => {
-    if (!event) return ''
-    // scheduled_date (YYYY-MM-DD) + start_time (HH:mm:ss)
-    const date = event.scheduled_date
-    const time = event.start_time ? event.start_time.slice(0, 5) : '00:00'
-    return `${date}T${time}`
+    if (event) {
+      // scheduled_date (YYYY-MM-DD) + start_time (HH:mm:ss)
+      const date = event.scheduled_date
+      const time = event.start_time ? event.start_time.slice(0, 5) : '00:00'
+      return `${date}T${time}`
+    }
+
+    // Default to current date/time, but apply targetFiscalYear if provided
+    const now = new Date()
+    let year = now.getFullYear()
+    const month = now.getMonth() + 1
+    const day = now.getDate()
+
+    if (targetFiscalYear) {
+      // If the current month is between April and December, it belongs to the fiscal year itself.
+      // If the current month is between January and March, it belongs to the fiscal year + 1.
+      year = month >= 4 ? targetFiscalYear : targetFiscalYear + 1
+    }
+
+    const mStr = String(month).padStart(2, '0')
+    const dStr = String(day).padStart(2, '0')
+    const hh = String(Math.min(now.getHours() + 1, 23)).padStart(2, '0') // default to next hour
+    const mm = '00'
+
+    return `${year}-${mStr}-${dStr}T${hh}:${mm}`
   }
 
   const getInitialEndDateTime = () => {

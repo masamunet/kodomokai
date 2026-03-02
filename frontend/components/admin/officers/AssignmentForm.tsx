@@ -16,9 +16,10 @@ import { AlertCircle, ShieldCheck, UserPlus, Calendar } from 'lucide-react'
 type Props = {
   roles: any[]
   profiles: any[]
+  targetFiscalYear: number
 }
 
-export default function AssignmentForm({ roles, profiles }: Props) {
+export default function AssignmentForm({ roles, profiles, targetFiscalYear }: Props) {
   const [message, setMessage] = useState<string | null>(null)
 
   const handleSubmit = async (formData: FormData) => {
@@ -51,7 +52,7 @@ export default function AssignmentForm({ roles, profiles }: Props) {
                   type="number"
                   name="fiscal_year"
                   id="fiscal_year"
-                  defaultValue={2025}
+                  defaultValue={targetFiscalYear}
                   required
                   className="w-32"
                 />
@@ -101,7 +102,7 @@ export default function AssignmentForm({ roles, profiles }: Props) {
                   type="date"
                   name="start_date"
                   id="start_date"
-                  defaultValue="2025-04-01"
+                  defaultValue={`${targetFiscalYear}-04-01`}
                 />
               </Stack>
 
@@ -113,7 +114,7 @@ export default function AssignmentForm({ roles, profiles }: Props) {
                   type="date"
                   name="end_date"
                   id="end_date"
-                  defaultValue="2026-03-31"
+                  defaultValue={`${targetFiscalYear + 1}-03-31`}
                 />
               </Stack>
             </Box>
