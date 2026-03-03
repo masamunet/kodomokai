@@ -1,5 +1,6 @@
 import * as React from "react"
 import NextTopLoader from 'nextjs-toploader';
+import { BrowserDetector } from '@/components/BrowserDetector';
 
 interface AppRootLayoutProps {
   children: React.ReactNode
@@ -18,6 +19,7 @@ export function AppRootLayout({ children, fonts }: AppRootLayoutProps) {
           template='<div class="bar" role="bar"><div class="peg"></div></div>'
           zIndex={1600}
         />
+        <BrowserDetector />
         {children}
       </body>
     </html>

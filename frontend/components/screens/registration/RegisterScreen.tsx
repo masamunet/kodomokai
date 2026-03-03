@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Input } from '@/ui/primitives/Input'
-import { sendMagicLink } from '@/app/actions/auth'
+import { sendMagicLink, verifyInvitationCode } from '@/app/actions/auth'
 import { signInWithGoogle } from '@/app/login/actions'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -15,11 +16,43 @@ import { Card, CardContent } from '@/ui/primitives/Card'
 import { Mail, AlertCircle, ArrowRight, Chrome } from 'lucide-react'
 
 export function RegisterScreen() {
+  const searchParams = useSearchParams()
+  const urlCode = searchParams.get('code')
+
+  const [invitationCode, setInvitationCode] = useState(urlCode || '')
+  const [isCodeFromUrl, setIsCodeFromUrl] = useState(false)
+
   const [email, setEmail] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [errorCode, setErrorCode] = useState('')
+
+  useEffect(() => {
+    if (urlCode) {
+      setInvitationCode(urlCode)
+      setIsCodeFromUrl(true)
+    }
+  }, [urlCode])
+
+  const handleGoogleSignIn = async () => {
+    setError('')
+    setLoading(true)
+
+    try {
+      const verifyResult = await verifyInvitationCode(invitationCode)
+      if (!verifyResult.success) {
+        setError(verifyResult.message || '招待コードが正しくありません')
+        setLoading(false)
+        return
+      }
+
+      await signInWithGoogle()
+    } catch (err) {
+      setError('予期せぬエラーが発生しました')
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,6 +61,13 @@ export function RegisterScreen() {
     setLoading(true)
 
     try {
+      const verifyResult = await verifyInvitationCode(invitationCode)
+      if (!verifyResult.success) {
+        setError(verifyResult.message || '招待コードが正しくありません')
+        setLoading(false)
+        return
+      }
+
       const result = await sendMagicLink(email)
       if (result.success) {
         setIsSubmitted(true)
@@ -96,7 +136,7 @@ export function RegisterScreen() {
                 <Button
                   variant="outline"
                   type="button"
-                  onClick={() => signInWithGoogle()}
+                  onClick={handleGoogleSignIn}
                   className="w-full h-12 gap-3 border-border hover:bg-muted font-bold"
                   activeScale={true}
                 >
@@ -112,6 +152,24 @@ export function RegisterScreen() {
 
                 <form onSubmit={handleSubmit}>
                   <Stack className="gap-6">
+                    <Stack className="gap-2">
+                      <HStack className="justify-between">
+                        <Text weight="bold" className="text-sm">招待コード</Text>
+                      </HStack>
+                      <Input
+                        id="invitationCode"
+                        name="invitationCode"
+                        type="text"
+                        required
+                        value={invitationCode}
+                        onChange={(e) => setInvitationCode(e.target.value)}
+                        placeholder="システムから案内されたコード"
+                        disabled={loading || isCodeFromUrl}
+                        readOnly={isCodeFromUrl}
+                        className={`h-12 px-4 rounded-xl border-border focus:ring-primary ${isCodeFromUrl ? 'bg-muted/50 text-muted-foreground' : ''}`}
+                      />
+                    </Stack>
+
                     <Stack className="gap-2">
                       <HStack className="justify-between">
                         <Text weight="bold" className="text-sm">メールアドレス</Text>
