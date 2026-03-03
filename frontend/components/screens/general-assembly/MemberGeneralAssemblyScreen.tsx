@@ -99,130 +99,132 @@ export function MemberGeneralAssemblyScreen({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
-      {/* Sidebar Navigation */}
-      <div className="w-full lg:w-64 flex-shrink-0 print:hidden space-y-6">
-        <Button variant="ghost" size="sm" asChild className="pl-0 gap-2 mb-2 text-muted-foreground hover:text-primary">
-          <Link href="/">
-            <ArrowLeft size={16} /> ダッシュボードへ戻る
-          </Link>
-        </Button>
+    <Box className="container mx-auto py-8">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Sidebar Navigation */}
+        <div className="w-full lg:w-64 flex-shrink-0 print:hidden space-y-6">
+          <Button variant="ghost" size="sm" asChild className="pl-0 gap-2 mb-2 text-muted-foreground hover:text-primary">
+            <Link href="/">
+              <ArrowLeft size={16} /> ダッシュボードへ戻る
+            </Link>
+          </Button>
 
-        <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
-          <div className="p-4 bg-muted/30 border-b border-border">
-            <Text weight="bold" className="text-foreground">総会資料一覧</Text>
-          </div>
-          <div className="p-2 space-y-1">
-            {Object.entries(MATERIAL_LABELS).map(([key, label], idx) => {
-              const isDistributed = distributedMaterials[key]
-              const Icon = MATERIAL_ICONS[key]
-              if (!isDistributed) return null
+          <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+            <div className="p-4 bg-muted/30 border-b border-border">
+              <Text weight="bold" className="text-foreground">総会資料一覧</Text>
+            </div>
+            <div className="p-2 space-y-1">
+              {Object.entries(MATERIAL_LABELS).map(([key, label], idx) => {
+                const isDistributed = distributedMaterials[key]
+                const Icon = MATERIAL_ICONS[key]
+                if (!isDistributed) return null
 
-              return (
-                <button
-                  key={key}
-                  onClick={() => setSelectedMaterial(key)}
-                  className={`
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedMaterial(key)}
+                    className={`
                     w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-left
                     ${selectedMaterial === key
-                      ? 'bg-primary/10 text-primary font-bold'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                    }
+                        ? 'bg-primary/10 text-primary font-bold'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      }
                   `}
-                >
-                  <div className={`
+                  >
+                    <div className={`
                     flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold shrink-0
                     ${selectedMaterial === key ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}
                   `}>
-                    {idx + 1}
-                  </div>
-                  <span className="flex-1">{label}</span>
-                </button>
-              )
-            })}
+                      {idx + 1}
+                    </div>
+                    <span className="flex-1">{label}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 min-w-0">
+          <div className="bg-card border border-border rounded-xl shadow-sm min-h-[500px] overflow-hidden print:border-none print:shadow-none print:rounded-none">
+            <div className="border-b border-border p-4 flex justify-between items-center bg-muted/10 print:hidden">
+              <Heading size="h3" className="font-bold flex items-center gap-2">
+                {MATERIAL_ICONS[selectedMaterial] && <IconWrapper icon={MATERIAL_ICONS[selectedMaterial]} />}
+                {MATERIAL_LABELS[selectedMaterial]}
+              </Heading>
+              <Button size="sm" variant="outline" onClick={handlePrint} className="gap-2">
+                <Printer size={16} /> 印刷
+              </Button>
+            </div>
+
+            <div className="p-6 md:p-10 print:p-0">
+              {selectedMaterial === 'cover' && (
+                <GeneralAssemblyCover
+                  year={targetFiscalYear}
+                  organizationName={settings?.name}
+                  eraName={settings?.wareki_era_name}
+                  startYear={settings?.wareki_start_year}
+                />
+              )}
+              {selectedMaterial === 'activity_report' && (
+                <AnnualScheduleEditor
+                  year={targetFiscalYear}
+                  events={currentEvents}
+                  eraName={settings?.wareki_era_name || '令和'}
+                  startYear={settings?.wareki_start_year || 2019}
+                  title="活動報告書"
+                  readOnly={true}
+                />
+              )}
+              {selectedMaterial === 'settlement_report' && settlementReport && (
+                <AccountingEditor
+                  initialData={settlementReport}
+                  currentYear={targetFiscalYear}
+                  accountingInfo={accountingInfoCurrent}
+                  readOnly={true}
+                />
+              )}
+              {selectedMaterial === 'officer_list' && (
+                <NextYearOfficerScreen
+                  nextWarekiYear={officerData.nextWarekiYear}
+                  nextFiscalYear={officerData.nextFiscalYear}
+                  roles={officerData.roles}
+                  assignments={officerData.assignments}
+                  sortedAssignments={officerData.sortedAssignments}
+                  profiles={officerData.profiles}
+                  readOnly={true}
+                />
+              )}
+              {selectedMaterial === 'next_activity_plan' && (
+                <AnnualScheduleEditor
+                  year={nextFiscalYear}
+                  events={nextEvents}
+                  eraName={settings?.wareki_era_name || '令和'}
+                  startYear={settings?.wareki_start_year || 2019}
+                  title="活動予定案"
+                  readOnly={true}
+                />
+              )}
+              {selectedMaterial === 'next_budget_plan' && budgetReport && (
+                <AccountingEditor
+                  initialData={budgetReport}
+                  currentYear={nextFiscalYear}
+                  accountingInfo={accountingInfoNext}
+                  readOnly={true}
+                />
+              )}
+              {selectedMaterial === 'constitution' && (
+                <ConstitutionEditor
+                  initialData={constitution}
+                  readOnly={true}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 min-w-0">
-        <div className="bg-card border border-border rounded-xl shadow-sm min-h-[500px] overflow-hidden print:border-none print:shadow-none print:rounded-none">
-          <div className="border-b border-border p-4 flex justify-between items-center bg-muted/10 print:hidden">
-            <Heading size="h3" className="font-bold flex items-center gap-2">
-              {MATERIAL_ICONS[selectedMaterial] && <IconWrapper icon={MATERIAL_ICONS[selectedMaterial]} />}
-              {MATERIAL_LABELS[selectedMaterial]}
-            </Heading>
-            <Button size="sm" variant="outline" onClick={handlePrint} className="gap-2">
-              <Printer size={16} /> 印刷
-            </Button>
-          </div>
-
-          <div className="p-6 md:p-10 print:p-0">
-            {selectedMaterial === 'cover' && (
-              <GeneralAssemblyCover
-                year={targetFiscalYear}
-                organizationName={settings?.name}
-                eraName={settings?.wareki_era_name}
-                startYear={settings?.wareki_start_year}
-              />
-            )}
-            {selectedMaterial === 'activity_report' && (
-              <AnnualScheduleEditor
-                year={targetFiscalYear}
-                events={currentEvents}
-                eraName={settings?.wareki_era_name || '令和'}
-                startYear={settings?.wareki_start_year || 2019}
-                title="活動報告書"
-                readOnly={true}
-              />
-            )}
-            {selectedMaterial === 'settlement_report' && settlementReport && (
-              <AccountingEditor
-                initialData={settlementReport}
-                currentYear={targetFiscalYear}
-                accountingInfo={accountingInfoCurrent}
-                readOnly={true}
-              />
-            )}
-            {selectedMaterial === 'officer_list' && (
-              <NextYearOfficerScreen
-                nextWarekiYear={officerData.nextWarekiYear}
-                nextFiscalYear={officerData.nextFiscalYear}
-                roles={officerData.roles}
-                assignments={officerData.assignments}
-                sortedAssignments={officerData.sortedAssignments}
-                profiles={officerData.profiles}
-                readOnly={true}
-              />
-            )}
-            {selectedMaterial === 'next_activity_plan' && (
-              <AnnualScheduleEditor
-                year={nextFiscalYear}
-                events={nextEvents}
-                eraName={settings?.wareki_era_name || '令和'}
-                startYear={settings?.wareki_start_year || 2019}
-                title="活動予定案"
-                readOnly={true}
-              />
-            )}
-            {selectedMaterial === 'next_budget_plan' && budgetReport && (
-              <AccountingEditor
-                initialData={budgetReport}
-                currentYear={nextFiscalYear}
-                accountingInfo={accountingInfoNext}
-                readOnly={true}
-              />
-            )}
-            {selectedMaterial === 'constitution' && (
-              <ConstitutionEditor
-                initialData={constitution}
-                readOnly={true}
-              />
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+    </Box>
   )
 }
 

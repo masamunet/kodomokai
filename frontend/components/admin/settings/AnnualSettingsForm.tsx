@@ -21,7 +21,10 @@ export default function AnnualSettingsForm({ fiscalYear, initialInvitationCode }
 
   useEffect(() => {
     // get origin for testing locally or in production
-    setBaseUrl(window.location.origin)
+    const timer = setTimeout(() => {
+      setBaseUrl(window.location.origin)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -14,39 +14,36 @@ export function BrowserDetector() {
   const [currentUrl, setCurrentUrl] = useState('')
 
   useEffect(() => {
-    setCurrentUrl(window.location.href)
+    const timer = setTimeout(() => {
+      setCurrentUrl(window.location.href)
 
-    const ua = navigator.userAgent || navigator.vendor || (window as any).opera || ''
+      const ua = navigator.userAgent || navigator.vendor || (window as any).opera || ''
 
-    // Detect OS
-    if (/iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream) {
-      setOs('ios')
-    } else if (/android/i.test(ua)) {
-      setOs('android')
-    }
+      // Detect OS
+      if (/iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream) {
+        setOs('ios')
+      } else if (/android/i.test(ua)) {
+        setOs('android')
+      }
 
-    // Detect In-App Browsers
-    // LINE, Instagram, Facebook, Twitter, and other common ones
-    const inAppBrowserRules = [
-      'Line',           // LINE
-      'Instagram',      // Instagram
-      'FBAN', 'FBAV',   // Facebook
-      'Twitter',        // Twitter
-      'MicroMessenger'  // WeChat
-    ]
+      // Detect In-App Browsers
+      // LINE, Instagram, Facebook, Twitter, and other common ones
+      const inAppBrowserRules = [
+        'Line',           // LINE
+        'Instagram',      // Instagram
+        'FBAN', 'FBAV',   // Facebook
+        'Twitter',        // Twitter
+        'MicroMessenger'  // WeChat
+      ]
 
-    const isMatched = inAppBrowserRules.some(rule => new RegExp(rule, 'i').test(ua))
+      const isMatched = inAppBrowserRules.some(rule => new RegExp(rule, 'i').test(ua))
 
-    // Additional check for iOS specifically: if it has Safari but no Version/ inside an app viewer context
-    // Some in-app browsers do have "Safari" in UA but are not standard safari.
-    const isIOSMobile = /iPhone|iPod/.test(ua)
-    const isSafari = /Safari/i.test(ua) && !/Chrome/i.test(ua) && !/CriOS/i.test(ua)
-    // If it's iOS and NOT Safari (and not Chrome on iOS, which is acceptable usually, but wait, do we want to force Safari?)
-    // Actually, usually blocking LINE/Instagram is the main goal. 
+      if (isMatched) {
+        setIsInAppBrowser(true)
+      }
+    }, 0)
 
-    if (isMatched) {
-      setIsInAppBrowser(true)
-    }
+    return () => clearTimeout(timer)
   }, [])
 
   if (!isInAppBrowser) return null

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getDistributedMaterials } from '@/app/admin/actions/general-assembly'
 import { MemberGeneralAssemblyScreen } from '@/components/screens/general-assembly/MemberGeneralAssemblyScreen'
+import { Box } from '@/ui/layout/Box'
 import { getOrganizationSettings, getTargetFiscalYear } from '@/app/admin/actions/settings'
 import { getAnnualEvents } from '@/app/actions/events'
 import { getFiscalReportWithItems, getAccountingInfo, getFiscalReports } from '@/app/admin/actions/accounting'
@@ -24,7 +25,7 @@ export default async function GeneralAssemblyPage() {
   const targetFiscalYear = await getTargetFiscalYear()
 
   if (!settings) {
-    return <div>システム設定が見つかりません。管理者に連絡してください。</div>
+    return <Box>システム設定が見つかりません。管理者に連絡してください。</Box>
   }
 
   const nextFiscalYear = targetFiscalYear + 1
@@ -96,21 +97,19 @@ export default async function GeneralAssemblyPage() {
   const constitution = await getConstitution()
 
   return (
-    <div className="container mx-auto py-8">
-      <MemberGeneralAssemblyScreen
-        targetFiscalYear={targetFiscalYear}
-        nextFiscalYear={nextFiscalYear}
-        settings={settings}
-        currentEvents={currentEvents || []}
-        nextEvents={nextEvents || []}
-        settlementReport={settlementReport}
-        budgetReport={budgetReport}
-        accountingInfoCurrent={accountingInfoCurrent}
-        accountingInfoNext={accountingInfoNext}
-        officerData={officerData}
-        constitution={constitution}
-        distributedMaterials={distributedMaterials}
-      />
-    </div>
+    <MemberGeneralAssemblyScreen
+      targetFiscalYear={targetFiscalYear}
+      nextFiscalYear={nextFiscalYear}
+      settings={settings}
+      currentEvents={currentEvents || []}
+      nextEvents={nextEvents || []}
+      settlementReport={settlementReport}
+      budgetReport={budgetReport}
+      accountingInfoCurrent={accountingInfoCurrent}
+      accountingInfoNext={accountingInfoNext}
+      officerData={officerData}
+      constitution={constitution}
+      distributedMaterials={distributedMaterials}
+    />
   )
 }
