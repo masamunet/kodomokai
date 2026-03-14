@@ -1,3 +1,5 @@
+'use server'
+
 import { createClient } from '@/lib/supabase/server'
 import { RegistrationData } from '@/components/registration/onboarding/RegistrationWizard'
 import { getBaseUrl } from '@/lib/utils'
@@ -14,9 +16,7 @@ export async function verifyInvitationCode(code: string) {
     .single()
 
   if (error || !settings) {
-    // If no code is configured for this year, we allow registration OR we block it depending on policy.
-    // Given the prompt "設定されてない年度なら環境変数の値で登録できるなど/設定されてない年度なら通す", let's be lenient if no DB row exists.
-    // Actually, user said: "設定されてない年度なら環境変数の値で登録できるなど。" meaning fallback to env var logic.
+    // DB未設定の場合は環境変数にフォールバック
     const fallbackCode = process.env.INVITATION_CODE
     if (fallbackCode) {
       if (code === fallbackCode) {
@@ -24,14 +24,8 @@ export async function verifyInvitationCode(code: string) {
       }
       return { success: false, message: '招待コードが正しくありません' }
     }
-    // If neither DB nor ENV is set, we could allow it or block it. Let's allow it as a failsafe so users aren't locked out.
-    // Wait, better to block with a friendly message to contact admin if strict lock is intended. Let's block it unless code matches.
-    // If no config exists, only allow registration if they don't provide a code? No, we need a code.
-    // Let's assume if no settings at all and no code, let them pass if code is empty? No, require code. If no config at all, fallback to env. If no env, error.
-    if (!fallbackCode) {
-      // No DB, no ENV. 
-      return { success: true } // Let's allow registration if administrator hasn't set anything up.
-    }
+    // DB設定もENVもない場合はブロック
+    return { success: false, message: '招待コードが設定されていません。管理者にお問い合わせください。' }
   }
 
   if (settings && settings.invitation_code !== code) {
